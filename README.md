@@ -17,7 +17,7 @@ A simple JS(TS) SDK for XuperOS
 
 ### install npm
 
-~~> npm install --save xuper-sdk@beta~~
+> npm install --save xuper-sdk
 
 ## Example
 
