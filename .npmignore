@@ -14,4 +14,4 @@ scripts/
 jest.config.js
 tsconfig.json
 typedoc.json
-.eslintrc
+.eslintrc.js
