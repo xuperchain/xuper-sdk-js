@@ -1,6 +1,7 @@
 # Xuper SDK JS 
 
 [![Build Status](https://travis-ci.org/xuperchain/xuper-sdk-js.svg?branch=master)](https://travis-ci.org/xuperchain/xuper-sdk-js)
+[![npm version](https://badge.fury.io/js/%40xuperchain%2Fxuper-sdk.svg)](https://badge.fury.io/js/%40xuperchain%2Fxuper-sdk)
 
 A simple JS(TS) SDK for XuperOS
 
