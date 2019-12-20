@@ -11,8 +11,7 @@ deploy:
     provider: npm
     email: smilingxinyi@gmail.com
     skip_cleanup: true
-    api_key:
-        secure: "a18af458-7fd9-42d2-a5d1-c2dd93029f49"
+    api_key: "a18af458-7fd9-42d2-a5d1-c2dd93029f49"
     on:
         tags: true
         repo: "xuperchain/xuper-sdk-js"

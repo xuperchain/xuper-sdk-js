@@ -1,5 +1,7 @@
 # Xuper SDK JS 
 
+[![Build Status](https://travis-ci.org/xuperchain/xuper-sdk-js.svg?branch=master)](https://travis-ci.org/xuperchain/xuper-sdk-js)
+
 A simple JS(TS) SDK for XuperOS
 
 ## Features
@@ -42,15 +44,15 @@ xsdk.createAccount(
 
 ## Documents
 
-- Create new account [Detail](https://smilingxinyi.github.io/xuper-sdk-js/classes/xupersdk.html#createaccount)
+- Create new account [Detail](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#createaccount)
 
-- Revert exist account [Detail](https://smilingxinyi.github.io/xuper-sdk-js/classes/xupersdk.html#revertaccount)
+- Revert exist account [Detail](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#revertaccount)
     
-- Query transaction [Detail](https://smilingxinyi.github.io/xuper-sdk-js/classes/xupersdk.html#querytransaction)
+- Query transaction [Detail](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#querytransaction)
 
-- More... [documents](https://smilingxinyi.github.io/xuper-sdk-js/)
+- More... [documents](https://xuperchain.github.io/xuper-sdk-js/)
 
 ## Todos
 
 - Support xuperchain/xuperunion
-- Suppert contract
+- Support contract
