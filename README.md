@@ -17,11 +17,11 @@ A simple JS(TS) SDK for XuperOS
 
 ## Usage
 
-### install npm
+### Install package
 
 > npm install --save xuper-sdk
 
-## Example
+### Example
 
 ```javascript
 
