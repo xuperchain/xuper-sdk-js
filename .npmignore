@@ -7,4 +7,11 @@ scripts/
 .npmignore
 .travis.yml
 package-lock.json
+
+src/
 docs/
+scripts/
+jest.config.js
+tsconfig.json
+typedoc.json
+.eslintrc
