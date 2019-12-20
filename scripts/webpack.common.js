@@ -21,7 +21,11 @@ module.exports = {
     resolve: {
         extensions: ['.tsx', '.ts', '.js']
     },
-    external: {
-
+    externals: {
+        'bn.js': 'bn.js',
+        'sha256': 'sha256',
+        'elliptic': 'elliptic',
+        'ripemd160-min/dist-umd': 'ripemd160-min/dist-umd',
+        'pbkdf2': 'pbkdf2'
     }
 };

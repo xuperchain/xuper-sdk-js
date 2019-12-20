@@ -1,5 +1,5 @@
 {
-    "name": "xuper-sdk",
+    "name": "@xuperchain/xuper-sdk",
     "version": "1.0.0",
     "description": "A simple JS(TS) SDK for XuperOS",
     "main": "index.js",
@@ -32,6 +32,7 @@
         "@typescript-eslint/eslint-plugin": "^2.12.0",
         "@typescript-eslint/parser": "^2.12.0",
         "clean-webpack-plugin": "^3.0.0",
+        "coveralls": "^3.0.9",
         "dotenv": "^8.2.0",
         "eslint": "^6.7.2",
         "eslint-config-airbnb-base": "^14.0.0",
@@ -53,6 +54,9 @@
             "pre-commit": "npm run lint:fix && npm run docs && git add docs/"
         }
     },
+    "publishConfig": {
+        "access": "public"
+    },
     "dependencies": {
         "@types/bn.js": "^4.11.5",
         "@types/elliptic": "^6.4.10",
@@ -60,8 +64,11 @@
         "@types/sha256": "^0.2.0",
         "bn.js": "^5.0.0",
         "elliptic": "^6.5.2",
-        "pbkdf2": "^3.0webpack-cli.17",
+        "pbkdf2": "^3.0.17",
         "ripemd160-min": "0.0.6",
         "sha256": "^0.2.0"
-    }
+    },
+    "files": [
+        "./lib"
+    ]
 }
