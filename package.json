@@ -1,6 +1,6 @@
 {
     "name": "@xuperchain/xuper-sdk",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "A simple JS(TS) SDK for XuperOS",
     "main": "lib/index.js",
     "scripts": {
