@@ -15,7 +15,7 @@ import {Cryptography, Language, Strength} from './constants';
 
 import wordlist from './wordlist.json';
 import {
-    PublicKeyModel, PrivateKeyModel, AccountInerface, AccountModel,
+    PublicKeyModel, PrivateKeyModel, AccountInerface, AccountModel
 } from './interfaces';
 import {base58Encode, base58Decode, deepEqual} from './utils';
 
@@ -62,7 +62,7 @@ export default class Account implements AccountInerface {
         const publicKey: PublicKeyModel = {
             X: privateKey.X,
             Y: privateKey.Y,
-            Curvname: privateKey.Curvname,
+            Curvname: privateKey.Curvname
         };
 
         const address = this.generateAddress(publicKey, cryptography);
@@ -71,7 +71,7 @@ export default class Account implements AccountInerface {
             address,
             mnemonic,
             privateKey,
-            publicKey,
+            publicKey
         };
     }
 
@@ -91,7 +91,7 @@ export default class Account implements AccountInerface {
         const publicKey: PublicKeyModel = {
             X: privateKey.X,
             Y: privateKey.Y,
-            Curvname: privateKey.Curvname,
+            Curvname: privateKey.Curvname
         };
 
         const address = this.generateAddress(publicKey, cryptography);
@@ -100,7 +100,7 @@ export default class Account implements AccountInerface {
             address,
             mnemonic,
             privateKey,
-            publicKey,
+            publicKey
         };
     }
 
@@ -288,7 +288,7 @@ export default class Account implements AccountInerface {
             Curvname: 'P-256',
             D: k.toString(10),
             X: pubXY.getX().toString(10),
-            Y: pubXY.getY().toString(10),
+            Y: pubXY.getY().toString(10)
         };
     }
 

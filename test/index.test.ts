@@ -12,11 +12,11 @@ const node = process.env.NODE || '';
 const endorseConf = {
     fee: '10',
     server: process.env.ENDORSE_SERVER || '',
-    feeAddress:  process.env.FEEADDRESS || '',
+    feeAddress: process.env.FEEADDRESS || '',
     feeServiceAddress: process.env.FEESERVICEADDRESS || ''
 };
 
-describe(`Xuper SDK`, () => {
+describe('Xuper SDK', () => {
     test('create new account with mnemonic should return account model', () => {
         const xsdk = new XuperSDK({node: '', chain: 'xuper'});
         const accountModel = xsdk.createAccount(

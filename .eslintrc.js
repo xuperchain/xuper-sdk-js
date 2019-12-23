@@ -17,6 +17,7 @@ module.exports = {
         sourceType: 'module'
     },
     plugins: ['@typescript-eslint'],
+    ignorePatterns: ['*.test.js', 'node_modules/'],
     rules: {
         'indent': ['error', 4],
         'no-multi-spaces': 'error',
@@ -41,6 +42,7 @@ module.exports = {
         'no-throw-literal': 'off',
         'arrow-parens': 'off',
         'no-useless-catch': 'off',
+        'comma-dangle': ["error", "never"],
         // Todo
         '@typescript-eslint/ban-ts-ignore': 'off',
         'no-unused-expressions': 'off',

@@ -8,11 +8,11 @@ import sha256 from 'sha256';
 import {ec as EC} from 'elliptic';
 import Account from './account';
 import {
-    Language, Strength, Cryptography, VERSION,
+    Language, Strength, Cryptography, VERSION
 } from './constants';
 import {jsonEncode} from './utils';
 import {
-    XuperSDKInterface, AccountModel, XuperOptions, PrivateKeyModel, PublicKeyModel,
+    XuperSDKInterface, AccountModel, XuperOptions, PrivateKeyModel, PublicKeyModel
 } from './interfaces';
 
 export {Language, Strength, Cryptography} from './constants';
@@ -93,9 +93,9 @@ export default class XuperSDK implements XuperSDKInterface {
             body: JSON.stringify({
                 address: address || this.accountModel!.address,
                 bcs: [{
-                    bcname: this.options.chain,
-                }],
-            }),
+                    bcname: this.options.chain
+                }]
+            })
         }).then(
             response => {
                 if (!response.ok) {
@@ -104,7 +104,7 @@ export default class XuperSDK implements XuperSDKInterface {
                     });
                 }
                 return response.json();
-            },
+            }
         );
     }
 
@@ -122,9 +122,9 @@ export default class XuperSDK implements XuperSDKInterface {
             body: JSON.stringify({
                 address: address || this.accountModel!.address,
                 tfds: [{
-                    bcname: this.options.chain,
-                }],
-            }),
+                    bcname: this.options.chain
+                }]
+            })
         }).then(
             response => {
                 if (!response.ok) {
@@ -133,7 +133,7 @@ export default class XuperSDK implements XuperSDKInterface {
                     });
                 }
                 return response.json();
-            },
+            }
         );
     }
 
@@ -157,8 +157,8 @@ export default class XuperSDK implements XuperSDKInterface {
             address: this.accountModel!.address,
             request: {
                 initiator: this.accountModel!.address,
-                bcname: this.options.chain,
-            },
+                bcname: this.options.chain
+            }
         };
 
         if (this.options.needEndorse) {
@@ -183,12 +183,12 @@ export default class XuperSDK implements XuperSDKInterface {
         const body = {
             RequestName: 'PreExecWithFee',
             BcName: this.options.chain,
-            RequestData: btoa(JSON.stringify(data)),
+            RequestData: btoa(JSON.stringify(data))
         };
 
         return fetch(`${this.options.endorseConf!.server}/v1/endorsercall`, {
             method: 'POST',
-            body: JSON.stringify(body),
+            body: JSON.stringify(body)
         }).then(
             response => {
                 if (!response.ok) {
@@ -197,7 +197,7 @@ export default class XuperSDK implements XuperSDKInterface {
                     });
                 }
                 return response.json();
-            },
+            }
         );
     }
 
@@ -233,7 +233,7 @@ export default class XuperSDK implements XuperSDKInterface {
             tx_outputs: txOutputs,
             initiator: this.accountModel!.address,
             auth_require: [],
-            nonce: this.getNonce(),
+            nonce: this.getNonce()
         };
 
         const digestHash = this.encodeDataForDigestHash(tx, false);
@@ -247,19 +247,19 @@ export default class XuperSDK implements XuperSDKInterface {
 
         const signatureInfo = {
             PublicKey: this.accountIns.publicOrPrivateKeyToString(this.accountModel!.publicKey),
-            Sign: btoa(derbuf.join('')),
+            Sign: btoa(derbuf.join(''))
         };
 
         const signatureInfos = [];
         signatureInfos.push(signatureInfo);
         Object.assign(tx, {
-            initiator_signs: signatureInfos,
+            initiator_signs: signatureInfos
         });
 
         const digest = this.encodeDataForDigestHash(tx, true);
 
         Object.assign(tx, {
-            txid: btoa(digest.map(v => String.fromCharCode(v)).join('')),
+            txid: btoa(digest.map(v => String.fromCharCode(v)).join(''))
         });
 
         return tx;
@@ -304,7 +304,7 @@ export default class XuperSDK implements XuperSDKInterface {
                     totalSelected: number[] = [];
 
                 checkTransaction.tx_outputs.forEach((
-                    txOutput: { to_addr: string; amount: any }, index: any,
+                    txOutput: { to_addr: string; amount: any }, index: any
                 ) => {
                     if (txOutput.to_addr === btoa(this.accountModel!.address)) {
                         const utxo = {
@@ -312,7 +312,7 @@ export default class XuperSDK implements XuperSDKInterface {
                             to_addr: txOutput.to_addr,
                             // @ts-ignore
                             ref_txid: checkTransaction.txid,
-                            ref_offset: index,
+                            ref_offset: index
                         };
                         utxolist.push(utxo);
                         totalSelected = atob(utxo.amount).split('').map(w => w.charCodeAt(0));
@@ -321,7 +321,7 @@ export default class XuperSDK implements XuperSDKInterface {
 
                 const utxoOutputs = {
                     utxoList: utxolist,
-                    totalSelected,
+                    totalSelected
                 };
 
                 const totalNeed = new BN(amount).add(new BN(fee));
@@ -330,7 +330,7 @@ export default class XuperSDK implements XuperSDKInterface {
                 const output = this.makeTxOutput(
                     new BN(totalSelected).toString(10),
                     totalNeed,
-                    this.accountModel!.address,
+                    this.accountModel!.address
                 );
                 txOutputs.push(output);
 
@@ -349,7 +349,7 @@ export default class XuperSDK implements XuperSDKInterface {
                     tx_outputs: txOutputs,
                     initiator: this.accountModel!.address,
                     auth_require: authRequire,
-                    nonce: this.getNonce(),
+                    nonce: this.getNonce()
                 };
 
                 if (preExecWithUtxosObj.response) {
@@ -380,7 +380,7 @@ export default class XuperSDK implements XuperSDKInterface {
 
                 const signatureInfo = {
                     PublicKey: this.accountIns.publicOrPrivateKeyToString(this.accountModel!.publicKey),
-                    Sign: btoa(derbuf.join('')),
+                    Sign: btoa(derbuf.join(''))
                 };
 
                 const signatureInfos = [];
@@ -396,20 +396,20 @@ export default class XuperSDK implements XuperSDKInterface {
 
                 const obj = {
                     bcname: this.options.chain,
-                    tx,
+                    tx
                 };
 
                 const body = {
                     RequestName: 'ComplianceCheck',
                     BcName: 'xuper',
                     Fee: checkTransaction,
-                    RequestData: btoa(JSON.stringify(obj)),
+                    RequestData: btoa(JSON.stringify(obj))
                 };
 
                 // @ts-ignore
                 return fetch(`${this.options.endorseConf.server}/v1/endorsercall`, {
                     method: 'POST',
-                    body: JSON.stringify(body),
+                    body: JSON.stringify(body)
                 })
                     .then(response => {
                         if (!response.ok) {
@@ -451,12 +451,12 @@ export default class XuperSDK implements XuperSDKInterface {
             bcname: 'xuper',
             status: 4,
             tx,
-            txid: tx.txid,
+            txid: tx.txid
         };
 
         return fetch(`${this.options.node}/v1/post_tx`, {
             method: 'POST',
-            body: JSON.stringify(tmp),
+            body: JSON.stringify(tmp)
         }).then(response => {
             if (!response.ok) {
                 return response.json().then(res => {
@@ -474,12 +474,12 @@ export default class XuperSDK implements XuperSDKInterface {
     async queryTransaction(txid: string): Promise<any> {
         const tmp = {
             bcname: 'xuper',
-            txid,
+            txid
         };
 
         return fetch(`${this.options.node}/v1/query_tx`, {
             method: 'POST',
-            body: JSON.stringify(tmp),
+            body: JSON.stringify(tmp)
         }).then(response => {
             if (!response.ok) {
                 return response.json().then(res => {
@@ -497,7 +497,7 @@ export default class XuperSDK implements XuperSDKInterface {
     private makeTxOutput(
         totalSelected: BN | string | number,
         totalNeed: BN | string | number,
-        toAddress: string,
+        toAddress: string
     ): any {
         let bnUtxos;
         let bnNeed;
@@ -513,7 +513,7 @@ export default class XuperSDK implements XuperSDKInterface {
 
             return {
                 amount: btoa(delta.toArray().map(v => String.fromCharCode(v)).join('')),
-                to_addr: btoa(toAddress),
+                to_addr: btoa(toAddress)
             };
         }
         throw 'Totalselected not enough';
@@ -522,26 +522,26 @@ export default class XuperSDK implements XuperSDKInterface {
     private makeTxOutputs(
         amount: BN | string | number,
         fee: BN | string | number,
-        to: string,
+        to: string
     ): any {
         const bnAmount = new BN(amount);
         const bnFee = new BN(fee);
 
         const accounts = [{
             address: to,
-            amount: bnAmount,
+            amount: bnAmount
         }];
 
         if (bnFee.gt(new BN(0))) {
             accounts.push({
                 address: '$',
-                amount: bnFee,
+                amount: bnFee
             });
         }
 
         return accounts.map(account => ({
             amount: btoa(account.amount.toArray().map(v => String.fromCharCode(v)).join('')),
-            to_addr: btoa(account.address),
+            to_addr: btoa(account.address)
         }));
     }
 
@@ -550,7 +550,7 @@ export default class XuperSDK implements XuperSDKInterface {
             ref_txid: utxo.ref_txid || utxo.refTxid,
             ref_offset: utxo.ref_offset || utxo.refOffset,
             from_addr: utxo.to_addr || utxo.toAddr,
-            amount: utxo.amount,
+            amount: utxo.amount
         }));
     }
 
@@ -576,7 +576,7 @@ export default class XuperSDK implements XuperSDKInterface {
                     str += jsonEncode(txInput.amount);
                 }
                 str += jsonEncode(txInput.frozen_height || 0);
-            },
+            }
         );
 
         str += jsonEncode(tx.tx_outputs);
