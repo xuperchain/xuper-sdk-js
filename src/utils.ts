@@ -10,7 +10,7 @@
  */
 export function base58Encode(
     data: Uint8Array,
-    alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz',
+    alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 ): string {
     let str = '';
     const d: any[] = [];
@@ -18,10 +18,12 @@ export function base58Encode(
     let j: any;
     let n;
 
-    Object.values(data).forEach(i => {
+    // @ts-ignore
+    for (const i: number in data) {
         j = 0;
         c = data[i];
 
+        // @ts-ignore
         str += c || str.length ^ i ? '' : 1;
 
         while (j in d || c) {
@@ -31,7 +33,7 @@ export function base58Encode(
             d[j] = n % 58;
             j++;
         }
-    });
+    }
 
     while (j--) {
         str += alphabet[d[j]];
@@ -47,7 +49,7 @@ export function base58Encode(
  */
 export function base58Decode(
     str: string,
-    alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz',
+    alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 ): Uint8Array {
     const d: any[] = [];
     const arr: number[] = [];
