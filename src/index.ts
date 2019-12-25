@@ -12,7 +12,8 @@ import {
 } from './constants';
 import {jsonEncode} from './utils';
 import {
-    XuperSDKInterface, AccountModel, XuperOptions, PrivateKeyModel, PublicKeyModel
+    XuperSDKInterface, AccountModel, XuperOptions, PrivateKeyModel,
+    PublicKeyModel, ContracRequesttModel
 } from './interfaces';
 
 export {Language, Strength, Cryptography} from './constants';
@@ -488,6 +489,116 @@ export default class XuperSDK implements XuperSDKInterface {
             }
             return response.json();
         });
+    }
+
+    /**
+     * Pre-execution constract with utxos
+     * @param invokeRequests
+     * @param authRequire
+     * @param amount
+     * @param fee
+     */
+    preExecConstract(
+        invokeRequests: ContracRequesttModel[],
+        authRequire: string[],
+        amount: string,
+        fee: string
+    ): Promise<any> {
+        if (!this.accountModel) {
+            throw 'No account information';
+        }
+
+        let bnZ = new BN(0);
+        const bnAmount = new BN(amount);
+        const bnFee = new BN(fee);
+
+        bnZ = bnZ.add(bnAmount).add(bnFee);
+
+        const data: any = {
+            bcname: this.options.chain,
+            address: this.accountModel!.address,
+            totalAmount: bnZ.toNumber(),
+            request: {
+                initiator: this.accountModel!.address,
+                bcname: this.options.chain,
+                auth_require: authRequire,
+                requests: invokeRequests
+            }
+        };
+
+        // try {
+        //     // Todo: fix - totalAmount field is not bigint
+        //     data.totalAmount = bnZ.toNumber();
+        // } catch (e) {
+        //     throw 'Pre-exec error';
+        // }
+
+        console.log(invokeRequests);
+        console.warn(data);
+
+        const body = {
+            RequestName: 'PreExecWithFee',
+            BcName: this.options.chain,
+            RequestData: btoa(JSON.stringify(data))
+        };
+
+        console.log(body);
+
+        return fetch(`${this.options.endorseConf!.server}/v1/endorsercall`, {
+            method: 'POST',
+            body: JSON.stringify(body)
+        }).then(
+            response => {
+                if (!response.ok) {
+                    return response.json().then(res => {
+                        throw res;
+                    });
+                }
+                return response.json();
+            }
+        );
+    }
+
+    async invokeContract(
+        contractName: string,
+        methodName: string,
+        args: any
+    ) {
+        if (!this.accountModel) {
+            throw 'No account information';
+        }
+
+        const invokeRequests: ContracRequesttModel[] = [{
+            module_name: 'wasm',
+            method_name: methodName,
+            contract_name: contractName,
+            args
+        }];
+
+        const authRequires: string[] = [];
+        if (this.options.endorseConf) {
+            authRequires.push(this.options.endorseConf.feeServiceAddress);
+            let preExecWithUtxos;
+            let preExecWithUtxosObj;
+            try {
+                preExecWithUtxos = await this.preExecConstract(
+                    invokeRequests,
+                    authRequires,
+                    '0',
+                    this.options.endorseConf.fee
+                );
+                preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
+                console.warn(preExecWithUtxosObj);
+            } catch (e) {
+                throw e;
+            }
+        }
+
+        // let res = {
+        //     initiator: this.accountModel.address,
+        //     auth_require: authRequires,
+        //     fee = pre
+        // }
     }
 
     private getNonce(): string {

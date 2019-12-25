@@ -3,8 +3,11 @@
  * Created by xinyi on 2019/11/27
  */
 
-require('whatwg-fetch');
+/* eslint-disable no-undef */
+
 import XuperSDK, {Cryptography, Language, Strength} from '../src';
+
+require('whatwg-fetch');
 
 const chain = 'xuper';
 const node = process.env.NODE || '';
@@ -76,7 +79,7 @@ describe('Xuper SDK', () => {
             Cryptography.EccFIPS
         );
 
-        let invaildMnemonic = accountModel.mnemonic.split(' ');
+        const invaildMnemonic = accountModel.mnemonic.split(' ');
         invaildMnemonic[0] = '牁';
 
         const result = xsdk.checkMnemonic(
@@ -145,7 +148,6 @@ describe('Xuper SDK', () => {
     });
 
     test('post pre-transaction with utxo should return bcname, response, utxoOutput', async () => {
-
         const xsdk = new XuperSDK({
             node,
             chain,
@@ -248,4 +250,22 @@ describe('Xuper SDK', () => {
         expect(result.header).not.toHaveProperty('error');
     });
 
+    test('invoke contract should return', async () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain,
+            needEndorse: true,
+            endorseConf
+        });
+
+        xsdk.revertAccount(
+            process.env.TEST_MNEMONIC || '',
+            Language.SimplifiedChinese,
+            Cryptography.EccFIPS
+        );
+
+        await xsdk.invokeContract('counter', 'increase', {
+            Key: btoa('counter')
+        });
+    });
 });

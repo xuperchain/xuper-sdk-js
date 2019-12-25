@@ -52,6 +52,13 @@ export interface AccountModel {
     privateKey: PrivateKeyModel;
 }
 
+export interface ContracRequesttModel {
+    module_name: string;
+    contract_name: string;
+    method_name: string;
+    args: any;
+}
+
 /*
 -------------------------------------------------------------------------------
 Configuration
@@ -175,6 +182,8 @@ export interface XuperSDKInterface {
      * @param txid
      */
     queryTransaction(txid: string): Promise<any>;
+
+    // invokeContract(): Promise<any>;
 }
 
 /**
