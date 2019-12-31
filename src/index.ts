@@ -13,7 +13,7 @@ import {
 import {jsonEncode} from './utils';
 import {
     XuperSDKInterface, AccountModel, XuperOptions, PrivateKeyModel,
-    PublicKeyModel, ContracRequesttModel
+    PublicKeyModel, ContracRequesttModel, TransactionModel
 } from './interfaces';
 
 export {Language, Strength, Cryptography} from './constants';
@@ -266,6 +266,163 @@ export default class XuperSDK implements XuperSDKInterface {
         return tx;
     }
 
+    async generateTransaction(
+        authRequire: string[],
+        toAddress: string,
+        amount: string,
+        fee: string,
+        desc = '',
+        preExecWithUtxosObj: any
+    ): Promise<any> {
+        const checkTransaction = this.makeCheckTransaction(preExecWithUtxosObj);
+        const txOutputs = this.makeTxOutputs(amount, fee, toAddress);
+
+        const utxolist: {
+            amount: any;
+            'to_addr': string;
+            'ref_txid': any;
+            'ref_offset': any;
+        }[] = [];
+
+        let totalSelected: number[] = [];
+
+        checkTransaction.tx_outputs.forEach((
+            txOutput: { to_addr: string; amount: any }, index: any
+        ) => {
+            if (txOutput.to_addr === btoa(this.accountModel!.address)) {
+                const utxo = {
+                    amount: txOutput.amount,
+                    to_addr: txOutput.to_addr,
+                    // @ts-ignore
+                    ref_txid: checkTransaction.txid,
+                    ref_offset: index
+                };
+                utxolist.push(utxo);
+                totalSelected = atob(utxo.amount).split('').map(w => w.charCodeAt(0));
+            }
+        });
+
+        const utxoOutputs = {
+            utxoList: utxolist,
+            totalSelected
+        };
+
+        const totalNeed = new BN(amount).add(new BN(fee));
+
+        const txInputs = this.makeTxInputs(utxoOutputs.utxoList);
+        const output = this.makeTxOutput(
+            new BN(totalSelected).toString(10),
+            totalNeed,
+            this.accountModel!.address
+        );
+        txOutputs.push(output);
+
+        const te = new TextEncoder();
+        const descBuf: Uint8Array = te.encode(desc);
+        const descArr: string[] = [];
+        descBuf.forEach(n => descArr.push(String.fromCharCode(n)));
+
+        const tx = {
+            version: VERSION,
+            desc: btoa(descArr.join('')),
+            coinbase: false,
+            autogen: false,
+            timestamp: parseInt(Date.now().toString().padEnd(19, '0'), 10),
+            tx_inputs: txInputs,
+            tx_outputs: txOutputs,
+            initiator: this.accountModel!.address,
+            auth_require: authRequire,
+            nonce: this.getNonce()
+        };
+
+        if (preExecWithUtxosObj.response) {
+            if (preExecWithUtxosObj.response.inputs) {
+                // @ts-ignore
+                tx.tx_inputs_ext = preExecWithUtxosObj.response.inputs;
+            }
+
+            if (preExecWithUtxosObj.response.outputs) {
+                // @ts-ignore
+                tx.tx_outputs_ext = preExecWithUtxosObj.response.outputs;
+            }
+
+            if (preExecWithUtxosObj.response.requests) {
+                // @ts-ignore
+                tx.contract_requests = preExecWithUtxosObj.response.requests;
+            }
+        }
+
+        const digestHash = this.encodeDataForDigestHash(tx, false);
+
+        const ec = new EC('p256');
+
+        const bnD = new BN(this.accountModel!.privateKey.D);
+        const privKey = ec.keyFromPrivate(bnD.toArray());
+        const sign = privKey.sign(digestHash);
+        const derbuf = sign.toDER().map((v: number) => String.fromCharCode(v));
+
+        const signatureInfo = {
+            PublicKey: this.accountIns.publicOrPrivateKeyToString(this.accountModel!.publicKey),
+            Sign: btoa(derbuf.join(''))
+        };
+
+        const signatureInfos = [];
+        signatureInfos.push(signatureInfo);
+
+        // @ts-ignore
+        tx.initiator_signs = signatureInfos;
+
+        const digest = this.encodeDataForDigestHash(tx, true);
+
+        // @ts-ignore
+        tx.txid = btoa(digest.map(v => String.fromCharCode(v)).join(''));
+
+        const obj = {
+            bcname: this.options.chain,
+            tx
+        };
+
+        const body = {
+            RequestName: 'ComplianceCheck',
+            BcName: 'xuper',
+            Fee: checkTransaction,
+            RequestData: btoa(JSON.stringify(obj))
+        };
+
+        // @ts-ignore
+        return fetch(`${this.options.endorseConf.server}/v1/endorsercall`, {
+            method: 'POST',
+            body: JSON.stringify(body)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(res => {
+                        throw res;
+                    });
+                }
+                return response.json();
+            })
+            .then((result: any) => {
+                // @ts-ignore
+                if (!tx.auth_require_signs) {
+                    // @ts-ignore
+                    tx.auth_require_signs = [];
+                }
+
+                // @ts-ignore
+                tx.auth_require_signs.push(signatureInfo);
+                // @ts-ignore
+                tx.auth_require_signs.push(result.EndorserSign);
+
+                const digestWithEndorse = this.encodeDataForDigestHash(tx, true);
+
+                // @ts-ignore
+                tx.txid = btoa(digestWithEndorse.map(v => String.fromCharCode(v)).join(''));
+
+                return tx;
+            });
+    }
+
     /**
      * Generate transaction
      * @param toAddress
@@ -301,8 +458,8 @@ export default class XuperSDK implements XuperSDKInterface {
                     'ref_txid': any;
                     'ref_offset': any;
                 }[] = [];
-                let
-                    totalSelected: number[] = [];
+
+                let totalSelected: number[] = [];
 
                 checkTransaction.tx_outputs.forEach((
                     txOutput: { to_addr: string; amount: any }, index: any
@@ -333,8 +490,8 @@ export default class XuperSDK implements XuperSDKInterface {
                     totalNeed,
                     this.accountModel!.address
                 );
-                txOutputs.push(output);
 
+                txOutputs.push(output);
                 const te = new TextEncoder();
                 const descBuf: Uint8Array = te.encode(desc);
                 const descArr: string[] = [];
@@ -526,23 +683,11 @@ export default class XuperSDK implements XuperSDKInterface {
             }
         };
 
-        // try {
-        //     // Todo: fix - totalAmount field is not bigint
-        //     data.totalAmount = bnZ.toNumber();
-        // } catch (e) {
-        //     throw 'Pre-exec error';
-        // }
-
-        console.log(invokeRequests);
-        console.warn(data);
-
         const body = {
             RequestName: 'PreExecWithFee',
             BcName: this.options.chain,
             RequestData: btoa(JSON.stringify(data))
         };
-
-        console.log(body);
 
         return fetch(`${this.options.endorseConf!.server}/v1/endorsercall`, {
             method: 'POST',
@@ -562,6 +707,7 @@ export default class XuperSDK implements XuperSDKInterface {
     async invokeContract(
         contractName: string,
         methodName: string,
+        moduleName: string,
         args: any
     ) {
         if (!this.accountModel) {
@@ -569,7 +715,7 @@ export default class XuperSDK implements XuperSDKInterface {
         }
 
         const invokeRequests: ContracRequesttModel[] = [{
-            module_name: 'wasm',
+            module_name: moduleName, // 'wasm',
             method_name: methodName,
             contract_name: contractName,
             args
@@ -588,17 +734,134 @@ export default class XuperSDK implements XuperSDKInterface {
                     this.options.endorseConf.fee
                 );
                 preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
-                console.warn(preExecWithUtxosObj);
+                const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
+                const tx = await this.generateTransaction(authRequires, '', '0',
+                    gasUsed.toString(), '', preExecWithUtxosObj);
+                console.log(tx);
+                const result = await this.postTransaction(tx);
+                console.warn(result);
             } catch (e) {
                 throw e;
             }
         }
+    }
 
-        // let res = {
-        //     initiator: this.accountModel.address,
-        //     auth_require: authRequires,
-        //     fee = pre
+    async createContractAccount(contractAccountName: number) {
+        if (!this.accountModel) {
+            throw 'No account information';
+        }
+
+        if (contractAccountName < 10 ** 15
+            || contractAccountName >= 10 ** 16) {
+            throw 'Conrtact account must be numbers of length 16';
+        }
+
+        // const prefixes = 'XC';
+        // const contractAccount = `${prefixes}${contractAccountName}@${this.options.chain}`;
+
+        const defaultACL = {
+            pm: {
+                rule: 1,
+                acceptValue: 1.0
+            },
+            aksWeight: {
+                [this.accountModel.address]: 1.0
+            }
+        };
+
+        console.log(defaultACL);
+
+        const args = {
+            account_name: btoa(contractAccountName.toString()),
+            acl: btoa(JSON.stringify(defaultACL))
+        };
+
+        const invokeRequests: ContracRequesttModel[] = [{
+            module_name: 'xkernel', // 'wasm',
+            method_name: 'NewAccount',
+            args
+        }];
+
+        const authRequires: string[] = [];
+        // if (this.options.endorseConf) {
+        authRequires.push(this.options.endorseConf!.feeServiceAddress);
+        const preExecWithUtxos = await this.preExecConstract(invokeRequests,
+            authRequires, '0', this.options.endorseConf!.fee);
+
+        const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
+        const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
+        const tx = await this.generateTransaction(authRequires, '', '0',
+            gasUsed.toString(), '', preExecWithUtxosObj);
+        const result = await this.postTransaction(tx);
+        console.log(result);
         // }
+        // throw 'bug';
+    }
+
+    async deployWasmContract(
+        contractAccount: string,
+        contractName: string,
+        code: string,
+        runtime: string,
+        initArgs: any
+    ) {
+        if (!this.accountModel) {
+            throw 'No account information';
+        }
+
+        const newInitArgs = {
+            ...initArgs
+        };
+
+        Object.keys(initArgs).forEach(key => {
+            newInitArgs[key] = btoa(initArgs[key]);
+        });
+
+        const desc = new Uint8Array([10, 1].concat(runtime.split('').map(w => w.charCodeAt(0))));
+        const descBuf = Object.values(desc).map(n => String.fromCharCode(n));
+
+        const args = {
+            account_name: contractAccount,
+            contract_name: contractName,
+            contract_desc: descBuf.join(''),
+            contract_code: code,
+            init_args: JSON.stringify(newInitArgs)
+        };
+
+        const contractArgs = {
+            ...args
+        };
+
+        Object.keys(contractArgs).forEach(key => {
+            // @ts-ignore
+            contractArgs[key] = btoa(contractArgs[key]);
+        });
+
+        const invokeRequests: ContracRequesttModel[] = [{
+            module_name: 'xkernel',
+            method_name: 'Deploy',
+            args: contractArgs
+        }];
+
+        const authRequires: string[] = [`${contractAccount}/${this.accountModel.address}`];
+        authRequires.push(this.options.endorseConf!.feeServiceAddress);
+
+        const preExecWithUtxos = await this.preExecConstract(invokeRequests,
+            authRequires, '0', this.options.endorseConf!.fee);
+
+        const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
+
+        const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
+
+        // console.error(gasUsed);
+
+        // const authRequires2: string[] = [`${contractAccount}/${this.accountModel!.address}`];
+
+        const tx = await this.generateTransaction(authRequires, '', '0',
+            gasUsed.toString(), '', preExecWithUtxosObj);
+        console.warn(tx);
+        const result = await this.postTransaction(tx);
+        console.log(result);
     }
 
     private getNonce(): string {
@@ -638,10 +901,14 @@ export default class XuperSDK implements XuperSDKInterface {
         const bnAmount = new BN(amount);
         const bnFee = new BN(fee);
 
-        const accounts = [{
-            address: to,
-            amount: bnAmount
-        }];
+        const accounts = [];
+
+        if (to) {
+            accounts.push({
+                address: to,
+                amount: bnAmount
+            });
+        }
 
         if (bnFee.gt(new BN(0))) {
             accounts.push({

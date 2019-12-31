@@ -19,6 +19,8 @@ const endorseConf = {
     feeServiceAddress: process.env.FEESERVICEADDRESS || ''
 };
 
+
+
 describe('Xuper SDK', () => {
     test('create new account with mnemonic should return account model', () => {
         const xsdk = new XuperSDK({node: '', chain: 'xuper'});
@@ -264,8 +266,70 @@ describe('Xuper SDK', () => {
             Cryptography.EccFIPS
         );
 
-        await xsdk.invokeContract('counter', 'increase', {
-            Key: btoa('counter')
+        await xsdk.invokeContract('', 'Get', 'xkernel', {
+            Bucket: btoa('XCAccount'),
+            Key: btoa('XC1111111111111111@xuper')
         });
+    });
+
+    test('createContractAccount', async () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain,
+            needEndorse: true,
+            endorseConf
+        });
+
+        xsdk.revertAccount(
+            process.env.TEST_MNEMONIC || '',
+            Language.SimplifiedChinese,
+            Cryptography.EccFIPS
+        );
+
+        await xsdk.createContractAccount(1234567890666660);
+    });
+
+    test('testDeployWasmContract', async () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain,
+            needEndorse: true,
+            endorseConf
+        });
+
+        xsdk.revertAccount(
+            process.env.TEST_MNEMONIC || '',
+
+            Language.SimplifiedChinese,
+            Cryptography.EccFIPS
+        );
+
+        const codeBuf: string[] = [];
+
+        // @ts-ignore
+        window.file.forEach(n => codeBuf.push(String.fromCharCode(n)));
+
+        await xsdk.deployWasmContract(
+            'XC1234567890666660@xuper',
+            'counter',
+            codeBuf.join(''),
+            'c',
+            {
+                creator: 'xchain'
+            }
+        );
+    });
+
+    test('query transaction id should return status', async () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain,
+            needEndorse: true,
+            endorseConf
+        });
+
+        const result = await xsdk.queryTransaction('/aGXihDS0VmgQCzazB2gtTHD77P1UPh4wRicDp5jdZA=');
+
+        console.info(JSON.stringify(result));
     });
 });

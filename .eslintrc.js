@@ -44,6 +44,7 @@ module.exports = {
         'no-useless-catch': 'off',
         'no-trailing-spaces': 'off',
         'comma-dangle': ["error", "never"],
+        '@typescript-eslint/no-explicit-any': 'off',
         // Todo
         '@typescript-eslint/ban-ts-ignore': 'off',
         'no-unused-expressions': 'off',

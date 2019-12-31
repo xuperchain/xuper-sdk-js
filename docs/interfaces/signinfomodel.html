@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Language | @xuperchain/xuper-sdk</title>
+	<title>SignInfoModel | @xuperchain/xuper-sdk</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,56 +56,57 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="language.html">Language</a>
+					<a href="signinfomodel.html">SignInfoModel</a>
 				</li>
 			</ul>
-			<h1>Enumeration Language</h1>
+			<h1>Interface SignInfoModel</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-comment">
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>Mnemonic language</p>
-					</div>
-				</div>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">SignInfoModel</span>
+					</li>
+				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Enumeration members</h3>
+							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="language.html#english" class="tsd-kind-icon">English</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="language.html#simplifiedchinese" class="tsd-kind-icon">Simplified<wbr>Chinese</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="signinfomodel.html#publickey" class="tsd-kind-icon">Public<wbr>Key</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="signinfomodel.html#sign" class="tsd-kind-icon">Sign</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Enumeration members</h2>
-				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="english" class="tsd-anchor"></a>
-					<h3>English</h3>
-					<div class="tsd-signature tsd-kind-icon">English<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;English&quot;</span></div>
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="publickey" class="tsd-anchor"></a>
+					<h3>Public<wbr>Key</h3>
+					<div class="tsd-signature tsd-kind-icon">Public<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/constants.ts#L16">constants.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/interfaces.ts#L83">interfaces.ts:83</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="simplifiedchinese" class="tsd-anchor"></a>
-					<h3>Simplified<wbr>Chinese</h3>
-					<div class="tsd-signature tsd-kind-icon">Simplified<wbr>Chinese<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;SimplifiedChinese&quot;</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="sign" class="tsd-anchor"></a>
+					<h3>Sign</h3>
+					<div class="tsd-signature tsd-kind-icon">Sign<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/constants.ts#L15">constants.ts:15</a></li>
+							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/interfaces.ts#L84">interfaces.ts:84</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -122,25 +123,13 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-enum">
-						<a href="cryptography.html" class="tsd-kind-icon">Cryptography</a>
+						<a href="../enums/cryptography.html" class="tsd-kind-icon">Cryptography</a>
 					</li>
-				</ul>
-				<ul class="current">
-					<li class="current tsd-kind-enum">
-						<a href="language.html" class="tsd-kind-icon">Language</a>
-						<ul>
-							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="language.html#english" class="tsd-kind-icon">English</a>
-							</li>
-							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="language.html#simplifiedchinese" class="tsd-kind-icon">Simplified<wbr>Chinese</a>
-							</li>
-						</ul>
-					</li>
-				</ul>
-				<ul class="after-current">
 					<li class=" tsd-kind-enum">
-						<a href="strength.html" class="tsd-kind-icon">Strength</a>
+						<a href="../enums/language.html" class="tsd-kind-icon">Language</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="../enums/strength.html" class="tsd-kind-icon">Strength</a>
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="../classes/account.html" class="tsd-kind-icon">Account</a>
@@ -149,34 +138,46 @@
 						<a href="../classes/xupersdk.html" class="tsd-kind-icon">XuperSDK</a>
 					</li>
 					<li class=" tsd-kind-interface">
-						<a href="../interfaces/accountinerface.html" class="tsd-kind-icon">Account<wbr>Inerface</a>
+						<a href="accountinerface.html" class="tsd-kind-icon">Account<wbr>Inerface</a>
 					</li>
 					<li class=" tsd-kind-interface">
-						<a href="../interfaces/accountmodel.html" class="tsd-kind-icon">Account<wbr>Model</a>
+						<a href="accountmodel.html" class="tsd-kind-icon">Account<wbr>Model</a>
 					</li>
 					<li class=" tsd-kind-interface">
-						<a href="../interfaces/authmodel.html" class="tsd-kind-icon">Auth<wbr>Model</a>
+						<a href="authmodel.html" class="tsd-kind-icon">Auth<wbr>Model</a>
 					</li>
 					<li class=" tsd-kind-interface">
-						<a href="../interfaces/contracrequesttmodel.html" class="tsd-kind-icon">Contrac<wbr>Requestt<wbr>Model</a>
+						<a href="contracrequesttmodel.html" class="tsd-kind-icon">Contrac<wbr>Requestt<wbr>Model</a>
 					</li>
 					<li class=" tsd-kind-interface">
-						<a href="../interfaces/privatekeymodel.html" class="tsd-kind-icon">Private<wbr>Key<wbr>Model</a>
+						<a href="privatekeymodel.html" class="tsd-kind-icon">Private<wbr>Key<wbr>Model</a>
 					</li>
 					<li class=" tsd-kind-interface">
-						<a href="../interfaces/publickeymodel.html" class="tsd-kind-icon">Public<wbr>Key<wbr>Model</a>
+						<a href="publickeymodel.html" class="tsd-kind-icon">Public<wbr>Key<wbr>Model</a>
+					</li>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface">
+						<a href="signinfomodel.html" class="tsd-kind-icon">Sign<wbr>Info<wbr>Model</a>
+						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="signinfomodel.html#publickey" class="tsd-kind-icon">Public<wbr>Key</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="signinfomodel.html#sign" class="tsd-kind-icon">Sign</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-interface">
+						<a href="transactionmodel.html" class="tsd-kind-icon">Transaction<wbr>Model</a>
 					</li>
 					<li class=" tsd-kind-interface">
-						<a href="../interfaces/signinfomodel.html" class="tsd-kind-icon">Sign<wbr>Info<wbr>Model</a>
+						<a href="xuperoptions.html" class="tsd-kind-icon">Xuper<wbr>Options</a>
 					</li>
 					<li class=" tsd-kind-interface">
-						<a href="../interfaces/transactionmodel.html" class="tsd-kind-icon">Transaction<wbr>Model</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="../interfaces/xuperoptions.html" class="tsd-kind-icon">Xuper<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="../interfaces/xupersdkinterface.html" class="tsd-kind-icon">XuperSDKInterface</a>
+						<a href="xupersdkinterface.html" class="tsd-kind-icon">XuperSDKInterface</a>
 					</li>
 					<li class=" tsd-kind-variable">
 						<a href="../globals.html#version" class="tsd-kind-icon">VERSION</a>

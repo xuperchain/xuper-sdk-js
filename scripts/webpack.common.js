@@ -2,6 +2,7 @@
  * @file (webpack.common)
  * Created by xinyi on 2019/12/5
  */
+/* eslint-disable quote-props */
 
 // webpack conf
 module.exports = {

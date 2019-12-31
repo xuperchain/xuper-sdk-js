@@ -3,6 +3,7 @@
  * Created by xinyi on 2019/11/27
  */
 require('dotenv').config();
+const fs = require('fs');
 const NodeEnvironment = require('jest-environment-jsdom-fourteen');
 
 class CustomEnvironment extends NodeEnvironment {
@@ -18,12 +19,14 @@ class CustomEnvironment extends NodeEnvironment {
         this.global.TextDecoder = TextDecoder;
 
         // crypto module
-        let nodeCrypto = require('crypto');
+        const nodeCrypto = require('crypto');
         this.global.crypto = {
             getRandomValues: function (buffer) {
                 return nodeCrypto.randomFillSync(buffer);
             }
         };
+
+        this.global.file = Uint8Array.from(fs.readFileSync(`${__dirname}/contract_code/counter.wasm`));
     }
 }
 

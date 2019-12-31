@@ -53,10 +53,88 @@ export interface AccountModel {
 }
 
 export interface ContracRequesttModel {
+    /**
+     * Contract module name
+     */
     module_name: string;
-    contract_name: string;
+
+    /**
+     * Contract name
+     */
+    contract_name?: string;
+
+    /**
+     * Contract method name
+     */
     method_name: string;
+
+    /**
+     * Contract arguments
+     */
     args: any;
+}
+
+export interface AuthModel {
+    auth: string;
+
+}
+
+export interface SignInfoModel {
+    PublicKey: string;
+    Sign: string;
+}
+
+export interface TransactionModel {
+    /**
+     * Transaction ID
+     */
+    txid: string;
+
+    /**
+     * SDK version
+     */
+    version: number;
+
+    /**
+     * Transaction description
+     */
+    desc: string;
+
+    coinbase: boolean;
+    autogen: boolean;
+
+    /**
+     * Timestamp
+     */
+    timestamp: string;
+
+    /**
+     * Inputs
+     */
+    tx_inputs: any[];
+
+    /**
+     * Outputs
+     */
+    tx_outputs: any[];
+
+    /**
+     * Transaction initiator
+     */
+    initiator: string;
+
+    /**
+     * nonce
+     */
+    nonce: string;
+
+    tx_inputs_ext: any[];
+
+    tx_outputs_ext: any[];
+
+    contract_requests: any[];
+
+    initiator_signs: SignInfoModel[];
 }
 
 /*
@@ -69,16 +147,24 @@ Configuration
  * Configuration Interface - Xuper otpions
  */
 export interface XuperOptions {
-    // Peer ip & port
+    /**
+     * Peer ip & port
+     */
     node: string;
 
-    // Blockchain name
+    /**
+     * Blockchain name
+     */
     chain: string;
 
-    // Endorse service
+    /**
+     * Endorse service
+     */
     needEndorse?: boolean;
 
-    // Endorse conf
+    /**
+     * Endorse conf
+     */
     endorseConf?: {
         fee: string;
         server: string;
