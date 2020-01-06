@@ -6,17 +6,22 @@
 import BN from 'bn.js';
 import sha256 from 'sha256';
 import {ec as EC} from 'elliptic';
-import Account from './account';
+
 import {
     Language, Strength, Cryptography, VERSION
 } from './constants';
-import {jsonEncode} from './utils';
+
+import {jsonEncode, publicOrPrivateKeyToString, postRequest} from './utils';
+
 import {
     XuperSDKInterface, AccountModel, XuperOptions, PrivateKeyModel,
-    PublicKeyModel, ContracRequesttModel, TransactionModel
+    PublicKeyModel, ContracRequesttModel, TXOutput, UTXO
 } from './interfaces';
 
-export {Language, Strength, Cryptography} from './constants';
+import Errors from './error';
+
+import Account from './account';
+import Transaction from './transaction';
 
 export default class XuperSDK implements XuperSDKInterface {
     accountIns: Account;
@@ -139,6 +144,14 @@ export default class XuperSDK implements XuperSDKInterface {
     }
 
     /**
+     * Key to string
+     * @param key
+     */
+    publicOrPrivateKeyToString(key: PrivateKeyModel | PublicKeyModel): string {
+        return publicOrPrivateKeyToString(key);
+    }
+
+    /**
      * Pre-execution transaction with utxos
      * @param toAddress
      * @param amount
@@ -155,9 +168,9 @@ export default class XuperSDK implements XuperSDKInterface {
 
         const data: any = {
             bcname: this.options.chain,
-            address: this.accountModel!.address,
+            address: this.accountModel.address,
             request: {
-                initiator: this.accountModel!.address,
+                initiator: this.accountModel.address,
                 bcname: this.options.chain
             }
         };
@@ -202,10 +215,6 @@ export default class XuperSDK implements XuperSDKInterface {
         );
     }
 
-    publicOrPrivateKeyToString(key: PrivateKeyModel | PublicKeyModel): string {
-        return this.accountIns.publicOrPrivateKeyToString(key);
-    }
-
     /**
      * Endorse
      * @param preExecWithUtxos
@@ -247,7 +256,7 @@ export default class XuperSDK implements XuperSDKInterface {
         const derbuf = sign.toDER().map((v: number) => String.fromCharCode(v));
 
         const signatureInfo = {
-            PublicKey: this.accountIns.publicOrPrivateKeyToString(this.accountModel!.publicKey),
+            PublicKey: this.publicOrPrivateKeyToString(this.accountModel!.publicKey),
             Sign: btoa(derbuf.join(''))
         };
 
@@ -264,6 +273,227 @@ export default class XuperSDK implements XuperSDKInterface {
         });
 
         return tx;
+    }
+
+    generateCheckTransaction(preExecWithUtxos: any): Transaction {
+        if (!this.accountModel) {
+            throw Errors.ACCOUNT_NOT_EXIST;
+        }
+        if (!this.options.endorseConf) {
+            throw Errors.INVALID_CONFIGURATION;
+        }
+
+        const {fee, feeAddress} = this.options.endorseConf;
+        const {utxoOutput} = preExecWithUtxos;
+
+        return new Transaction(
+            this.accountModel,
+            {utxoOutput},
+            feeAddress,
+            0,
+            fee
+        );
+    }
+
+    async preExecTransactionWithUTXO(
+        sum: string | number | BN,
+        authRequire: string[] = [],
+        invokeRequests = []
+    ): Promise<any> {
+        if (!this.accountModel) {
+            throw Errors.ACCOUNT_NOT_EXIST;
+        }
+        if (!this.options.endorseConf) {
+            throw Errors.INVALID_CONFIGURATION;
+        }
+
+        const bnSum = new BN(sum);
+
+        const data: any = {
+            bcname: this.options.chain,
+            address: this.accountModel.address,
+            totalAmount: bnSum.toNumber(),
+            request: {
+                initiator: this.accountModel.address,
+                bcname: this.options.chain,
+                auth_require: authRequire,
+                requests: invokeRequests
+            }
+        };
+
+        const body = {
+            RequestName: 'PreExecWithFee',
+            BcName: this.options.chain,
+            RequestData: btoa(JSON.stringify(data))
+        };
+
+        return postRequest(`${this.options.endorseConf.server}/v1/endorsercall`, body);
+    }
+
+    async generateTransaction2(
+        toAddress: string,
+        amount: string,
+        fee: string,
+        desc = ''
+    ) {
+        if (!this.accountModel) {
+            throw Errors.ACCOUNT_NOT_EXIST;
+        }
+        if (!this.options.endorseConf) {
+            throw Errors.INVALID_CONFIGURATION;
+        }
+
+        const authFuncMap = {
+            [this.options.endorseConf.feeServiceAddress]: async (checkTx: any, realTx: any) => {
+                const obj = {
+                    bcname: this.options.chain,
+                    realTx
+                };
+
+                const body = {
+                    RequestName: 'ComplianceCheck',
+                    BcName: 'xuper',
+                    Fee: checkTx,
+                    RequestData: btoa(JSON.stringify(obj))
+                };
+
+                const result = await postRequest(`${this.options.endorseConf.server}/v1/endorsercall`, body);
+
+                if (!realTx.auth_require_signs) {
+                    // @ts-ignore
+                    // eslint-disable-next-line no-param-reassign
+                    // realTx.auth_require_signs = [];
+                }
+
+                // @ts-ignore
+                realTx.auth_require_signs.push(result.EndorserSign);
+
+                const digestWithEndorse = this.encodeDataForDigestHash(realTx, true);
+
+                // eslint-disable-next-line no-param-reassign
+                realTx.txid = btoa(digestWithEndorse.map(v => String.fromCharCode(v)).join(''));
+
+                return realTx;
+            }
+        };
+
+        let bnSum = new BN(0);
+        const bnAmount = new BN(amount);
+        const bnFee = new BN(fee);
+        bnSum = bnSum.add(bnAmount).add(bnFee);
+
+        const authRequire = [];
+
+        if (this.options.needEndorse) {
+            authRequire.push(this.options.endorseConf.feeServiceAddress);
+            const endorseFee = new BN(this.options.endorseConf.fee);
+            bnSum.add(endorseFee);
+        }
+
+        const preExecWithUtxos = await this.preExecTransactionWithUTXO(bnSum, authRequire);
+        const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
+
+        const checkTransaction = this.generateCheckTransaction(preExecWithUtxosObj);
+
+        let totalSelected: number[] = [];
+        const utxoList: UTXO[] = [];
+
+        checkTransaction.txOutputs.forEach((
+            txOutput: TXOutput, index: number
+        ) => {
+            if (txOutput.toAddr === btoa(this.accountModel!.address)) {
+                const utxo: UTXO = {
+                    amount: txOutput.amount,
+                    toAddr: txOutput.toAddr,
+                    refTxid: checkTransaction.txid,
+                    refOffset: index
+                };
+                utxoList.push(utxo);
+                totalSelected = atob(utxo.amount).split('').map(w => w.charCodeAt(0));
+            }
+        });
+
+        const utxoOutputs = {
+            utxoList,
+            totalSelected
+        };
+
+        const transaction = new Transaction(this.accountModel,
+            {...preExecWithUtxosObj, utxoOutputs},
+            toAddress, amount, fee, desc, authRequire);
+
+        const formatCheckTxData = this.convertCheckTransaction(checkTransaction);
+        const formatTxData = this.convertTransaction(transaction);
+
+        // if (authRequire.length > 0) {
+        //
+        // }
+    }
+
+    convertCheckTransaction(checkTransaction: Transaction): any {
+        const {
+            version,
+            coinbase,
+            autogen,
+            timestamp,
+            txInputs,
+            txOutputs,
+            initiator,
+            authRequire,
+            nonce,
+            initiatorSigns,
+            txid
+        } = checkTransaction;
+
+        return {
+            version,
+            coinbase,
+            autogen,
+            timestamp,
+            tx_inputs: txInputs,
+            tx_outputs: txOutputs,
+            initiator,
+            auth_require: authRequire,
+            nonce,
+            initiator_signs: initiatorSigns,
+            txid
+        };
+    }
+
+    convertTransaction(transaction: Transaction): any {
+        const {
+            version,
+            coinbase,
+            autogen,
+            timestamp,
+            txInputs,
+            txOutputs,
+            initiator,
+            authRequire,
+            nonce,
+            initiatorSigns,
+            txid,
+            txInputsExt,
+            txOutputsExt,
+            contractRequests
+        } = transaction;
+
+        return {
+            version,
+            coinbase,
+            autogen,
+            timestamp,
+            tx_inputs: txInputs,
+            tx_outputs: txOutputs,
+            initiator,
+            auth_require: authRequire,
+            nonce,
+            initiator_signs: initiatorSigns,
+            txid,
+            tx_inputs_ext: txInputsExt,
+            tx_outputs_ext: txOutputsExt,
+            contract_requests: contractRequests
+        };
     }
 
     async generateTransaction(
@@ -362,7 +592,7 @@ export default class XuperSDK implements XuperSDKInterface {
         const derbuf = sign.toDER().map((v: number) => String.fromCharCode(v));
 
         const signatureInfo = {
-            PublicKey: this.accountIns.publicOrPrivateKeyToString(this.accountModel!.publicKey),
+            PublicKey: this.publicOrPrivateKeyToString(this.accountModel!.publicKey),
             Sign: btoa(derbuf.join(''))
         };
 
@@ -537,7 +767,7 @@ export default class XuperSDK implements XuperSDKInterface {
                 const derbuf = sign.toDER().map((v: number) => String.fromCharCode(v));
 
                 const signatureInfo = {
-                    PublicKey: this.accountIns.publicOrPrivateKeyToString(this.accountModel!.publicKey),
+                    PublicKey: this.publicOrPrivateKeyToString(this.accountModel!.publicKey),
                     Sign: btoa(derbuf.join(''))
                 };
 
@@ -551,6 +781,8 @@ export default class XuperSDK implements XuperSDKInterface {
 
                 // @ts-ignore
                 tx.txid = btoa(digest.map(v => String.fromCharCode(v)).join(''));
+
+                // ----------------
 
                 const obj = {
                     bcname: this.options.chain,
@@ -768,8 +1000,6 @@ export default class XuperSDK implements XuperSDKInterface {
                 [this.accountModel.address]: 1.0
             }
         };
-
-        console.log(defaultACL);
 
         const args = {
             account_name: btoa(contractAccountName.toString()),
@@ -1019,3 +1249,5 @@ export default class XuperSDK implements XuperSDKInterface {
         return sha256.x2(Array.from(bytes), {asBytes: true});
     }
 }
+
+export {Language, Strength, Cryptography} from './constants';

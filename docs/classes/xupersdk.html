@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>XuperSDK | @xuperchain/xuper-sdk</title>
+	<title>XuperSDK | Xuper SDK (JS/TS)</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="../index.html" class="title">@xuperchain/xuper-sdk</a>
+					<a href="../index.html" class="title">Xuper SDK (JS/TS)</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -53,7 +53,7 @@
 		<div class="container">
 			<ul class="tsd-breadcrumb">
 				<li>
-					<a href="../globals.html">Globals</a>
+					<a href="../index.html">Globals</a>
 				</li>
 				<li>
 					<a href="xupersdk.html">XuperSDK</a>
@@ -104,11 +104,15 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="xupersdk.html#checkaddress" class="tsd-kind-icon">check<wbr>Address</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="xupersdk.html#checkmnemonic" class="tsd-kind-icon">check<wbr>Mnemonic</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="xupersdk.html#convertchecktransaction" class="tsd-kind-icon">convert<wbr>Check<wbr>Transaction</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="xupersdk.html#converttransaction" class="tsd-kind-icon">convert<wbr>Transaction</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="xupersdk.html#createaccount" class="tsd-kind-icon">create<wbr>Account</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="xupersdk.html#createcontractaccount" class="tsd-kind-icon">create<wbr>Contract<wbr>Account</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="xupersdk.html#deploywasmcontract" class="tsd-kind-icon">deploy<wbr>Wasm<wbr>Contract</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="xupersdk.html#encodedatafordigesthash" class="tsd-kind-icon">encode<wbr>Data<wbr>For<wbr>Digest<wbr>Hash</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="xupersdk.html#generatechecktransaction" class="tsd-kind-icon">generate<wbr>Check<wbr>Transaction</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="xupersdk.html#generatetransaction" class="tsd-kind-icon">generate<wbr>Transaction</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="xupersdk.html#generatetransaction2" class="tsd-kind-icon">generate<wbr>Transaction2</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="xupersdk.html#getbalance" class="tsd-kind-icon">get<wbr>Balance</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="xupersdk.html#getbalancedetail" class="tsd-kind-icon">get<wbr>Balance<wbr>Detail</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="xupersdk.html#getnonce" class="tsd-kind-icon">get<wbr>Nonce</a></li>
@@ -121,6 +125,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="xupersdk.html#posttransaction" class="tsd-kind-icon">post<wbr>Transaction</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="xupersdk.html#preexecconstract" class="tsd-kind-icon">pre<wbr>Exec<wbr>Constract</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="xupersdk.html#preexectransaction" class="tsd-kind-icon">pre<wbr>Exec<wbr>Transaction</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="xupersdk.html#preexectransactionwithutxo" class="tsd-kind-icon">pre<wbr>Exec<wbr>Transaction<wbr>WithUTXO</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="xupersdk.html#publicorprivatekeytostring" class="tsd-kind-icon">public<wbr>OrPrivate<wbr>Key<wbr>ToString</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="xupersdk.html#querytransaction" class="tsd-kind-icon">query<wbr>Transaction</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="xupersdk.html#revertaccount" class="tsd-kind-icon">revert<wbr>Account</a></li>
@@ -142,7 +147,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L35">index.ts:35</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L40">index.ts:40</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -165,7 +170,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/xupersdkinterface.html">XuperSDKInterface</a>.<a href="../interfaces/xupersdkinterface.html#accountins">accountIns</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L22">index.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L27">index.ts:27</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -176,7 +181,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/xupersdkinterface.html">XuperSDKInterface</a>.<a href="../interfaces/xupersdkinterface.html#accountmodel">accountModel</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L24">index.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L29">index.ts:29</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -187,7 +192,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/xupersdkinterface.html">XuperSDKInterface</a>.<a href="../interfaces/xupersdkinterface.html#options">options</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L26">index.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L31">index.ts:31</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -197,7 +202,7 @@
 					<div class="tsd-signature tsd-kind-icon">instance<span class="tsd-signature-symbol">:</span> <a href="xupersdk.html" class="tsd-signature-type">XuperSDK</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L28">index.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L33">index.ts:33</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -215,7 +220,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/xupersdkinterface.html">XuperSDKInterface</a>.<a href="../interfaces/xupersdkinterface.html#checkaddress">checkAddress</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L70">index.ts:70</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L75">index.ts:75</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -246,7 +251,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/xupersdkinterface.html">XuperSDKInterface</a>.<a href="../interfaces/xupersdkinterface.html#checkmnemonic">checkMnemonic</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L79">index.ts:79</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L84">index.ts:84</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -270,6 +275,52 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="convertchecktransaction" class="tsd-anchor"></a>
+					<h3>convert<wbr>Check<wbr>Transaction</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">convert<wbr>Check<wbr>Transaction<span class="tsd-signature-symbol">(</span>checkTransaction<span class="tsd-signature-symbol">: </span><a href="transaction.html" class="tsd-signature-type">Transaction</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L433">index.ts:433</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>checkTransaction: <a href="transaction.html" class="tsd-signature-type">Transaction</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="converttransaction" class="tsd-anchor"></a>
+					<h3>convert<wbr>Transaction</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">convert<wbr>Transaction<span class="tsd-signature-symbol">(</span>transaction<span class="tsd-signature-symbol">: </span><a href="transaction.html" class="tsd-signature-type">Transaction</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L463">index.ts:463</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>transaction: <a href="transaction.html" class="tsd-signature-type">Transaction</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="createaccount" class="tsd-anchor"></a>
 					<h3>create<wbr>Account</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -280,7 +331,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/xupersdkinterface.html">XuperSDKInterface</a>.<a href="../interfaces/xupersdkinterface.html#createaccount">createAccount</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L48">index.ts:48</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L53">index.ts:53</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -320,7 +371,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L749">index.ts:749</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L981">index.ts:981</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -343,7 +394,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L801">index.ts:801</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L1031">index.ts:1031</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -378,7 +429,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L935">index.ts:935</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L1165">index.ts:1165</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -395,6 +446,29 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="generatechecktransaction" class="tsd-anchor"></a>
+					<h3>generate<wbr>Check<wbr>Transaction</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">generate<wbr>Check<wbr>Transaction<span class="tsd-signature-symbol">(</span>preExecWithUtxos<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="transaction.html" class="tsd-signature-type">Transaction</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L278">index.ts:278</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>preExecWithUtxos: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="transaction.html" class="tsd-signature-type">Transaction</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="generatetransaction" class="tsd-anchor"></a>
 					<h3>generate<wbr>Transaction</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -404,7 +478,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L269">index.ts:269</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L499">index.ts:499</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -433,6 +507,38 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="generatetransaction2" class="tsd-anchor"></a>
+					<h3>generate<wbr>Transaction2</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">generate<wbr>Transaction2<span class="tsd-signature-symbol">(</span>toAddress<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, amount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, fee<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, desc<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L333">index.ts:333</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>toAddress: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>amount: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>fee: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> desc: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;&quot;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="getbalance" class="tsd-anchor"></a>
 					<h3>get<wbr>Balance</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -443,7 +549,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/xupersdkinterface.html">XuperSDKInterface</a>.<a href="../interfaces/xupersdkinterface.html#getbalance">getBalance</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L87">index.ts:87</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L92">index.ts:92</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -474,7 +580,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/xupersdkinterface.html">XuperSDKInterface</a>.<a href="../interfaces/xupersdkinterface.html#getbalancedetail">getBalanceDetail</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L116">index.ts:116</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L121">index.ts:121</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -504,7 +610,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L867">index.ts:867</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L1097">index.ts:1097</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -521,7 +627,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L707">index.ts:707</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L939">index.ts:939</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -553,7 +659,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L213">index.ts:213</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L222">index.ts:222</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -613,7 +719,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/xupersdkinterface.html">XuperSDKInterface</a>.<a href="../interfaces/xupersdkinterface.html#maketrasaction">makeTrasaction</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L433">index.ts:433</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L663">index.ts:663</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -652,7 +758,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L926">index.ts:926</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L1156">index.ts:1156</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -675,7 +781,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L871">index.ts:871</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L1101">index.ts:1101</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -704,7 +810,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L896">index.ts:896</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L1126">index.ts:1126</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -734,7 +840,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/xupersdkinterface.html">XuperSDKInterface</a>.<a href="../interfaces/xupersdkinterface.html#posttransaction">postTransaction</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L607">index.ts:607</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L839">index.ts:839</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -764,7 +870,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L658">index.ts:658</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L890">index.ts:890</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -804,7 +910,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/xupersdkinterface.html">XuperSDKInterface</a>.<a href="../interfaces/xupersdkinterface.html#preexectransaction">preExecTransaction</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L147">index.ts:147</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L160">index.ts:160</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -831,6 +937,35 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="preexectransactionwithutxo" class="tsd-anchor"></a>
+					<h3>pre<wbr>Exec<wbr>Transaction<wbr>WithUTXO</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">pre<wbr>Exec<wbr>Transaction<wbr>WithUTXO<span class="tsd-signature-symbol">(</span>sum<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">BN</span>, authRequire<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, invokeRequests<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">never</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L298">index.ts:298</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>sum: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">BN</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> authRequire: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> invokeRequests: <span class="tsd-signature-type">never</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="publicorprivatekeytostring" class="tsd-anchor"></a>
 					<h3>public<wbr>OrPrivate<wbr>Key<wbr>ToString</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -840,13 +975,20 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L205">index.ts:205</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L150">index.ts:150</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Key to string</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>key: <a href="../interfaces/privatekeymodel.html" class="tsd-signature-type">PrivateKeyModel</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/publickeymodel.html" class="tsd-signature-type">PublicKeyModel</a></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -864,7 +1006,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/xupersdkinterface.html">XuperSDKInterface</a>.<a href="../interfaces/xupersdkinterface.html#querytransaction">queryTransaction</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L632">index.ts:632</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L864">index.ts:864</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -895,7 +1037,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/xupersdkinterface.html">XuperSDKInterface</a>.<a href="../interfaces/xupersdkinterface.html#revertaccount">revertAccount</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L60">index.ts:60</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L65">index.ts:65</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -931,7 +1073,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/index.ts#L30">index.ts:30</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/index.ts#L35">index.ts:35</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -950,7 +1092,7 @@
 			<nav class="tsd-navigation primary">
 				<ul>
 					<li class="globals  ">
-						<a href="../globals.html"><em>Globals</em></a>
+						<a href="../index.html"><em>Globals</em></a>
 					</li>
 				</ul>
 			</nav>
@@ -967,6 +1109,9 @@
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="account.html" class="tsd-kind-icon">Account</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="transaction.html" class="tsd-kind-icon">Transaction</a>
 					</li>
 				</ul>
 				<ul class="current">
@@ -995,6 +1140,12 @@
 								<a href="xupersdk.html#checkmnemonic" class="tsd-kind-icon">check<wbr>Mnemonic</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="xupersdk.html#convertchecktransaction" class="tsd-kind-icon">convert<wbr>Check<wbr>Transaction</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="xupersdk.html#converttransaction" class="tsd-kind-icon">convert<wbr>Transaction</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="xupersdk.html#createaccount" class="tsd-kind-icon">create<wbr>Account</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
@@ -1007,7 +1158,13 @@
 								<a href="xupersdk.html#encodedatafordigesthash" class="tsd-kind-icon">encode<wbr>Data<wbr>For<wbr>Digest<wbr>Hash</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="xupersdk.html#generatechecktransaction" class="tsd-kind-icon">generate<wbr>Check<wbr>Transaction</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="xupersdk.html#generatetransaction" class="tsd-kind-icon">generate<wbr>Transaction</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="xupersdk.html#generatetransaction2" class="tsd-kind-icon">generate<wbr>Transaction2</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="xupersdk.html#getbalance" class="tsd-kind-icon">get<wbr>Balance</a>
@@ -1046,6 +1203,9 @@
 								<a href="xupersdk.html#preexectransaction" class="tsd-kind-icon">pre<wbr>Exec<wbr>Transaction</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="xupersdk.html#preexectransactionwithutxo" class="tsd-kind-icon">pre<wbr>Exec<wbr>Transaction<wbr>WithUTXO</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="xupersdk.html#publicorprivatekeytostring" class="tsd-kind-icon">public<wbr>OrPrivate<wbr>Key<wbr>ToString</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
@@ -1073,6 +1233,9 @@
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/contracrequesttmodel.html" class="tsd-kind-icon">Contrac<wbr>Requestt<wbr>Model</a>
 					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="../interfaces/errorinterface.html" class="tsd-kind-icon">Error<wbr>Interface</a>
+					</li>
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/privatekeymodel.html" class="tsd-kind-icon">Private<wbr>Key<wbr>Model</a>
 					</li>
@@ -1083,7 +1246,13 @@
 						<a href="../interfaces/signinfomodel.html" class="tsd-kind-icon">Sign<wbr>Info<wbr>Model</a>
 					</li>
 					<li class=" tsd-kind-interface">
+						<a href="../interfaces/transactioninterface.html" class="tsd-kind-icon">Transaction<wbr>Interface</a>
+					</li>
+					<li class=" tsd-kind-interface">
 						<a href="../interfaces/transactionmodel.html" class="tsd-kind-icon">Transaction<wbr>Model</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="../interfaces/xuperendorseconf.html" class="tsd-kind-icon">Xuper<wbr>Endorse<wbr>Conf</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/xuperoptions.html" class="tsd-kind-icon">Xuper<wbr>Options</a>
@@ -1092,26 +1261,20 @@
 						<a href="../interfaces/xupersdkinterface.html" class="tsd-kind-icon">XuperSDKInterface</a>
 					</li>
 					<li class=" tsd-kind-variable">
-						<a href="../globals.html#version" class="tsd-kind-icon">VERSION</a>
+						<a href="../index.html#version" class="tsd-kind-icon">VERSION</a>
 					</li>
-					<li class=" tsd-kind-function">
-						<a href="../globals.html#base58decode" class="tsd-kind-icon">base58<wbr>Decode</a>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="../index.html#xupererror" class="tsd-kind-icon">Xuper<wbr>Error</a>
 					</li>
-					<li class=" tsd-kind-function">
-						<a href="../globals.html#base58encode" class="tsd-kind-icon">base58<wbr>Encode</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="../globals.html#deepequal" class="tsd-kind-icon">deep<wbr>Equal</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="../globals.html#jsonencode" class="tsd-kind-icon">json<wbr>Encode</a>
+					<li class=" tsd-kind-object-literal">
+						<a href="../index.html#errors" class="tsd-kind-icon">Errors</a>
 					</li>
 				</ul>
 			</nav>
 		</div>
 	</div>
 </div>
-<footer class="with-border-bottom">
+<footer>
 	<div class="container">
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
@@ -1171,9 +1334,6 @@
 		</div>
 	</div>
 </footer>
-<div class="container tsd-generator">
-	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
-</div>
 <div class="overlay"></div>
 <script src="../assets/js/main.js"></script>
 <script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>

@@ -1,4 +1,8 @@
 {
+    "name": "Xuper SDK (JS/TS)",
     "mode": "file",
-    "out": "docs"
+    "out": "docs",
+    "readme": "none",
+    "hideGenerator": true,
+    "exclude": ["src/utils.ts"]
 }

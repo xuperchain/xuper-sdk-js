@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Cryptography | @xuperchain/xuper-sdk</title>
+	<title>Cryptography | Xuper SDK (JS/TS)</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="../index.html" class="title">@xuperchain/xuper-sdk</a>
+					<a href="../index.html" class="title">Xuper SDK (JS/TS)</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -53,7 +53,7 @@
 		<div class="container">
 			<ul class="tsd-breadcrumb">
 				<li>
-					<a href="../globals.html">Globals</a>
+					<a href="../index.html">Globals</a>
 				</li>
 				<li>
 					<a href="cryptography.html">Cryptography</a>
@@ -94,7 +94,7 @@
 					<div class="tsd-signature tsd-kind-icon">EccFIPS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;1</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/94e4b33/src/constants.ts#L32">constants.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/constants.ts#L32">constants.ts:32</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -104,7 +104,7 @@
 			<nav class="tsd-navigation primary">
 				<ul>
 					<li class="globals  ">
-						<a href="../globals.html"><em>Globals</em></a>
+						<a href="../index.html"><em>Globals</em></a>
 					</li>
 				</ul>
 			</nav>
@@ -132,6 +132,9 @@
 						<a href="../classes/account.html" class="tsd-kind-icon">Account</a>
 					</li>
 					<li class=" tsd-kind-class">
+						<a href="../classes/transaction.html" class="tsd-kind-icon">Transaction</a>
+					</li>
+					<li class=" tsd-kind-class">
 						<a href="../classes/xupersdk.html" class="tsd-kind-icon">XuperSDK</a>
 					</li>
 					<li class=" tsd-kind-interface">
@@ -146,6 +149,9 @@
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/contracrequesttmodel.html" class="tsd-kind-icon">Contrac<wbr>Requestt<wbr>Model</a>
 					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="../interfaces/errorinterface.html" class="tsd-kind-icon">Error<wbr>Interface</a>
+					</li>
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/privatekeymodel.html" class="tsd-kind-icon">Private<wbr>Key<wbr>Model</a>
 					</li>
@@ -156,7 +162,13 @@
 						<a href="../interfaces/signinfomodel.html" class="tsd-kind-icon">Sign<wbr>Info<wbr>Model</a>
 					</li>
 					<li class=" tsd-kind-interface">
+						<a href="../interfaces/transactioninterface.html" class="tsd-kind-icon">Transaction<wbr>Interface</a>
+					</li>
+					<li class=" tsd-kind-interface">
 						<a href="../interfaces/transactionmodel.html" class="tsd-kind-icon">Transaction<wbr>Model</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="../interfaces/xuperendorseconf.html" class="tsd-kind-icon">Xuper<wbr>Endorse<wbr>Conf</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/xuperoptions.html" class="tsd-kind-icon">Xuper<wbr>Options</a>
@@ -165,26 +177,20 @@
 						<a href="../interfaces/xupersdkinterface.html" class="tsd-kind-icon">XuperSDKInterface</a>
 					</li>
 					<li class=" tsd-kind-variable">
-						<a href="../globals.html#version" class="tsd-kind-icon">VERSION</a>
+						<a href="../index.html#version" class="tsd-kind-icon">VERSION</a>
 					</li>
-					<li class=" tsd-kind-function">
-						<a href="../globals.html#base58decode" class="tsd-kind-icon">base58<wbr>Decode</a>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="../index.html#xupererror" class="tsd-kind-icon">Xuper<wbr>Error</a>
 					</li>
-					<li class=" tsd-kind-function">
-						<a href="../globals.html#base58encode" class="tsd-kind-icon">base58<wbr>Encode</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="../globals.html#deepequal" class="tsd-kind-icon">deep<wbr>Equal</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="../globals.html#jsonencode" class="tsd-kind-icon">json<wbr>Encode</a>
+					<li class=" tsd-kind-object-literal">
+						<a href="../index.html#errors" class="tsd-kind-icon">Errors</a>
 					</li>
 				</ul>
 			</nav>
 		</div>
 	</div>
 </div>
-<footer class="with-border-bottom">
+<footer>
 	<div class="container">
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
@@ -244,9 +250,6 @@
 		</div>
 	</div>
 </footer>
-<div class="container tsd-generator">
-	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
-</div>
 <div class="overlay"></div>
 <script src="../assets/js/main.js"></script>
 <script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>

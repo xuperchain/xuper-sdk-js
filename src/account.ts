@@ -3,9 +3,6 @@
  * Created by xinyi on 2019/12/19
  */
 
-/* eslint-disable no-useless-escape */
-
-
 import BN from 'bn.js';
 import sha256 from 'sha256';
 import pbkdf2 from 'pbkdf2';
@@ -102,24 +99,6 @@ export default class Account implements AccountInerface {
             privateKey,
             publicKey
         };
-    }
-
-    /**
-     * Converting a public key or private key to a string
-     * @param key
-     */
-    publicOrPrivateKeyToString(key: PrivateKeyModel | PublicKeyModel): string {
-        let str = `\{\"Curvname\":\"${key.Curvname}\",\"X\":${key.X},\"Y\":${key.Y}`;
-
-        // @ts-ignore
-        if (key.D) {
-            // @ts-ignore
-            str += `,\"D\":${key.D}`;
-        }
-
-        str += '\}';
-
-        return str;
     }
 
     /**

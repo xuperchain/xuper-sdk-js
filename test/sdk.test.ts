@@ -19,8 +19,6 @@ const endorseConf = {
     feeServiceAddress: process.env.FEESERVICEADDRESS || ''
 };
 
-
-
 describe('Xuper SDK', () => {
     test('create new account with mnemonic should return account model', () => {
         const xsdk = new XuperSDK({node: '', chain: 'xuper'});
@@ -157,7 +155,7 @@ describe('Xuper SDK', () => {
             endorseConf
         });
 
-        const accountModel = xsdk.revertAccount(
+        xsdk.revertAccount(
             process.env.TEST_MNEMONIC || '',
             Language.SimplifiedChinese,
             Cryptography.EccFIPS
@@ -169,7 +167,9 @@ describe('Xuper SDK', () => {
             '1'
         );
 
-        const resultObj = JSON.parse(atob(result['ResponseData']));
+        const resultObj = JSON.parse(atob(result.ResponseData));
+
+        console.log(resultObj.utxoOutput)
         expect(resultObj.bcname).toEqual(chain);
         expect(resultObj.header).toHaveProperty('logid');
         expect(resultObj.utxoOutput).toHaveProperty('utxoList');
@@ -219,33 +219,6 @@ describe('Xuper SDK', () => {
             '100',
             '10'
         );
-
-        const result = await xsdk.postTransaction(tx);
-        expect(result.header).toHaveProperty('logid');
-        expect(result.header).not.toHaveProperty('error');
-    });
-
-    test('generate transaction with desc should return transaction model', async () => {
-        const xsdk = new XuperSDK({
-            node,
-            chain,
-            needEndorse: true,
-            endorseConf
-        });
-
-        xsdk.revertAccount(
-            process.env.TEST_MNEMONIC || '',
-            Language.SimplifiedChinese,
-            Cryptography.EccFIPS
-        );
-
-        const tx = await xsdk.makeTrasaction(
-            process.env.TEST_TARGET_ADDRESS || '',
-            '100',
-            '10',
-            'Hi 你好 こんにちは'
-        );
-
 
         const result = await xsdk.postTransaction(tx);
         expect(result.header).toHaveProperty('logid');
@@ -332,4 +305,70 @@ describe('Xuper SDK', () => {
 
         console.info(JSON.stringify(result));
     });
+
+    /**
+     * Tracsaction
+     */
+
+    test('generate new transaction should return transaction model', async () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain,
+            needEndorse: true,
+            endorseConf
+        });
+
+        xsdk.revertAccount(
+            process.env.TEST_MNEMONIC || '',
+            Language.SimplifiedChinese,
+            Cryptography.EccFIPS
+        );
+
+        const tx = await xsdk.generateTransaction2(
+            process.env.TEST_TARGET_ADDRESS || '',
+            '100',
+            '10'
+        );
+    });
+
+    // test('generate transaction with desc should return transaction model', async () => {
+    //     const xsdk = new XuperSDK({
+    //         node,
+    //         chain,
+    //         needEndorse: true,
+    //         endorseConf
+    //     });
+    //
+    //     xsdk.revertAccount(
+    //         process.env.TEST_MNEMONIC || '',
+    //         Language.SimplifiedChinese,
+    //         Cryptography.EccFIPS
+    //     );
+    //
+    //     const tx = await xsdk.makeTrasaction(
+    //         process.env.TEST_TARGET_ADDRESS || '',
+    //         '100',
+    //         '10',
+    //         'Hi 你好 こんにちは'
+    //     );
+    //
+    //     const result = await xsdk.postTransaction(tx);
+    //     expect(result.header).toHaveProperty('logid');
+    //     expect(result.header).not.toHaveProperty('error');
+    // });
+
+    test('query transaction should return transaction status', async () => {});
+
+    /**
+     * Contract
+     */
+
+    // create contract account
+    test('create contract account should return successful transaction result', async () => {});
+
+    // deploy contract
+    test('deploy webassembly contract should return successful transaction result', async () => {});
+
+    // invoke contract
+    test('invoke webassembly contract should return successful transaction result', async () => {});
 });

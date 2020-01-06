@@ -79,11 +79,6 @@ export interface AuthModel {
 
 }
 
-export interface SignInfoModel {
-    PublicKey: string;
-    Sign: string;
-}
-
 export interface TransactionModel {
     /**
      * Transaction ID
@@ -106,7 +101,7 @@ export interface TransactionModel {
     /**
      * Timestamp
      */
-    timestamp: string;
+    timestamp: number;
 
     /**
      * Inputs
@@ -143,6 +138,13 @@ Configuration
 -------------------------------------------------------------------------------
  */
 
+export interface XuperEndorseConf {
+    fee: string;
+    server: string;
+    feeAddress: string;
+    feeServiceAddress: string;
+}
+
 /**
  * Configuration Interface - Xuper otpions
  */
@@ -165,14 +167,8 @@ export interface XuperOptions {
     /**
      * Endorse conf
      */
-    endorseConf?: {
-        fee: string;
-        server: string;
-        feeAddress: string;
-        feeServiceAddress: string;
-    };
+    endorseConf: XuperEndorseConf;
 }
-
 
 /*
 -------------------------------------------------------------------------------
@@ -269,7 +265,9 @@ export interface XuperSDKInterface {
      */
     queryTransaction(txid: string): Promise<any>;
 
+    // makeTransfer(): Promise<any>;
     // invokeContract(): Promise<any>;
+    // depolyContract(): Promise<any>;
 }
 
 /**
@@ -304,10 +302,97 @@ export interface AccountInerface {
      * @param language
      */
     checkMnemonic(mnemonic: string, language: Language): boolean;
+}
+
+/**
+ * @hidden
+ */
+export interface TXInput {
+    refTxid: string;
+    refOffset: number;
+    fromAddr: string;
+    amount: string;
+    frozenHeight?: number;
+}
+
+/**
+ * @hidden
+ */
+export interface TXOutput {
+    amount: string;
+    toAddr: string;
+}
+
+/**
+ * @hidden
+ */
+export interface UTXO {
+    amount: string;
+    toAddr: string;
+    refOffset: number;
+    refTxid: string;
+}
+
+export interface SignInfoModel {
+    PublicKey: string;
+    Sign: string;
+}
+
+export interface TransactionInterface {
+    account: AccountModel;
 
     /**
-     * Converting a public key or private key to a string
-     * @param key
+     * Transaction ID
      */
-    publicOrPrivateKeyToString(key: PrivateKeyModel | PublicKeyModel): string;
+    txid: string;
+
+    /**
+     * SDK version
+     */
+    version: number;
+
+    /**
+     * Timestamp
+     */
+    timestamp: number;
+
+    coinbase: boolean;
+    autogen: boolean;
+
+    /**
+     * Transaction description
+     */
+    desc: Uint8Array;
+
+    /**
+     * Inputs
+     */
+    txInputs: TXInput[];
+
+    /**
+     * Outputs
+     */
+    txOutputs: any[];
+
+    /**
+     * Transaction initiator
+     */
+    initiator: string;
+
+    /**
+     * Nonce
+     */
+    nonce: string;
+
+    authRequire: string[];
+
+    txInputsExt?: any[];
+
+    txOutputsExt?: any[];
+
+    contractRequests?: any[];
+
+    initiatorSigns?: SignInfoModel[];
+
+    authRequireSigns?: any[];
 }

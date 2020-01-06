@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>@xuperchain/xuper-sdk</title>
+	<title>Xuper SDK (JS/TS)</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="index.html" class="title">@xuperchain/xuper-sdk</a>
+					<a href="index.html" class="title">Xuper SDK (JS/TS)</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -53,93 +53,210 @@
 		<div class="container">
 			<ul class="tsd-breadcrumb">
 				<li>
-					<a href="globals.html">Globals</a>
+					<a href="index.html">Globals</a>
 				</li>
 			</ul>
-			<h1> @xuperchain/xuper-sdk</h1>
+			<h1> Xuper SDK (JS/TS)</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<div class="tsd-panel tsd-typography">
-				<a href="#xuper-sdk-js" id="xuper-sdk-js" style="color: inherit; text-decoration: none;">
-					<h1>Xuper SDK JS</h1>
-				</a>
-				<p><a href="https://travis-ci.org/xuperchain/xuper-sdk-js"><img src="https://travis-ci.org/xuperchain/xuper-sdk-js.svg?branch=master" alt="Build Status"></a>
-				<a href="https://badge.fury.io/js/%40xuperchain%2Fxuper-sdk"><img src="https://badge.fury.io/js/%40xuperchain%2Fxuper-sdk.svg" alt="npm version"></a></p>
-				<p>A simple JS(TS) SDK for XuperOS</p>
-				<a href="#features" id="features" style="color: inherit; text-decoration: none;">
-					<h2>Features</h2>
-				</a>
-				<ul>
-					<li>Create / Revert account</li>
-					<li>Get local account balance and detail</li>
-					<li>Make, post and query transaction</li>
-				</ul>
-				<a href="#support-codexuper-oscode" id="support-codexuper-oscode" style="color: inherit; text-decoration: none;">
-					<h2>Support <code>Xuper OS</code></h2>
-				</a>
-				<ul>
-					<li>Pre-Execution</li>
-					<li>Endorser check and signature</li>
-				</ul>
-				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
-					<h2>Usage</h2>
-				</a>
-				<a href="#install-package" id="install-package" style="color: inherit; text-decoration: none;">
-					<h3>Install package</h3>
-				</a>
-				<blockquote>
-					<p>npm install --save xuper-sdk</p>
-				</blockquote>
-				<a href="#example" id="example" style="color: inherit; text-decoration: none;">
-					<h3>Example</h3>
-				</a>
-				<pre><code class="language-javascript">
-<span class="hljs-keyword">import</span> XuperSDK, {Cryptography, Language, Strength} <span class="hljs-keyword">from</span> <span class="hljs-string">'xuper-sdk'</span>
-
-<span class="hljs-keyword">const</span> xsdk = <span class="hljs-keyword">new</span> XuperSDK({
-    node,
-    chain,
-    <span class="hljs-attr">needEndorse</span>: <span class="hljs-literal">true</span>,
-    endorseConf
-})
-
-xsdk.createAccount(
-    Language.SimplifiedChinese,
-    Strength.Easy,
-    Cryptography.EccFIPS
-)
-</code></pre>
-				<a href="#documents" id="documents" style="color: inherit; text-decoration: none;">
-					<h2>Documents</h2>
-				</a>
-				<ul>
-					<li><p>Create new account <a href="https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#createaccount">Detail</a></p>
-					</li>
-					<li><p>Revert exist account <a href="https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#revertaccount">Detail</a></p>
-					</li>
-					<li><p>Query transaction <a href="https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#querytransaction">Detail</a></p>
-					</li>
-					<li><p>More... <a href="https://xuperchain.github.io/xuper-sdk-js/">documents</a></p>
-					</li>
-				</ul>
-				<a href="#todos" id="todos" style="color: inherit; text-decoration: none;">
-					<h2>Todos</h2>
-				</a>
-				<ul>
-					<li>Support xuperchain/xuperunion</li>
-					<li>Support contract</li>
-				</ul>
-			</div>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Enumerations</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-enum"><a href="enums/cryptography.html" class="tsd-kind-icon">Cryptography</a></li>
+								<li class="tsd-kind-enum"><a href="enums/language.html" class="tsd-kind-icon">Language</a></li>
+								<li class="tsd-kind-enum"><a href="enums/strength.html" class="tsd-kind-icon">Strength</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Classes</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-class"><a href="classes/account.html" class="tsd-kind-icon">Account</a></li>
+								<li class="tsd-kind-class"><a href="classes/transaction.html" class="tsd-kind-icon">Transaction</a></li>
+								<li class="tsd-kind-class"><a href="classes/xupersdk.html" class="tsd-kind-icon">XuperSDK</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Interfaces</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-interface"><a href="interfaces/accountinerface.html" class="tsd-kind-icon">Account<wbr>Inerface</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/accountmodel.html" class="tsd-kind-icon">Account<wbr>Model</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/authmodel.html" class="tsd-kind-icon">Auth<wbr>Model</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/contracrequesttmodel.html" class="tsd-kind-icon">Contrac<wbr>Requestt<wbr>Model</a></li>
+								<li class="tsd-kind-interface tsd-is-not-exported"><a href="interfaces/errorinterface.html" class="tsd-kind-icon">Error<wbr>Interface</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/privatekeymodel.html" class="tsd-kind-icon">Private<wbr>Key<wbr>Model</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/publickeymodel.html" class="tsd-kind-icon">Public<wbr>Key<wbr>Model</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/signinfomodel.html" class="tsd-kind-icon">Sign<wbr>Info<wbr>Model</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/transactioninterface.html" class="tsd-kind-icon">Transaction<wbr>Interface</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/transactionmodel.html" class="tsd-kind-icon">Transaction<wbr>Model</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/xuperendorseconf.html" class="tsd-kind-icon">Xuper<wbr>Endorse<wbr>Conf</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/xuperoptions.html" class="tsd-kind-icon">Xuper<wbr>Options</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/xupersdkinterface.html" class="tsd-kind-icon">XuperSDKInterface</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Variables</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-variable"><a href="index.html#version" class="tsd-kind-icon">VERSION</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-not-exported">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-is-not-exported"><a href="index.html#xupererror" class="tsd-kind-icon">Xuper<wbr>Error</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Object literals</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-object-literal"><a href="index.html#errors" class="tsd-kind-icon">Errors</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Variables</h2>
+				<section class="tsd-panel tsd-member tsd-kind-variable">
+					<a name="version" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> VERSION</h3>
+					<div class="tsd-signature tsd-kind-icon">VERSION<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">1</span><span class="tsd-signature-symbol"> =&nbsp;1</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/constants.ts#L9">constants.ts:9</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Account SDK version</p>
+						</div>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-is-not-exported">
+					<a name="xupererror" class="tsd-anchor"></a>
+					<h3>Xuper<wbr>Error</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">Xuper<wbr>Error<span class="tsd-signature-symbol">(</span>errorCode<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, name<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, isFront<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span>, payload<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="interfaces/errorinterface.html" class="tsd-signature-type">ErrorInterface</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/error.ts#L15">error.ts:15</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>errorCode: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>message: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> name: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;Xuper SDK error&quot;</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> isFront: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> payload: <span class="tsd-signature-type">Error</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="interfaces/errorinterface.html" class="tsd-signature-type">ErrorInterface</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Object literals</h2>
+				<section class="tsd-panel tsd-member tsd-kind-object-literal">
+					<a name="errors" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> Errors</h3>
+					<div class="tsd-signature tsd-kind-icon">Errors<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/error.ts#L34">error.ts:34</a></li>
+						</ul>
+					</aside>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
+						<a name="errors.account_not_exist" class="tsd-anchor"></a>
+						<h3>ACCOUNT_<wbr>NOT_<wbr>EXIST</h3>
+						<div class="tsd-signature tsd-kind-icon">ACCOUNT_<wbr>NOT_<wbr>EXIST<span class="tsd-signature-symbol">:</span> <a href="interfaces/errorinterface.html" class="tsd-signature-type">ErrorInterface</a><span class="tsd-signature-symbol"> =&nbsp;XuperError(6001, &#x27;Account not exist&#x27;)</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/error.ts#L40">error.ts:40</a></li>
+							</ul>
+						</aside>
+					</section>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
+						<a name="errors.invalid_configuration" class="tsd-anchor"></a>
+						<h3>INVALID_<wbr>CONFIGURATION</h3>
+						<div class="tsd-signature tsd-kind-icon">INVALID_<wbr>CONFIGURATION<span class="tsd-signature-symbol">:</span> <a href="interfaces/errorinterface.html" class="tsd-signature-type">ErrorInterface</a><span class="tsd-signature-symbol"> =&nbsp;XuperError(1003, &#x27;Invalid configuration&#x27;)</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/error.ts#L37">error.ts:37</a></li>
+							</ul>
+						</aside>
+					</section>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
+						<a name="errors.invalid_params" class="tsd-anchor"></a>
+						<h3>INVALID_<wbr>PARAMS</h3>
+						<div class="tsd-signature tsd-kind-icon">INVALID_<wbr>PARAMS<span class="tsd-signature-symbol">:</span> <a href="interfaces/errorinterface.html" class="tsd-signature-type">ErrorInterface</a><span class="tsd-signature-symbol"> =&nbsp;XuperError(5002, &#x27;Invalid params&#x27;)</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/error.ts#L39">error.ts:39</a></li>
+							</ul>
+						</aside>
+					</section>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
+						<a name="errors.network_err" class="tsd-anchor"></a>
+						<h3>NETWORK_<wbr>ERR</h3>
+						<div class="tsd-signature tsd-kind-icon">NETWORK_<wbr>ERR<span class="tsd-signature-symbol">:</span> <a href="interfaces/errorinterface.html" class="tsd-signature-type">ErrorInterface</a><span class="tsd-signature-symbol"> =&nbsp;XuperError(1002, &#x27;Network error&#x27;)</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/error.ts#L36">error.ts:36</a></li>
+							</ul>
+						</aside>
+					</section>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
+						<a name="errors.timeout" class="tsd-anchor"></a>
+						<h3>TIMEOUT</h3>
+						<div class="tsd-signature tsd-kind-icon">TIMEOUT<span class="tsd-signature-symbol">:</span> <a href="interfaces/errorinterface.html" class="tsd-signature-type">ErrorInterface</a><span class="tsd-signature-symbol"> =&nbsp;XuperError(1001, &#x27;Timeout&#x27;)</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/error.ts#L35">error.ts:35</a></li>
+							</ul>
+						</aside>
+					</section>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
+						<a name="errors.utxo_not_enough" class="tsd-anchor"></a>
+						<h3>UTXO_<wbr>NOT_<wbr>ENOUGH</h3>
+						<div class="tsd-signature tsd-kind-icon">UTXO_<wbr>NOT_<wbr>ENOUGH<span class="tsd-signature-symbol">:</span> <a href="interfaces/errorinterface.html" class="tsd-signature-type">ErrorInterface</a><span class="tsd-signature-symbol"> =&nbsp;XuperError(5001, &#x27;Utxo is not enough&#x27;)</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/cf93f43/src/error.ts#L38">error.ts:38</a></li>
+							</ul>
+						</aside>
+					</section>
+				</section>
+			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class="globals  ">
-						<a href="globals.html"><em>Globals</em></a>
+					<li class="globals current ">
+						<a href="index.html"><em>Globals</em></a>
 					</li>
 				</ul>
 			</nav>
@@ -158,6 +275,9 @@ xsdk.createAccount(
 						<a href="classes/account.html" class="tsd-kind-icon">Account</a>
 					</li>
 					<li class=" tsd-kind-class">
+						<a href="classes/transaction.html" class="tsd-kind-icon">Transaction</a>
+					</li>
+					<li class=" tsd-kind-class">
 						<a href="classes/xupersdk.html" class="tsd-kind-icon">XuperSDK</a>
 					</li>
 					<li class=" tsd-kind-interface">
@@ -172,6 +292,9 @@ xsdk.createAccount(
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/contracrequesttmodel.html" class="tsd-kind-icon">Contrac<wbr>Requestt<wbr>Model</a>
 					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/errorinterface.html" class="tsd-kind-icon">Error<wbr>Interface</a>
+					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/privatekeymodel.html" class="tsd-kind-icon">Private<wbr>Key<wbr>Model</a>
 					</li>
@@ -182,7 +305,13 @@ xsdk.createAccount(
 						<a href="interfaces/signinfomodel.html" class="tsd-kind-icon">Sign<wbr>Info<wbr>Model</a>
 					</li>
 					<li class=" tsd-kind-interface">
+						<a href="interfaces/transactioninterface.html" class="tsd-kind-icon">Transaction<wbr>Interface</a>
+					</li>
+					<li class=" tsd-kind-interface">
 						<a href="interfaces/transactionmodel.html" class="tsd-kind-icon">Transaction<wbr>Model</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/xuperendorseconf.html" class="tsd-kind-icon">Xuper<wbr>Endorse<wbr>Conf</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/xuperoptions.html" class="tsd-kind-icon">Xuper<wbr>Options</a>
@@ -191,26 +320,20 @@ xsdk.createAccount(
 						<a href="interfaces/xupersdkinterface.html" class="tsd-kind-icon">XuperSDKInterface</a>
 					</li>
 					<li class=" tsd-kind-variable">
-						<a href="globals.html#version" class="tsd-kind-icon">VERSION</a>
+						<a href="index.html#version" class="tsd-kind-icon">VERSION</a>
 					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#base58decode" class="tsd-kind-icon">base58<wbr>Decode</a>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="index.html#xupererror" class="tsd-kind-icon">Xuper<wbr>Error</a>
 					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#base58encode" class="tsd-kind-icon">base58<wbr>Encode</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#deepequal" class="tsd-kind-icon">deep<wbr>Equal</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#jsonencode" class="tsd-kind-icon">json<wbr>Encode</a>
+					<li class=" tsd-kind-object-literal">
+						<a href="index.html#errors" class="tsd-kind-icon">Errors</a>
 					</li>
 				</ul>
 			</nav>
 		</div>
 	</div>
 </div>
-<footer class="with-border-bottom">
+<footer>
 	<div class="container">
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
@@ -270,9 +393,6 @@ xsdk.createAccount(
 		</div>
 	</div>
 </footer>
-<div class="container tsd-generator">
-	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
-</div>
 <div class="overlay"></div>
 <script src="assets/js/main.js"></script>
 <script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>

@@ -3,6 +3,7 @@
     "version": "1.0.3",
     "description": "A simple JS(TS) SDK for XuperOS",
     "main": "lib/index.js",
+    "types": "lib/index.d.js",
     "scripts": {
         "build": "./node_modules/.bin/webpack --colors --progress --config ./scripts/webpack.prod.js",
         "docs": "typedoc --mode file --out docs src",

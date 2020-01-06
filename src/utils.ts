@@ -4,6 +4,12 @@
  */
 
 /**
+ * @ignore
+ */
+
+import {PrivateKeyModel, PublicKeyModel} from './interfaces';
+
+/**
  * Base58 - encode
  * @param data
  * @param alphabet
@@ -89,6 +95,11 @@ export function jsonEncode(t: any): string {
     return `${JSON.stringify(t)}\n`;
 }
 
+/**
+ * Deep equal
+ * @param x
+ * @param y
+ */
 export function deepEqual(x: any, y: any): boolean {
     if (x === y) {
         return true;
@@ -110,4 +121,49 @@ export function deepEqual(x: any, y: any): boolean {
         }
     }
     return true;
+}
+
+/**
+ * Nonce
+ */
+export function getNonce(): string {
+    return (~~(Date.now() / 1000).toString()) + crypto.getRandomValues(new Uint32Array(1))[0].toString();
+}
+
+/**
+ * Converting a public key or private key to a string
+ * @param key
+ */
+export function publicOrPrivateKeyToString(key: PrivateKeyModel | PublicKeyModel): string {
+    let str = `\{\"Curvname\":\"${key.Curvname}\",\"X\":${key.X},\"Y\":${key.Y}`;
+
+    // @ts-ignore
+    if (key.D) {
+        // @ts-ignore
+        str += `,\"D\":${key.D}`;
+    }
+    str += '\}';
+
+    return str;
+}
+
+/**
+ * Post request
+ * @param t target host
+ * @param b body object
+ */
+export async function postRequest(t: string, b: object): Promise<any> {
+    return fetch(t, {
+        method: 'POST',
+        body: JSON.stringify(b)
+    }).then(
+        response => {
+            if (!response.ok) {
+                return response.json().then(res => {
+                    throw res;
+                });
+            }
+            return response.json();
+        }
+    );
 }
