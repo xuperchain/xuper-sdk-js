@@ -9,271 +9,233 @@ import {ec as EC} from 'elliptic';
 import {VERSION} from './constants';
 import Errors from './error';
 import {
-    XuperEndorseConf, AccountModel, TransactionInterface, TXOutput, TXInput, SignInfoModel, UTXO
+    AccountModel, Transaction, TXOutput, TXInput, TransactionInfomation, UTXO
 } from './interfaces';
 import {getNonce, jsonEncode, publicOrPrivateKeyToString} from './utils';
 
-export default class Transaction implements TransactionInterface {
-    account: AccountModel;
+function makeTxOutput(
+    totalSelected: BN | string | number, totalNeed: BN | string | number, toAddress: string
+): TXOutput {
+    let bnUtxos;
+    let bnNeed;
 
-    version = VERSION;
+    try {
+        bnUtxos = new BN(totalSelected);
+        bnNeed = new BN(totalNeed);
+    } catch (e) {
+        throw Errors.INVALID_PARAMS;
+    }
 
-    timestamp = parseInt(Date.now().toString().padEnd(19, '0'), 10);
-
-    autogen = false;
-
-    coinbase = false;
-
-    desc = new Uint8Array();
-
-    txInputs: TXInput[];
-
-    txOutputs: TXOutput[];
-
-    initiator: string;
-
-    nonce: string;
-
-    authRequire: string[];
-
-    txInputsExt?: any[];
-
-    txOutputsExt?: any[];
-
-    contractRequests?: any[];
-
-    initiatorSigns?: SignInfoModel[];
-
-    authRequireSigns?: any[];
-
-    txid: string;
-
-    constructor(
-        account: AccountModel,
-        preExecWithUtxos: any,
-        toAddress: string,
-        amount: number | string | BN,
-        fee: number | string | BN,
-        desc = '',
-        authRequire = {}
-    ) {
-        const {utxoOutput, response} = preExecWithUtxos;
-
-        this.account = account;
-        const bnAmount = new BN(amount);
-        const bnFee = new BN(fee);
-        const totalNeed = new BN(0);
-        totalNeed.add(bnAmount).add(bnFee);
-
-        // inputs
-        this.txInputs = this.makeTxInputs(utxoOutput.utxoList);
-
-        // outputs
-        const output = this.makeTxOutput(utxoOutput.totalSelected, totalNeed, this.account.address);
-        const txOutputs = this.makeTxOutputs(fee, 0, toAddress);
-        txOutputs.push(output);
-        this.txOutputs = txOutputs;
-
-        // description
-        const te = new TextEncoder();
-        const descBuff: Uint8Array = te.encode(desc);
-        const descArr: string[] = [];
-        descBuff.forEach(n => descArr.push(String.fromCharCode(n)));
-        this.desc = descBuff;
-
-        // initiator
-        this.initiator = this.account.address;
-
-        // nonce
-        this.nonce = getNonce();
-
-        // auth
-        this.authRequire = Object.keys(authRequire);
-
-        if (response) {
-            // input ext
-            if (response.inputs) {
-                this.txInputsExt = response.inputs;
-            }
-
-            // output ext
-            if (response.outputs) {
-                this.txOutputsExt = response.outputs;
-            }
-
-            // contract requests
-            if (response.requests) {
-                this.contractRequests = response.requests;
-            }
-        }
-
-        const digestHash = this.encodeDataForDigestHash(false);
-
-        const ec = new EC('p256');
-        const bnD = new BN(account.privateKey.D);
-        const privKey = ec.keyFromPrivate(bnD.toArray());
-        const sign = privKey.sign(digestHash);
-        const derbuf = sign.toDER().map((v: number) => String.fromCharCode(v));
-
-        // sign
-        const signatureInfo = {
-            PublicKey: publicOrPrivateKeyToString(account.publicKey),
-            Sign: btoa(derbuf.join(''))
+    if (bnUtxos.gte(bnNeed)) {
+        const delta = bnUtxos.sub(bnNeed);
+        return {
+            amount: btoa(delta.toArray().map(v => String.fromCharCode(v)).join('')),
+            toAddr: btoa(toAddress)
         };
-
-        const signatureInfos = [];
-        signatureInfos.push(signatureInfo);
-
-        this.initiatorSigns = signatureInfos;
-
-        const digest = this.encodeDataForDigestHash(true);
-
-        this.txid = btoa(digest.map(v => String.fromCharCode(v)).join(''));
-
-        if (this.authRequire.length > 0) {
-            // this.authRequire.map(key => {
-            //     authRequire[key];
-            // });
-        }
     }
+    throw Errors.UTXO_NOT_ENOUGH;
+}
 
-    private encodeDataForDigestHash(include_signs: boolean) {
-        let str = '';
+function makeTxOutputs(
+    amount: BN | string | number, fee: BN | string | number, to: string
+): TXOutput[] {
+    const bnAmount = new BN(amount);
+    const bnFee = new BN(fee);
+    const accounts = [];
 
-        this.txInputs.forEach(
-            (txInput: TXInput) => {
-                if (txInput.refTxid) {
-                    str += jsonEncode(txInput.refTxid);
-                }
-                str += jsonEncode(txInput.refOffset || 0);
-                if (txInput.fromAddr) {
-                    str += jsonEncode(txInput.fromAddr);
-                }
-                if (txInput.amount) {
-                    str += jsonEncode(txInput.amount);
-                }
-                str += jsonEncode(txInput.frozenHeight || 0);
-            }
-        );
+    to && accounts.push({
+        address: to,
+        amount: bnAmount
+    });
 
-        str += jsonEncode(this.txOutputs);
+    bnFee.gt(new BN(0)) && accounts.push({
+        address: '$',
+        amount: bnFee
+    });
 
-        if (this.desc && this.desc.length > 0) {
-            str += jsonEncode(this.desc);
-        }
+    return accounts.map(account => ({
+        amount: btoa(account.amount.toArray().map(v => String.fromCharCode(v)).join('')),
+        toAddr: btoa(account.address)
+    }));
+}
 
-        str += jsonEncode(this.nonce);
-        str += jsonEncode(this.timestamp);
-        str += jsonEncode(this.version);
-
-        if (this.txInputsExt && this.txInputsExt.length) {
-            // @ts-ignore
-            this.txInputsExt.forEach(inputExt => {
-                str += jsonEncode(inputExt.bucket);
-                if (inputExt.key) {
-                    str += jsonEncode(inputExt.key);
-                }
-                if (inputExt.ref_txid) {
-                    str += jsonEncode(inputExt.ref_txid);
-                }
-                if (inputExt.ref_offset) {
-                    str += jsonEncode(inputExt.ref_offset);
-                } else {
-                    str += jsonEncode(0);
-                }
-            });
-        }
-
-        if (this.txOutputsExt && this.txOutputsExt.length) {
-            // @ts-ignore
-            this.txOutputsExt.forEach(outputExt => {
-                str += jsonEncode(outputExt.bucket);
-                if (outputExt.key) {
-                    str += jsonEncode(outputExt.key);
-                }
-                if (outputExt.value) {
-                    str += jsonEncode(outputExt.value);
-                }
-            });
-        }
-
-        str += jsonEncode(this.contractRequests);
-
-        str += jsonEncode(this.initiator);
-
-        str += jsonEncode(this.authRequire && this.authRequire.length > 0 ? this.authRequire : null);
-
-        if (include_signs) {
-            str += jsonEncode(this.initiatorSigns);
-            str += jsonEncode(this.authRequireSigns);
-        }
-
-        str += jsonEncode(this.coinbase);
-
-        str += jsonEncode(this.autogen);
-
-        const te = new TextEncoder();
-        const bytes = te.encode(str);
-
-        return sha256.x2(Array.from(bytes), {asBytes: true});
-    }
-
-    private makeTxOutput(
-        totalSelected: BN | string | number,
-        totalNeed: BN | string | number,
-        toAddress: string
-    ): TXOutput {
-        let bnUtxos;
-        let bnNeed;
-
-        try {
-            bnUtxos = new BN(totalSelected);
-            bnNeed = new BN(totalNeed);
-        } catch (e) {
-            throw Errors.INVALID_PARAMS;
-        }
-
-        if (bnUtxos.gte(bnNeed)) {
-            const delta = bnUtxos.sub(bnNeed);
-            return {
-                amount: btoa(delta.toArray().map(v => String.fromCharCode(v)).join('')),
-                toAddr: btoa(toAddress)
-            };
-        }
-        throw Errors.UTXO_NOT_ENOUGH;
-    }
-
-    private makeTxOutputs(
-        amount: BN | string | number,
-        fee: BN | string | number,
-        to: string
-    ): TXOutput[] {
-        const bnAmount = new BN(amount);
-        const bnFee = new BN(fee);
-        const accounts = [];
-
-        to && accounts.push({
-            address: to,
-            amount: bnAmount
-        });
-
-        bnFee.gt(new BN(0)) && accounts.push({
-            address: '$',
-            amount: bnFee
-        });
-
-        return accounts.map(account => ({
-            amount: btoa(account.amount.toArray().map(v => String.fromCharCode(v)).join('')),
-            toAddr: btoa(account.address)
-        }));
-    }
-
-    private makeTxInputs = (
-        utxos: UTXO[]
-    ): TXInput[] => utxos.map(utxo => ({
+function makeTxInputs(utxos: UTXO[]): TXInput[] {
+    const txInputs: TXInput[] = [];
+    utxos.forEach(utxo => txInputs.push({
         refTxid: utxo.refTxid,
         refOffset: utxo.refOffset,
         fromAddr: utxo.toAddr,
         amount: utxo.amount
-    }));
+    } as TXInput));
+    return txInputs;
+}
+
+function encodeDataForDigestHash(tx: Transaction, include_signs: boolean) {
+    let str = '';
+
+    tx.txInputs.forEach(
+        (txInput: TXInput) => {
+            if (txInput.refTxid) {
+                str += jsonEncode(txInput.refTxid);
+            }
+            str += jsonEncode(txInput.refOffset || 0);
+            if (txInput.fromAddr) {
+                str += jsonEncode(txInput.fromAddr);
+            }
+            if (txInput.amount) {
+                str += jsonEncode(txInput.amount);
+            }
+            str += jsonEncode(txInput.frozenHeight || 0);
+        }
+    );
+
+    str += jsonEncode(tx.txOutputs);
+
+    if (tx.desc && tx.desc.length > 0) {
+        str += jsonEncode(tx.desc);
+    }
+
+    str += jsonEncode(tx.nonce);
+    str += jsonEncode(tx.timestamp);
+    str += jsonEncode(tx.version);
+
+    if (tx.txInputsExt && tx.txInputsExt.length) {
+        tx.txInputsExt.forEach(inputExt => {
+            str += jsonEncode(inputExt.bucket);
+            if (inputExt.key) {
+                str += jsonEncode(inputExt.key);
+            }
+            if (inputExt.ref_txid) {
+                str += jsonEncode(inputExt.ref_txid);
+            }
+            if (inputExt.ref_offset) {
+                str += jsonEncode(inputExt.ref_offset);
+            } else {
+                str += jsonEncode(0);
+            }
+        });
+    }
+
+    if (tx.txOutputsExt && tx.txOutputsExt.length) {
+        tx.txOutputsExt.forEach(outputExt => {
+            str += jsonEncode(outputExt.bucket);
+            if (outputExt.key) {
+                str += jsonEncode(outputExt.key);
+            }
+            if (outputExt.value) {
+                str += jsonEncode(outputExt.value);
+            }
+        });
+    }
+
+    str += jsonEncode(tx.contractRequests);
+
+    str += jsonEncode(tx.initiator);
+
+    str += jsonEncode(tx.authRequire && tx.authRequire.length > 0 ? tx.authRequire : null);
+
+    if (include_signs) {
+        str += jsonEncode(tx.initiatorSigns);
+        str += jsonEncode(tx.authRequireSigns);
+    }
+
+    str += jsonEncode(tx.coinbase);
+
+    str += jsonEncode(tx.autogen);
+
+    const te = new TextEncoder();
+    const bytes = te.encode(str);
+
+    return sha256.x2(Array.from(bytes), {asBytes: true});
+}
+
+function generateTransaction(
+    account: AccountModel, totalNeed: BN, preExecWithUtxos: any, authRequires: any, ti: TransactionInfomation
+): Transaction {
+    const {utxoOutput, response} = preExecWithUtxos;
+    const {utxoList, totalSelected} = utxoOutput;
+
+    const {
+        amount, fee, to, desc
+    } = ti;
+
+    // inputs
+    const txInputs = makeTxInputs(utxoList);
+
+    // outputs
+    const txOutputs = makeTxOutputs(amount, fee, to);
+    txOutputs.push(makeTxOutput(totalSelected, totalNeed, account.address));
+
+    /*
+    let totalNeed = new BN(0);
+
+    totalNeed = totalNeed.add(new BN(amount));
+    totalNeed = totalNeed.add(new BN(fee));
+
+    Object.keys(authRequires).forEach(key => {
+        const auth = authRequires[key];
+        totalNeed = totalNeed.add(new BN(auth.fee || 0));
+    });
+
+     */
+
+    // desc
+    const te = new TextEncoder();
+    const descBuff: Uint8Array = te.encode(desc);
+    const descArr: string[] = [];
+    descBuff.forEach(n => descArr.push(String.fromCharCode(n)));
+
+    // transaction
+    const tx = {
+        version: VERSION,
+        desc: btoa(descArr.join('')),
+        coinbase: false,
+        autogen: false,
+        timestamp: parseInt(Date.now().toString().padEnd(19, '0'), 10),
+        txInputs,
+        txOutputs,
+        initiator: account.address,
+        authRequire: Object.keys(authRequires),
+        nonce: getNonce()
+    } as Transaction;
+
+    if (response) {
+        // inputs ext
+        if (response.inputs) {
+            tx.txInputsExt = response.inputs;
+        }
+
+        // outputs ext
+        if (response.outputs) {
+            tx.txOutputsExt = response.outputs;
+        }
+
+        // contract request
+        if (response.requests) {
+            tx.contractRequests = response.requests;
+        }
+    }
+
+    const digestHash = encodeDataForDigestHash(tx, false);
+
+    // sign
+    const ec = new EC('p256');
+    const bnD = new BN(account.privateKey.D);
+    const privKey = ec.keyFromPrivate(bnD.toArray());
+    const sign = privKey.sign(digestHash);
+    const derbuf = sign.toDER().map((v: number) => String.fromCharCode(v));
+    const signatureInfos = [];
+    const signatureInfo = {
+        PublicKey: publicOrPrivateKeyToString(account.publicKey),
+        Sign: btoa(derbuf.join(''))
+    };
+    signatureInfos.push(signatureInfo);
+    tx.initiatorSigns = signatureInfos;
+
+    const digest = encodeDataForDigestHash(tx, true);
+
+    // txid
+    tx.txid = btoa(digest.map(v => String.fromCharCode(v)).join(''));
+
+    return tx;
 }

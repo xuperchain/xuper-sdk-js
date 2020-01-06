@@ -4,6 +4,7 @@
  */
 
 import {Cryptography, Language, Strength} from './constants';
+import BN from 'bn.js';
 
 /*
 -------------------------------------------------------------------------------
@@ -76,60 +77,6 @@ export interface ContracRequesttModel {
 
 export interface AuthModel {
     auth: string;
-
-}
-
-export interface TransactionModel {
-    /**
-     * Transaction ID
-     */
-    txid: string;
-
-    /**
-     * SDK version
-     */
-    version: number;
-
-    /**
-     * Transaction description
-     */
-    desc: string;
-
-    coinbase: boolean;
-    autogen: boolean;
-
-    /**
-     * Timestamp
-     */
-    timestamp: number;
-
-    /**
-     * Inputs
-     */
-    tx_inputs: any[];
-
-    /**
-     * Outputs
-     */
-    tx_outputs: any[];
-
-    /**
-     * Transaction initiator
-     */
-    initiator: string;
-
-    /**
-     * nonce
-     */
-    nonce: string;
-
-    tx_inputs_ext: any[];
-
-    tx_outputs_ext: any[];
-
-    contract_requests: any[];
-
-    initiator_signs: SignInfoModel[];
 }
 
 /*
@@ -141,7 +88,7 @@ Configuration
 export interface XuperEndorseConf {
     fee: string;
     server: string;
-    feeAddress: string;
+    complianceCheckfeeAddress: string;
     feeServiceAddress: string;
 }
 
@@ -167,7 +114,7 @@ export interface XuperOptions {
     /**
      * Endorse conf
      */
-    endorseConf: XuperEndorseConf;
+    endorseConf?: XuperEndorseConf;
 }
 
 /*
@@ -338,14 +285,14 @@ export interface SignInfoModel {
     Sign: string;
 }
 
-export interface TransactionInterface {
-    account: AccountModel;
+export interface TransactionInfomation {
+    amount: string | number | BN;
+    fee: string | number | BN;
+    to: string;
+    desc: string;
+}
 
-    /**
-     * Transaction ID
-     */
-    txid: string;
-
+export interface Transaction {
     /**
      * SDK version
      */
@@ -362,7 +309,7 @@ export interface TransactionInterface {
     /**
      * Transaction description
      */
-    desc: Uint8Array;
+    desc: string;
 
     /**
      * Inputs
@@ -380,19 +327,33 @@ export interface TransactionInterface {
     initiator: string;
 
     /**
+     * initiator sign
+     */
+    initiatorSigns?: SignInfoModel[];
+
+    /**
      * Nonce
      */
     nonce: string;
 
+    /**
+     * auth
+     */
     authRequire: string[];
+
+    /**
+     * auth sign
+     */
+    authRequireSigns?: any[];
+
+    /**
+     * Transaction ID
+     */
+    txid?: string;
 
     txInputsExt?: any[];
 
     txOutputsExt?: any[];
 
     contractRequests?: any[];
-
-    initiatorSigns?: SignInfoModel[];
-
-    authRequireSigns?: any[];
 }

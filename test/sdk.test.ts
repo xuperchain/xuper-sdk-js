@@ -15,7 +15,7 @@ const node = process.env.NODE || '';
 const endorseConf = {
     fee: '10',
     server: process.env.ENDORSE_SERVER || '',
-    feeAddress: process.env.FEEADDRESS || '',
+    complianceCheckfeeAddress: process.env.FEEADDRESS || '',
     feeServiceAddress: process.env.FEESERVICEADDRESS || ''
 };
 
@@ -306,10 +306,6 @@ describe('Xuper SDK', () => {
         console.info(JSON.stringify(result));
     });
 
-    /**
-     * Tracsaction
-     */
-
     test('generate new transaction should return transaction model', async () => {
         const xsdk = new XuperSDK({
             node,
@@ -325,9 +321,7 @@ describe('Xuper SDK', () => {
         );
 
         const tx = await xsdk.generateTransaction2(
-            process.env.TEST_TARGET_ADDRESS || '',
-            '100',
-            '10'
+
         );
     });
 

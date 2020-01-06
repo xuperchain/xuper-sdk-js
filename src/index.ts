@@ -11,17 +11,31 @@ import {
     Language, Strength, Cryptography, VERSION
 } from './constants';
 
-import {jsonEncode, publicOrPrivateKeyToString, postRequest} from './utils';
+import {
+    jsonEncode, publicOrPrivateKeyToString, postRequest, getNonce
+} from './utils';
 
 import {
     XuperSDKInterface, AccountModel, XuperOptions, PrivateKeyModel,
-    PublicKeyModel, ContracRequesttModel, TXOutput, UTXO
+    PublicKeyModel, ContracRequesttModel, Transaction
 } from './interfaces';
 
 import Errors from './error';
-
 import Account from './account';
-import Transaction from './transaction';
+
+function f() {
+    console.log('f(): evaluated');
+    return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+
+        console.log(target.options)
+
+        console.log(target)
+        console.log(propertyKey)
+        console.log(descriptor)
+
+        console.log('f(): called');
+    };
+}
 
 export default class XuperSDK implements XuperSDKInterface {
     accountIns: Account;
@@ -215,86 +229,6 @@ export default class XuperSDK implements XuperSDKInterface {
         );
     }
 
-    /**
-     * Endorse
-     * @param preExecWithUtxos
-     */
-    private makeCheckTransaction(preExecWithUtxos: any) {
-        const {fee, feeAddress} = this.options.endorseConf!;
-
-        const totalNeed = fee;
-        const {utxoOutput} = preExecWithUtxos;
-
-        const txInputs = this.makeTxInputs(utxoOutput.utxoList);
-
-        const output = this.makeTxOutput(utxoOutput.totalSelected,
-            totalNeed, this.accountModel!.address);
-
-        const txOutputs = this.makeTxOutputs(fee, 0, feeAddress);
-
-        txOutputs.push(output);
-
-        const tx = {
-            version: VERSION,
-            coinbase: false,
-            autogen: false,
-            timestamp: parseInt(Date.now().toString().padEnd(19, '0'), 10),
-            tx_inputs: txInputs,
-            tx_outputs: txOutputs,
-            initiator: this.accountModel!.address,
-            auth_require: [],
-            nonce: this.getNonce()
-        };
-
-        const digestHash = this.encodeDataForDigestHash(tx, false);
-
-        const ec = new EC('p256');
-
-        const bnD = new BN(this.accountModel!.privateKey.D);
-        const privKey = ec.keyFromPrivate(bnD.toArray());
-        const sign = privKey.sign(digestHash);
-        const derbuf = sign.toDER().map((v: number) => String.fromCharCode(v));
-
-        const signatureInfo = {
-            PublicKey: this.publicOrPrivateKeyToString(this.accountModel!.publicKey),
-            Sign: btoa(derbuf.join(''))
-        };
-
-        const signatureInfos = [];
-        signatureInfos.push(signatureInfo);
-        Object.assign(tx, {
-            initiator_signs: signatureInfos
-        });
-
-        const digest = this.encodeDataForDigestHash(tx, true);
-
-        Object.assign(tx, {
-            txid: btoa(digest.map(v => String.fromCharCode(v)).join(''))
-        });
-
-        return tx;
-    }
-
-    generateCheckTransaction(preExecWithUtxos: any): Transaction {
-        if (!this.accountModel) {
-            throw Errors.ACCOUNT_NOT_EXIST;
-        }
-        if (!this.options.endorseConf) {
-            throw Errors.INVALID_CONFIGURATION;
-        }
-
-        const {fee, feeAddress} = this.options.endorseConf;
-        const {utxoOutput} = preExecWithUtxos;
-
-        return new Transaction(
-            this.accountModel,
-            {utxoOutput},
-            feeAddress,
-            0,
-            fee
-        );
-    }
-
     async preExecTransactionWithUTXO(
         sum: string | number | BN,
         authRequire: string[] = [],
@@ -330,170 +264,72 @@ export default class XuperSDK implements XuperSDKInterface {
         return postRequest(`${this.options.endorseConf.server}/v1/endorsercall`, body);
     }
 
-    async generateTransaction2(
-        toAddress: string,
-        amount: string,
-        fee: string,
-        desc = ''
-    ) {
-        if (!this.accountModel) {
-            throw Errors.ACCOUNT_NOT_EXIST;
-        }
+    @f()
+    generateTransaction2() {
         if (!this.options.endorseConf) {
             throw Errors.INVALID_CONFIGURATION;
         }
+        const {fee, feeServiceAddress} = this.options.endorseConf!;
+    }
 
-        const authFuncMap = {
-            [this.options.endorseConf.feeServiceAddress]: async (checkTx: any, realTx: any) => {
-                const obj = {
-                    bcname: this.options.chain,
-                    realTx
-                };
+    /**
+     * Endorse
+     * @param preExecWithUtxos
+     */
+    private makeCheckTransaction(preExecWithUtxos: any) {
+        const {fee, feeServiceAddress} = this.options.endorseConf!;
 
-                const body = {
-                    RequestName: 'ComplianceCheck',
-                    BcName: 'xuper',
-                    Fee: checkTx,
-                    RequestData: btoa(JSON.stringify(obj))
-                };
+        const totalNeed = fee;
+        const {utxoOutput} = preExecWithUtxos;
 
-                const result = await postRequest(`${this.options.endorseConf.server}/v1/endorsercall`, body);
+        const txInputs = this.makeTxInputs(utxoOutput.utxoList);
 
-                if (!realTx.auth_require_signs) {
-                    // @ts-ignore
-                    // eslint-disable-next-line no-param-reassign
-                    // realTx.auth_require_signs = [];
-                }
+        const output = this.makeTxOutput(utxoOutput.totalSelected,
+            totalNeed, this.accountModel!.address);
 
-                // @ts-ignore
-                realTx.auth_require_signs.push(result.EndorserSign);
+        const txOutputs = this.makeTxOutputs(fee, 0, feeServiceAddress);
 
-                const digestWithEndorse = this.encodeDataForDigestHash(realTx, true);
+        txOutputs.push(output);
 
-                // eslint-disable-next-line no-param-reassign
-                realTx.txid = btoa(digestWithEndorse.map(v => String.fromCharCode(v)).join(''));
-
-                return realTx;
-            }
+        const tx = {
+            version: VERSION,
+            coinbase: false,
+            autogen: false,
+            timestamp: parseInt(Date.now().toString().padEnd(19, '0'), 10),
+            tx_inputs: txInputs,
+            tx_outputs: txOutputs,
+            initiator: this.accountModel!.address,
+            auth_require: [],
+            nonce: getNonce()
         };
 
-        let bnSum = new BN(0);
-        const bnAmount = new BN(amount);
-        const bnFee = new BN(fee);
-        bnSum = bnSum.add(bnAmount).add(bnFee);
+        const digestHash = this.encodeDataForDigestHash(tx, false);
 
-        const authRequire = [];
+        const ec = new EC('p256');
 
-        if (this.options.needEndorse) {
-            authRequire.push(this.options.endorseConf.feeServiceAddress);
-            const endorseFee = new BN(this.options.endorseConf.fee);
-            bnSum.add(endorseFee);
-        }
+        const bnD = new BN(this.accountModel!.privateKey.D);
+        const privKey = ec.keyFromPrivate(bnD.toArray());
+        const sign = privKey.sign(digestHash);
+        const derbuf = sign.toDER().map((v: number) => String.fromCharCode(v));
 
-        const preExecWithUtxos = await this.preExecTransactionWithUTXO(bnSum, authRequire);
-        const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
+        const signatureInfo = {
+            PublicKey: this.publicOrPrivateKeyToString(this.accountModel!.publicKey),
+            Sign: btoa(derbuf.join(''))
+        };
 
-        const checkTransaction = this.generateCheckTransaction(preExecWithUtxosObj);
-
-        let totalSelected: number[] = [];
-        const utxoList: UTXO[] = [];
-
-        checkTransaction.txOutputs.forEach((
-            txOutput: TXOutput, index: number
-        ) => {
-            if (txOutput.toAddr === btoa(this.accountModel!.address)) {
-                const utxo: UTXO = {
-                    amount: txOutput.amount,
-                    toAddr: txOutput.toAddr,
-                    refTxid: checkTransaction.txid,
-                    refOffset: index
-                };
-                utxoList.push(utxo);
-                totalSelected = atob(utxo.amount).split('').map(w => w.charCodeAt(0));
-            }
+        const signatureInfos = [];
+        signatureInfos.push(signatureInfo);
+        Object.assign(tx, {
+            initiator_signs: signatureInfos
         });
 
-        const utxoOutputs = {
-            utxoList,
-            totalSelected
-        };
+        const digest = this.encodeDataForDigestHash(tx, true);
 
-        const transaction = new Transaction(this.accountModel,
-            {...preExecWithUtxosObj, utxoOutputs},
-            toAddress, amount, fee, desc, authRequire);
+        Object.assign(tx, {
+            txid: btoa(digest.map(v => String.fromCharCode(v)).join(''))
+        });
 
-        const formatCheckTxData = this.convertCheckTransaction(checkTransaction);
-        const formatTxData = this.convertTransaction(transaction);
-
-        // if (authRequire.length > 0) {
-        //
-        // }
-    }
-
-    convertCheckTransaction(checkTransaction: Transaction): any {
-        const {
-            version,
-            coinbase,
-            autogen,
-            timestamp,
-            txInputs,
-            txOutputs,
-            initiator,
-            authRequire,
-            nonce,
-            initiatorSigns,
-            txid
-        } = checkTransaction;
-
-        return {
-            version,
-            coinbase,
-            autogen,
-            timestamp,
-            tx_inputs: txInputs,
-            tx_outputs: txOutputs,
-            initiator,
-            auth_require: authRequire,
-            nonce,
-            initiator_signs: initiatorSigns,
-            txid
-        };
-    }
-
-    convertTransaction(transaction: Transaction): any {
-        const {
-            version,
-            coinbase,
-            autogen,
-            timestamp,
-            txInputs,
-            txOutputs,
-            initiator,
-            authRequire,
-            nonce,
-            initiatorSigns,
-            txid,
-            txInputsExt,
-            txOutputsExt,
-            contractRequests
-        } = transaction;
-
-        return {
-            version,
-            coinbase,
-            autogen,
-            timestamp,
-            tx_inputs: txInputs,
-            tx_outputs: txOutputs,
-            initiator,
-            auth_require: authRequire,
-            nonce,
-            initiator_signs: initiatorSigns,
-            txid,
-            tx_inputs_ext: txInputsExt,
-            tx_outputs_ext: txOutputsExt,
-            contract_requests: contractRequests
-        };
+        return tx;
     }
 
     async generateTransaction(
@@ -562,7 +398,7 @@ export default class XuperSDK implements XuperSDKInterface {
             tx_outputs: txOutputs,
             initiator: this.accountModel!.address,
             auth_require: authRequire,
-            nonce: this.getNonce()
+            nonce: getNonce()
         };
 
         if (preExecWithUtxosObj.response) {
@@ -585,7 +421,6 @@ export default class XuperSDK implements XuperSDKInterface {
         const digestHash = this.encodeDataForDigestHash(tx, false);
 
         const ec = new EC('p256');
-
         const bnD = new BN(this.accountModel!.privateKey.D);
         const privKey = ec.keyFromPrivate(bnD.toArray());
         const sign = privKey.sign(digestHash);
@@ -737,7 +572,7 @@ export default class XuperSDK implements XuperSDKInterface {
                     tx_outputs: txOutputs,
                     initiator: this.accountModel!.address,
                     auth_require: authRequire,
-                    nonce: this.getNonce()
+                    nonce: getNonce()
                 };
 
                 if (preExecWithUtxosObj.response) {
@@ -1092,10 +927,6 @@ export default class XuperSDK implements XuperSDKInterface {
         console.warn(tx);
         const result = await this.postTransaction(tx);
         console.log(result);
-    }
-
-    private getNonce(): string {
-        return (~~(Date.now() / 1000).toString()) + crypto.getRandomValues(new Uint32Array(1))[0].toString();
     }
 
     private makeTxOutput(
