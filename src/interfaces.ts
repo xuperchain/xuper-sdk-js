@@ -3,8 +3,8 @@
  * Created by xinyi on 2019/12/19
  */
 
-import {Cryptography, Language, Strength} from './constants';
 import BN from 'bn.js';
+import {Cryptography, Language, Strength} from './constants';
 
 /*
 -------------------------------------------------------------------------------

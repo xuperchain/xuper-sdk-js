@@ -26,12 +26,11 @@ import Account from './account';
 function f() {
     console.log('f(): evaluated');
     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+        console.log(target.options);
 
-        console.log(target.options)
-
-        console.log(target)
-        console.log(propertyKey)
-        console.log(descriptor)
+        console.log(target);
+        console.log(propertyKey);
+        console.log(descriptor);
 
         console.log('f(): called');
     };
