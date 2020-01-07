@@ -261,7 +261,7 @@ export default class XuperSDK implements XuperSDKInterface {
             throw Errors.ACCOUNT_NOT_EXIST;
         }
 
-        const {fee: endorseFee, feeServiceAddress} = this.options.endorseConf;
+        const {fee: endorseFee, complianceCheckfeeAddress, feeServiceAddress} = this.options.endorseConf;
 
         const {amount, fee} = ti;
 
@@ -331,7 +331,7 @@ export default class XuperSDK implements XuperSDKInterface {
         const {utxoOutput} = preExecWithUtxosObj;
 
         const checkTx = generateTransaction(
-            this.accountModel, {utxoOutput}, [], {amount: endorseFee, fee: 0, to: feeServiceAddress}
+            this.accountModel, {utxoOutput}, [], {amount: endorseFee, fee: 0, to: complianceCheckfeeAddress}
         );
 
         let totalSelected: number[] = [];

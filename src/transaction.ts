@@ -185,7 +185,6 @@ export default function generateTransaction(
     // transaction
     const tx = {
         version: VERSION,
-        desc: btoa(descArr.join('')),
         coinbase: false,
         autogen: false,
         timestamp: parseInt(Date.now().toString().padEnd(19, '0'), 10),
@@ -195,6 +194,10 @@ export default function generateTransaction(
         authRequire: authRequires,
         nonce: getNonce()
     } as Transaction;
+
+    if (descArr.length > 0) {
+        tx.desc = btoa(descArr.join(''));
+    }
 
     if (response) {
         // inputs ext
