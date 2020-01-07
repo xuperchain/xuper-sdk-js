@@ -286,8 +286,8 @@ export default class XuperSDK implements XuperSDKInterface {
                         RequestData: btoa(JSON.stringify(obj))
                     };
 
-                    console.warn(checkTx.txOutputs)
-                    console.warn(tx.txOutputs)
+                    console.warn(checkTx.txOutputs);
+                    console.warn(tx.txOutputs);
                     console.log(body);
 
                     const tar = `${this.options.endorseConf!.server}/v1/endorsercall`;
@@ -297,7 +297,7 @@ export default class XuperSDK implements XuperSDKInterface {
                         body: JSON.stringify(body)
                     })
                         .then(response => {
-                            console.log('============1')
+                            console.log('============1');
                             if (!response.ok) {
                                 return response.json().then(res => {
                                     throw res;

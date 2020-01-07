@@ -11,7 +11,9 @@ import Errors from './error';
 import {
     AccountModel, Transaction, TXOutput, TXInput, TransactionInfomation, UTXO
 } from './interfaces';
-import {getNonce, jsonEncode, publicOrPrivateKeyToString, convert} from './utils';
+import {
+    getNonce, jsonEncode, publicOrPrivateKeyToString, convert
+} from './utils';
 
 function makeTxOutput(
     totalSelected: BN | string | number, totalNeed: BN | string | number, toAddress: string
@@ -237,7 +239,7 @@ export default function generateTransaction(
 
 export async function signTx(signFunc: Function): Promise<Transaction> {
     const tx = await signFunc();
-    console.log(tx)
+    console.log(tx);
     const digest = encodeDataForDigestHash(tx, true);
     // txid
     tx.txid = btoa(digest.map(v => String.fromCharCode(v)).join(''));
