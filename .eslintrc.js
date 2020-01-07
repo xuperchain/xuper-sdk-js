@@ -46,6 +46,7 @@ module.exports = {
         'comma-dangle': ["error", "never"],
         'no-useless-escape': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
+        'no-param-reassign': ["error", { "props": true, "ignorePropertyModificationsForRegex": ["^tx"] }],
         // Todo
         '@typescript-eslint/ban-ts-ignore': 'off',
         'no-unused-expressions': 'off',

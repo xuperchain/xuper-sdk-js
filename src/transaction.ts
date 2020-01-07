@@ -11,7 +11,7 @@ import Errors from './error';
 import {
     AccountModel, Transaction, TXOutput, TXInput, TransactionInfomation, UTXO
 } from './interfaces';
-import {getNonce, jsonEncode, publicOrPrivateKeyToString} from './utils';
+import {getNonce, jsonEncode, publicOrPrivateKeyToString, convert} from './utils';
 
 function makeTxOutput(
     totalSelected: BN | string | number, totalNeed: BN | string | number, toAddress: string
@@ -149,8 +149,11 @@ function encodeDataForDigestHash(tx: Transaction, include_signs: boolean) {
     return sha256.x2(Array.from(bytes), {asBytes: true});
 }
 
-function generateTransaction(
-    account: AccountModel, totalNeed: BN, preExecWithUtxos: any, authRequires: any, ti: TransactionInfomation
+export default function generateTransaction(
+    account: AccountModel,
+    preExecWithUtxos: any,
+    authRequires: any,
+    ti: TransactionInfomation
 ): Transaction {
     const {utxoOutput, response} = preExecWithUtxos;
     const {utxoList, totalSelected} = utxoOutput;
@@ -164,20 +167,12 @@ function generateTransaction(
 
     // outputs
     const txOutputs = makeTxOutputs(amount, fee, to);
-    txOutputs.push(makeTxOutput(totalSelected, totalNeed, account.address));
 
-    /*
     let totalNeed = new BN(0);
-
     totalNeed = totalNeed.add(new BN(amount));
     totalNeed = totalNeed.add(new BN(fee));
 
-    Object.keys(authRequires).forEach(key => {
-        const auth = authRequires[key];
-        totalNeed = totalNeed.add(new BN(auth.fee || 0));
-    });
-
-     */
+    txOutputs.push(makeTxOutput(totalSelected, totalNeed, account.address));
 
     // desc
     const te = new TextEncoder();
@@ -195,7 +190,7 @@ function generateTransaction(
         txInputs,
         txOutputs,
         initiator: account.address,
-        authRequire: Object.keys(authRequires),
+        authRequire: authRequires,
         nonce: getNonce()
     } as Transaction;
 
@@ -237,5 +232,14 @@ function generateTransaction(
     // txid
     tx.txid = btoa(digest.map(v => String.fromCharCode(v)).join(''));
 
+    return tx;
+}
+
+export async function signTx(signFunc: Function): Promise<Transaction> {
+    const tx = await signFunc();
+    console.log(tx)
+    const digest = encodeDataForDigestHash(tx, true);
+    // txid
+    tx.txid = btoa(digest.map(v => String.fromCharCode(v)).join(''));
     return tx;
 }

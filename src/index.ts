@@ -12,29 +12,18 @@ import {
 } from './constants';
 
 import {
-    jsonEncode, publicOrPrivateKeyToString, postRequest, getNonce
+    jsonEncode, publicOrPrivateKeyToString, postRequest, getNonce, convert
 } from './utils';
 
 import {
     XuperSDKInterface, AccountModel, XuperOptions, PrivateKeyModel,
-    PublicKeyModel, ContracRequesttModel, Transaction
+    PublicKeyModel, ContracRequesttModel, Transaction, TransactionInfomation,
+    UTXO, TXOutput
 } from './interfaces';
 
 import Errors from './error';
 import Account from './account';
-
-function f() {
-    console.log('f(): evaluated');
-    return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-        console.log(target.options);
-
-        console.log(target);
-        console.log(propertyKey);
-        console.log(descriptor);
-
-        console.log('f(): called');
-    };
-}
+import generateTransaction, {signTx} from './transaction';
 
 export default class XuperSDK implements XuperSDKInterface {
     accountIns: Account;
@@ -263,12 +252,125 @@ export default class XuperSDK implements XuperSDKInterface {
         return postRequest(`${this.options.endorseConf.server}/v1/endorsercall`, body);
     }
 
-    @f()
-    generateTransaction2() {
+    async generateTransaction2(ti: TransactionInfomation) {
         if (!this.options.endorseConf) {
             throw Errors.INVALID_CONFIGURATION;
         }
-        const {fee, feeServiceAddress} = this.options.endorseConf!;
+
+        if (!this.accountModel) {
+            throw Errors.ACCOUNT_NOT_EXIST;
+        }
+
+        const {fee: endorseFee, feeServiceAddress} = this.options.endorseConf;
+
+        const {amount, fee} = ti;
+
+        let totalNeed = new BN(0);
+
+        const authRequires: any = {};
+
+
+        if (this.options.endorseConf) {
+            authRequires[feeServiceAddress] = {
+                fee: endorseFee,
+                sign: (checkTx: Transaction, tx: Transaction) => {
+                    const obj = {
+                        bcname: this.options.chain,
+                        tx: convert(tx)
+                    };
+
+                    const body = {
+                        RequestName: 'ComplianceCheck',
+                        BcName: 'xuper',
+                        Fee: convert(checkTx),
+                        RequestData: btoa(JSON.stringify(obj))
+                    };
+
+                    console.warn(checkTx.txOutputs)
+                    console.warn(tx.txOutputs)
+                    console.log(body);
+
+                    const tar = `${this.options.endorseConf!.server}/v1/endorsercall`;
+
+                    return () => fetch(tar, {
+                        method: 'POST',
+                        body: JSON.stringify(body)
+                    })
+                        .then(response => {
+                            console.log('============1')
+                            if (!response.ok) {
+                                return response.json().then(res => {
+                                    throw res;
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then((result: any) => {
+                            if (!tx.authRequireSigns) {
+                                tx.authRequireSigns = [];
+                            }
+
+                            tx.authRequireSigns.push(result.EndorserSign);
+                            return tx;
+                        });
+                }
+            };
+        }
+
+        totalNeed = totalNeed.add(new BN(amount));
+        totalNeed = totalNeed.add(new BN(fee));
+
+        Object.keys(authRequires).forEach(key => {
+            const auth = authRequires[key];
+            totalNeed = totalNeed.add(new BN(auth.fee || 0));
+        });
+
+        const preExecWithUtxos = await this.preExecTransactionWithUTXO(totalNeed, Object.keys(authRequires));
+        const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
+
+        const {utxoOutput} = preExecWithUtxosObj;
+
+        const checkTx = generateTransaction(
+            this.accountModel, {utxoOutput}, [], {amount: endorseFee, fee: 0, to: feeServiceAddress}
+        );
+
+        let totalSelected: number[] = [];
+        const utxoList: UTXO[] = [];
+
+        checkTx.txOutputs.forEach((
+            txOutput: TXOutput, index: number
+        ) => {
+            if (txOutput.toAddr === btoa(this.accountModel!.address)) {
+                const utxo: UTXO = {
+                    amount: txOutput.amount,
+                    toAddr: txOutput.toAddr,
+                    refTxid: checkTx.txid!,
+                    refOffset: index
+                };
+                utxoList.push(utxo);
+                totalSelected = atob(utxo.amount).split('').map(w => w.charCodeAt(0));
+            }
+        });
+
+        const newUtxoOutput = {
+            utxoList,
+            totalSelected
+        };
+
+        const tx = generateTransaction(
+            this.accountModel,
+            {...preExecWithUtxosObj, utxoOutput: newUtxoOutput},
+            Object.keys(authRequires),
+            ti
+        );
+
+        // console.log(tx);
+
+        const auth = authRequires[feeServiceAddress];
+
+        const authFunc = auth.sign(checkTx, tx);
+
+        console.log(await signTx(authFunc));
     }
 
     /**

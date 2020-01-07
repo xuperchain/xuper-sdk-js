@@ -289,7 +289,7 @@ export interface TransactionInfomation {
     amount: string | number | BN;
     fee: string | number | BN;
     to: string;
-    desc: string;
+    desc?: string;
 }
 
 export interface Transaction {

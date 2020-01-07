@@ -167,3 +167,26 @@ export async function postRequest(t: string, b: object): Promise<any> {
         }
     );
 }
+
+export function convert(tar: any): any {
+    let format: any = {};
+
+    if (tar instanceof Array) {
+        const newTar = [...tar];
+        format = Object.assign([], newTar.map(v => convert(v)));
+    } else if (tar instanceof Object) {
+        const newTar = {...tar};
+        Object.keys(newTar).forEach(key => {
+            const value = newTar[key];
+            format[
+                /^[a-z]/.test(key)
+                    ? key.replace(/([A-Z]{1})/g, '_$1').toLowerCase()
+                    : key
+            ] = convert(value);
+        });
+    } else {
+        format = tar;
+    }
+
+    return format;
+}

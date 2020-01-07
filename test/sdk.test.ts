@@ -320,9 +320,11 @@ describe('Xuper SDK', () => {
             Cryptography.EccFIPS
         );
 
-        const tx = await xsdk.generateTransaction2(
-
-        );
+        const tx = await xsdk.generateTransaction2({
+            to: process.env.TEST_TARGET_ADDRESS || '',
+            amount: '100',
+            fee: '0'
+            });
     });
 
     // test('generate transaction with desc should return transaction model', async () => {
