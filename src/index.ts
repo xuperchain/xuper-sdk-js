@@ -224,7 +224,7 @@ export default class XuperSDK implements XuperSDKInterface {
      * Generate simple transaction
      * @param ti
      */
-    async generateTransaction(ti: TransactionInfomation) {
+    async generateTransaction(ti: TransactionInfomation): Promise<Transaction> {
         if (!this.options.endorseConf) {
             throw Errors.INVALID_CONFIGURATION;
         }
@@ -259,11 +259,11 @@ export default class XuperSDK implements XuperSDKInterface {
      * @param authRequires
      * @param preExecWithUtxosObj
      */
-    async makeTransaction(
+    private async makeTransaction(
         ti: TransactionInfomation,
         authRequires: {[propName: string]: AuthInterface},
         preExecWithUtxosObj: any
-    ) {
+    ): Promise<Transaction> {
         if (!this.options.endorseConf) {
             throw Errors.INVALID_CONFIGURATION;
         }
@@ -371,12 +371,19 @@ export default class XuperSDK implements XuperSDKInterface {
         });
     }
 
+    /**
+     * Invoke contract
+     * @param contractName
+     * @param methodName
+     * @param moduleName
+     * @param args
+     */
     async invokeContract(
         contractName: string,
         methodName: string,
         moduleName: string,
         args: any
-    ) {
+    ): Promise<any> {
         if (!this.accountModel) {
             throw 'No account information';
         }
@@ -417,6 +424,10 @@ export default class XuperSDK implements XuperSDKInterface {
         return this.postTransaction(tx);
     }
 
+    /**
+     * Create contract account
+     * @param contractAccountName
+     */
     async createContractAccount(contractAccountName: number) {
         if (!this.accountModel) {
             throw 'No account information';
@@ -446,7 +457,7 @@ export default class XuperSDK implements XuperSDKInterface {
         };
 
         const invokeRequests: ContracRequesttModel[] = [{
-            module_name: 'xkernel', // 'wasm',
+            module_name: 'xkernel',
             method_name: 'NewAccount',
             args
         }];
@@ -476,13 +487,21 @@ export default class XuperSDK implements XuperSDKInterface {
         return this.postTransaction(tx);
     }
 
+    /**
+     * Deploy wasm contract
+     * @param contractAccount
+     * @param contractName
+     * @param code
+     * @param runtime
+     * @param initArgs
+     */
     async deployWasmContract(
         contractAccount: string,
         contractName: string,
         code: string,
         runtime: string,
         initArgs: any
-    ) {
+    ): Promise<any> {
         if (!this.accountModel) {
             throw 'No account information';
         }
