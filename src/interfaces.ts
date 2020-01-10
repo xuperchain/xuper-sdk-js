@@ -322,7 +322,7 @@ export interface XuperSDKInterface {
      * Generate transaction
      * @param ti
      */
-    generateTransaction(ti: TransactionInfomation): Promise<Transaction>
+    generateTransaction(ti: TransactionInfomation): Promise<Transaction>;
 
     /**
      * Post transaction

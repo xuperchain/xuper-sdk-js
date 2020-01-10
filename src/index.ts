@@ -4,8 +4,6 @@
  */
 
 import BN from 'bn.js';
-import sha256 from 'sha256';
-import {ec as EC} from 'elliptic';
 
 import {
     Language, Strength, Cryptography
