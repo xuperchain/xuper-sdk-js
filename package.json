@@ -11,7 +11,8 @@
         "lint:fix": "eslint src/*.ts --fix",
         "test": "jest",
         "commit": "git-cz",
-        "release": "standard-version"
+        "prerelease": "./node_modules/.bin/webpack --colors --progress --config ./scripts/webpack.prod.js",
+        "release": "git add <file(s) to commit> && standard-version -a"
     },
     "repository": {
         "type": "git",
