@@ -1,6 +1,6 @@
 {
     "name": "@xuperchain/xuper-sdk",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "description": "A simple JS(TS) SDK for XuperOS",
     "main": "lib/index.js",
     "types": "lib/index.d.js",
@@ -12,7 +12,7 @@
         "test": "jest",
         "commit": "git-cz",
         "prerelease": "./node_modules/.bin/webpack --colors --progress --config ./scripts/webpack.prod.js",
-        "release": "git add <file(s) to commit> && standard-version -a"
+        "release": "standard-version -a"
     },
     "repository": {
         "type": "git",
