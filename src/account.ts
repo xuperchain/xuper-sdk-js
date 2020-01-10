@@ -208,7 +208,6 @@ export default class Account implements AccountInerface {
 
         const mnemonicBitSize = originMnemonic.length * 11;
 
-        // 进一步计算出校验位的比特位长度
         const checksumBitSize = mnemonicBitSize % 32;
 
         let bnRes = new BN(0);

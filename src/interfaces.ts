@@ -75,8 +75,9 @@ export interface ContracRequesttModel {
     args: any;
 }
 
-export interface AuthModel {
-    auth: string;
+export interface AuthInterface {
+    fee: string | number | BN;
+    sign: Function;
 }
 
 /*
@@ -189,7 +190,7 @@ export interface XuperSDKInterface {
      * @param amount
      * @param fee
      */
-    preExecTransaction(toAddress: string, amount: string, fee: string): Promise<any>;
+    // preExecTransaction(toAddress: string, amount: string, fee: string): Promise<any>;
 
     /**
      * Generate transaction
@@ -198,7 +199,7 @@ export interface XuperSDKInterface {
      * @param fee
      * @param desc
      */
-    makeTrasaction(toAddress: string, amount: string, fee: string, desc: string): Promise<any>;
+    // makeTrasaction(toAddress: string, amount: string, fee: string, desc: string): Promise<any>;
 
     /**
      * Post transaction

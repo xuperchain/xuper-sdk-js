@@ -9,7 +9,9 @@
         "docs": "typedoc --mode file --out docs src",
         "lint": "eslint src/*.ts",
         "lint:fix": "eslint src/*.ts --fix",
-        "test": "jest"
+        "test": "jest",
+        "commit": "git-cz",
+        "release": "standard-version"
     },
     "repository": {
         "type": "git",
@@ -34,6 +36,7 @@
         "@typescript-eslint/parser": "^2.12.0",
         "clean-webpack-plugin": "^3.0.0",
         "coveralls": "^3.0.9",
+        "cz-conventional-changelog": "^3.0.2",
         "dotenv": "^8.2.0",
         "eslint": "^6.7.2",
         "eslint-config-airbnb-base": "^14.0.0",
@@ -41,6 +44,7 @@
         "husky": "^3.1.0",
         "jest": "^24.9.0",
         "jest-environment-jsdom-fourteen": "^1.0.1",
+        "standard-version": "^7.0.1",
         "ts-jest": "^24.2.0",
         "ts-loader": "^6.2.1",
         "typedoc": "^0.15.5",
@@ -68,5 +72,10 @@
         "pbkdf2": "^3.0.17",
         "ripemd160-min": "0.0.6",
         "sha256": "^0.2.0"
+    },
+    "config": {
+        "commitizen": {
+            "path": "./node_modules/cz-conventional-changelog"
+        }
     }
 }

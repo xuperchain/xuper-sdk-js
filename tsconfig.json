@@ -66,10 +66,16 @@
         /* Advanced Options */
         "forceConsistentCasingInFileNames": true,
         /* Disallow inconsistently-cased references to the same file. */
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "lib": [
+            "dom",
+            "es5",
+            "scripthost",
+            "es2015.promise"
+        ]
     },
     "exclude": [
-//        "node_modules",
+        "node_modules",
         "test"
     ]
 }

@@ -51,7 +51,7 @@ xsdk.createAccount(
     
 - Query transaction [Detail](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#querytransaction)
 
-- More... [documents](https://xuperchain.github.io/xuper-sdk-js/)
+- [More...](https://xuperchain.github.io/xuper-sdk-js/)
 
 ## Todos
 
