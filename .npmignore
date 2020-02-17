@@ -15,3 +15,4 @@ jest.config.js
 tsconfig.json
 typedoc.json
 .eslintrc.js
+CHANGELOG.md

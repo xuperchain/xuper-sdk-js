@@ -4,6 +4,7 @@
  */
 
 /* eslint-disable no-undef */
+jest.setTimeout(10000);
 
 import XuperSDK, {Cryptography, Language, Strength} from '../src';
 
@@ -107,9 +108,13 @@ describe('Xuper SDK', () => {
     });
 
     if (process.env.LOCAL_ENV !== 'XuperOS') {
-        console.warn('Skip');
+        console.warn('Skip unsupported tests');
         return;
     }
+
+    /**
+     * Basic information
+     */
 
     test('get local account balance should return balance struct', async () => {
         const xsdk = new XuperSDK({node, chain});
@@ -147,6 +152,10 @@ describe('Xuper SDK', () => {
         expect(balanceDetail.tfds[0].tfd[1]).toHaveProperty('balance');
     });
 
+    /**
+     * Transaction
+     */
+
     test('post pre-transaction with utxo should return bcname, response, utxoOutput', async () => {
         const xsdk = new XuperSDK({
             node,
@@ -161,15 +170,12 @@ describe('Xuper SDK', () => {
             Cryptography.EccFIPS
         );
 
-        const result = await xsdk.preExecTransaction(
-            process.env.TEST_TARGET_ADDRESS || '',
-            '0',
-            '1'
+        const result = await xsdk.preExecTransactionWithUTXO(
+            '1',
+            []
         );
 
         const resultObj = JSON.parse(atob(result.ResponseData));
-
-        console.log(resultObj.utxoOutput)
         expect(resultObj.bcname).toEqual(chain);
         expect(resultObj.header).toHaveProperty('logid');
         expect(resultObj.utxoOutput).toHaveProperty('utxoList');
@@ -190,10 +196,9 @@ describe('Xuper SDK', () => {
         );
 
         try {
-            const result = await xsdk.preExecTransaction(
-                process.env.TEST_TARGET_ADDRESS || '',
-                '0',
-                '1'
+            const result = await xsdk.preExecTransactionWithUTXO(
+                '1',
+                []
             );
         } catch (err) {
             expect(err).toHaveProperty('error');
@@ -214,18 +219,18 @@ describe('Xuper SDK', () => {
             Cryptography.EccFIPS
         );
 
-        const tx = await xsdk.makeTrasaction(
-            process.env.TEST_TARGET_ADDRESS || '',
-            '100',
-            '10'
-        );
+        const tx = await xsdk.generateTransaction({
+            to: process.env.TEST_TARGET_ADDRESS || '',
+            amount: '100',
+            fee: '0'
+        });
 
         const result = await xsdk.postTransaction(tx);
         expect(result.header).toHaveProperty('logid');
         expect(result.header).not.toHaveProperty('error');
     });
 
-    test('invoke contract should return', async () => {
+    test('generate transaction with desc should return transaction model', async () => {
         const xsdk = new XuperSDK({
             node,
             chain,
@@ -239,13 +244,43 @@ describe('Xuper SDK', () => {
             Cryptography.EccFIPS
         );
 
-        await xsdk.invokeContract('', 'Get', 'xkernel', {
-            Bucket: btoa('XCAccount'),
-            Key: btoa('XC1111111111111111@xuper')
+        const tx = await xsdk.generateTransaction({
+            to: process.env.TEST_TARGET_ADDRESS || '',
+            amount: '100',
+            fee: '10',
+            desc: 'Hi 你好 こんにちは'
         });
+
+        const result = await xsdk.postTransaction(tx);
+        expect(result.header).toHaveProperty('logid');
+        expect(result.header).not.toHaveProperty('error');
     });
 
-    test('createContractAccount', async () => {
+    test('query transaction should return transaction status', async () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain,
+            needEndorse: true,
+            endorseConf
+        });
+
+        const txid = '/aGXihDS0VmgQCzazB2gtTHD77P1UPh4wRicDp5jdZA=';
+
+        const result = await xsdk.queryTransaction(txid);
+        expect(result.header).toHaveProperty('logid');
+        expect(result.header).not.toHaveProperty('error');
+        expect(result.txid).toEqual(txid);
+        expect(result).toHaveProperty('status');
+    });
+
+    // test('post transaction should return logid', async() => {});
+
+    /**
+     * Contract
+     */
+
+    // create contract account
+    test('create contract account should return successful transaction result', async () => {
         const xsdk = new XuperSDK({
             node,
             chain,
@@ -259,10 +294,16 @@ describe('Xuper SDK', () => {
             Cryptography.EccFIPS
         );
 
-        await xsdk.createContractAccount(1234567890666660);
+        const result = await xsdk.createContractAccount(
+            parseInt('1234567890' + (~~(Math.random() * 10 ** 6 - 10 ** 6) + 10 ** 6).toString())
+        );
+
+        expect(result.header).toHaveProperty('logid');
+        expect(result.header).not.toHaveProperty('error');
     });
 
-    test('testDeployWasmContract', async () => {
+    // deploy contract
+    test('deploy webassembly contract should return successful transaction result', async () => {
         const xsdk = new XuperSDK({
             node,
             chain,
@@ -282,31 +323,22 @@ describe('Xuper SDK', () => {
         // @ts-ignore
         window.file.forEach(n => codeBuf.push(String.fromCharCode(n)));
 
-        await xsdk.deployWasmContract(
+        const result = await xsdk.deployWasmContract(
             'XC1234567890666660@xuper',
-            'counter',
+            `counter${~~(Math.random() * 10 ** 3 - 10 ** 3) + 10 ** 3}`,
             codeBuf.join(''),
             'c',
             {
                 creator: 'xchain'
             }
         );
+
+        expect(result.header).toHaveProperty('logid');
+        expect(result.header).not.toHaveProperty('error');
     });
 
-    test('query transaction id should return status', async () => {
-        const xsdk = new XuperSDK({
-            node,
-            chain,
-            needEndorse: true,
-            endorseConf
-        });
-
-        const result = await xsdk.queryTransaction('/aGXihDS0VmgQCzazB2gtTHD77P1UPh4wRicDp5jdZA=');
-
-        console.info(JSON.stringify(result));
-    });
-
-    test('generate new transaction should return transaction model', async () => {
+    // invoke contract
+    test('invoke webassembly contract should return successful transaction result', async () => {
         const xsdk = new XuperSDK({
             node,
             chain,
@@ -320,51 +352,12 @@ describe('Xuper SDK', () => {
             Cryptography.EccFIPS
         );
 
-        const tx = await xsdk.generateTransaction2({
-            to: process.env.TEST_TARGET_ADDRESS || '',
-            amount: '100',
-            fee: '0'
-            });
+        const result = await xsdk.invokeContract('', 'Get', 'xkernel', {
+            Bucket: btoa('XCAccount'),
+            Key: btoa('XC1111111111111111@xuper')
+        });
+
+        expect(result.header).toHaveProperty('logid');
+        expect(result.header).not.toHaveProperty('error');
     });
-
-    // test('generate transaction with desc should return transaction model', async () => {
-    //     const xsdk = new XuperSDK({
-    //         node,
-    //         chain,
-    //         needEndorse: true,
-    //         endorseConf
-    //     });
-    //
-    //     xsdk.revertAccount(
-    //         process.env.TEST_MNEMONIC || '',
-    //         Language.SimplifiedChinese,
-    //         Cryptography.EccFIPS
-    //     );
-    //
-    //     const tx = await xsdk.makeTrasaction(
-    //         process.env.TEST_TARGET_ADDRESS || '',
-    //         '100',
-    //         '10',
-    //         'Hi 你好 こんにちは'
-    //     );
-    //
-    //     const result = await xsdk.postTransaction(tx);
-    //     expect(result.header).toHaveProperty('logid');
-    //     expect(result.header).not.toHaveProperty('error');
-    // });
-
-    test('query transaction should return transaction status', async () => {});
-
-    /**
-     * Contract
-     */
-
-    // create contract account
-    test('create contract account should return successful transaction result', async () => {});
-
-    // deploy contract
-    test('deploy webassembly contract should return successful transaction result', async () => {});
-
-    // invoke contract
-    test('invoke webassembly contract should return successful transaction result', async () => {});
 });

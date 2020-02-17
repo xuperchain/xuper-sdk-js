@@ -168,6 +168,10 @@ export async function postRequest(t: string, b: object): Promise<any> {
     );
 }
 
+/**
+ * Camel to underline
+ * @param tar
+ */
 export function convert(tar: any): any {
     let format: any = {};
 

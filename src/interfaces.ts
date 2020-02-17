@@ -75,9 +75,132 @@ export interface ContracRequesttModel {
     args: any;
 }
 
-export interface AuthModel {
-    auth: string;
+export interface AuthInterface {
+    fee: string | number | BN;
+    sign: Function;
 }
+
+/**
+ * @hidden
+ * Model Interface - transaction input
+ */
+export interface TXInput {
+    refTxid: string;
+    refOffset: number;
+    fromAddr: string;
+    amount: string;
+    frozenHeight?: number;
+}
+
+/**
+ * @hidden
+ * Model Interface - transaction output
+ */
+export interface TXOutput {
+    amount: string;
+    toAddr: string;
+}
+
+/**
+ * @hidden
+ * Model Interface - UTXO
+ */
+export interface UTXO {
+    amount: string;
+    toAddr: string;
+    refOffset: number;
+    refTxid: string;
+}
+
+/**
+ * @hidden
+ * Model Interface - signinfo
+ */
+export interface SignInfoModel {
+    PublicKey: string;
+    Sign: string;
+}
+
+/**
+ * @hidden
+ * Model Interface - transaction infomation
+ */
+export interface TransactionInfomation {
+    amount: string | number | BN;
+    fee: string | number | BN;
+    to: string;
+    desc?: string;
+}
+
+/**
+ * Model Interface - Transaction
+ */
+export interface Transaction {
+    /**
+     * SDK version
+     */
+    version: number;
+
+    /**
+     * Timestamp
+     */
+    timestamp: number;
+
+    coinbase: boolean;
+    autogen: boolean;
+
+    /**
+     * Transaction description
+     */
+    desc: string;
+
+    /**
+     * Inputs
+     */
+    txInputs: TXInput[];
+
+    /**
+     * Outputs
+     */
+    txOutputs: any[];
+
+    /**
+     * Transaction initiator
+     */
+    initiator: string;
+
+    /**
+     * initiator sign
+     */
+    initiatorSigns?: SignInfoModel[];
+
+    /**
+     * Nonce
+     */
+    nonce: string;
+
+    /**
+     * auth
+     */
+    authRequire: string[];
+
+    /**
+     * auth sign
+     */
+    authRequireSigns?: any[];
+
+    /**
+     * Transaction ID
+     */
+    txid?: string;
+
+    txInputsExt?: any[];
+
+    txOutputsExt?: any[];
+
+    contractRequests?: any[];
+}
+
 
 /*
 -------------------------------------------------------------------------------
@@ -185,20 +308,21 @@ export interface XuperSDKInterface {
 
     /**
      * Pre-execution transaction with utxos
-     * @param toAddress
-     * @param amount
-     * @param fee
+     * @param sum
+     * @param authRequire
+     * @param invokeRequests
      */
-    preExecTransaction(toAddress: string, amount: string, fee: string): Promise<any>;
+    preExecTransactionWithUTXO(
+        sum: string | number | BN,
+        authRequire: string[],
+        invokeRequests: ContracRequesttModel[]
+    ): Promise<any>;
 
     /**
      * Generate transaction
-     * @param toAddress
-     * @param amount
-     * @param fee
-     * @param desc
+     * @param ti
      */
-    makeTrasaction(toAddress: string, amount: string, fee: string, desc: string): Promise<any>;
+    generateTransaction(ti: TransactionInfomation): Promise<Transaction>;
 
     /**
      * Post transaction
@@ -212,9 +336,41 @@ export interface XuperSDKInterface {
      */
     queryTransaction(txid: string): Promise<any>;
 
-    // makeTransfer(): Promise<any>;
-    // invokeContract(): Promise<any>;
-    // depolyContract(): Promise<any>;
+    /**
+     * Invoke contract
+     * @param contractName
+     * @param methodName
+     * @param moduleName
+     * @param args
+     */
+    invokeContract(
+        contractName: string,
+        methodName: string,
+        moduleName: string,
+        args: any
+    ): Promise<any>;
+
+    /**
+     * Create contract account
+     * @param contractAccountName
+     */
+    createContractAccount(contractAccountName: number): Promise<any>;
+
+    /**
+     * Deploy wasm contract
+     * @param contractAccount
+     * @param contractName
+     * @param code
+     * @param runtime
+     * @param initArgs
+     */
+    deployWasmContract(
+        contractAccount: string,
+        contractName: string,
+        code: string,
+        runtime: string,
+        initArgs: any
+    ): Promise<any>;
 }
 
 /**
@@ -249,111 +405,4 @@ export interface AccountInerface {
      * @param language
      */
     checkMnemonic(mnemonic: string, language: Language): boolean;
-}
-
-/**
- * @hidden
- */
-export interface TXInput {
-    refTxid: string;
-    refOffset: number;
-    fromAddr: string;
-    amount: string;
-    frozenHeight?: number;
-}
-
-/**
- * @hidden
- */
-export interface TXOutput {
-    amount: string;
-    toAddr: string;
-}
-
-/**
- * @hidden
- */
-export interface UTXO {
-    amount: string;
-    toAddr: string;
-    refOffset: number;
-    refTxid: string;
-}
-
-export interface SignInfoModel {
-    PublicKey: string;
-    Sign: string;
-}
-
-export interface TransactionInfomation {
-    amount: string | number | BN;
-    fee: string | number | BN;
-    to: string;
-    desc?: string;
-}
-
-export interface Transaction {
-    /**
-     * SDK version
-     */
-    version: number;
-
-    /**
-     * Timestamp
-     */
-    timestamp: number;
-
-    coinbase: boolean;
-    autogen: boolean;
-
-    /**
-     * Transaction description
-     */
-    desc: string;
-
-    /**
-     * Inputs
-     */
-    txInputs: TXInput[];
-
-    /**
-     * Outputs
-     */
-    txOutputs: any[];
-
-    /**
-     * Transaction initiator
-     */
-    initiator: string;
-
-    /**
-     * initiator sign
-     */
-    initiatorSigns?: SignInfoModel[];
-
-    /**
-     * Nonce
-     */
-    nonce: string;
-
-    /**
-     * auth
-     */
-    authRequire: string[];
-
-    /**
-     * auth sign
-     */
-    authRequireSigns?: any[];
-
-    /**
-     * Transaction ID
-     */
-    txid?: string;
-
-    txInputsExt?: any[];
-
-    txOutputsExt?: any[];
-
-    contractRequests?: any[];
 }

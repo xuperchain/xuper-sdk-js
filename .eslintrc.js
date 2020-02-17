@@ -47,9 +47,9 @@ module.exports = {
         'no-useless-escape': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
         'no-param-reassign': ["error", { "props": true, "ignorePropertyModificationsForRegex": ["^tx"] }],
+        'no-unused-expressions': 'off',
         // Todo
         '@typescript-eslint/ban-ts-ignore': 'off',
-        'no-unused-expressions': 'off',
         'no-restricted-syntax': 'off',
         'guard-for-in': 'off',
         '@typescript-eslint/camelcase': 'off',

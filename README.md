@@ -20,13 +20,13 @@ A simple JS(TS) SDK for XuperOS
 
 ### Install package
 
-> npm install --save xuper-sdk
+> npm install --save @xuperchain/xuper-sdk
 
 ### Example
 
 ```javascript
 
-import XuperSDK, {Cryptography, Language, Strength} from 'xuper-sdk'
+import XuperSDK, {Cryptography, Language, Strength} from '@xuperchain/xuper-sdk'
 
 const xsdk = new XuperSDK({
     node,
@@ -51,9 +51,8 @@ xsdk.createAccount(
     
 - Query transaction [Detail](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#querytransaction)
 
-- More... [documents](https://xuperchain.github.io/xuper-sdk-js/)
+- [More...](https://xuperchain.github.io/xuper-sdk-js/)
 
 ## Todos
 
 - Support xuperchain/xuperunion
-- Support contract

@@ -39,10 +39,12 @@ function makeTxOutput(
 }
 
 function makeTxOutputs(
-    amount: BN | string | number, fee: BN | string | number, to: string
+    amount: BN | string | number,
+    fee?: BN | string | number,
+    to?: string
 ): TXOutput[] {
     const bnAmount = new BN(amount);
-    const bnFee = new BN(fee);
+    const bnFee = new BN(fee || 0);
     const accounts = [];
 
     to && accounts.push({
@@ -91,7 +93,7 @@ function encodeDataForDigestHash(tx: Transaction, include_signs: boolean) {
         }
     );
 
-    str += jsonEncode(tx.txOutputs);
+    str += jsonEncode(convert(tx.txOutputs));
 
     if (tx.desc && tx.desc.length > 0) {
         str += jsonEncode(tx.desc);
@@ -231,7 +233,6 @@ export default function generateTransaction(
     };
     signatureInfos.push(signatureInfo);
     tx.initiatorSigns = signatureInfos;
-
     const digest = encodeDataForDigestHash(tx, true);
 
     // txid
@@ -240,11 +241,8 @@ export default function generateTransaction(
     return tx;
 }
 
-export async function signTx(signFunc: Function): Promise<Transaction> {
-    const tx = await signFunc();
-    console.log(tx);
+export function signTx(tx: Transaction): Transaction {
     const digest = encodeDataForDigestHash(tx, true);
-    // txid
     tx.txid = btoa(digest.map(v => String.fromCharCode(v)).join(''));
     return tx;
 }
