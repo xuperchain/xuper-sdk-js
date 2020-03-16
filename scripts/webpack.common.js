@@ -6,10 +6,6 @@
 
 // webpack conf
 module.exports = {
-    entry: {
-        index: './src/index.ts',
-        'index.min': './src/index.ts'
-    },
     module: {
         rules: [
             {

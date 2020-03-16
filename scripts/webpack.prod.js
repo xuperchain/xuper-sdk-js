@@ -12,7 +12,12 @@ const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
 // webpack conf
-const prodConf = {
+const clientConf = {
+    entry: {
+        index: './src/index.ts',
+        'index.min': './src/index.ts'
+    },
+    target: 'web',
     output: {
         path: path.join(process.cwd(), 'lib'),
         filename: '[name].js',
@@ -38,4 +43,22 @@ const prodConf = {
     plugins: [new CleanWebpackPlugin({})]
 };
 
-module.exports = merge(commonConf, prodConf);
+const serverConf = {
+    entry: {
+        index: './src/index.ts'
+    },
+    target: 'node',
+    output: {
+        path: path.join(process.cwd(), 'lib'),
+        filename: '[name].node.js',
+        library: '[name]',
+        libraryTarget: 'umd'
+    },
+    mode: 'production',
+    plugins: [new CleanWebpackPlugin({})]
+};
+
+module.exports = [
+    merge(commonConf, clientConf),
+    merge(commonConf, serverConf)
+];
