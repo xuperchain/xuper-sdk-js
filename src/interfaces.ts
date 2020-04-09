@@ -209,11 +209,33 @@ Configuration
  */
 
 export interface XuperEndorseConf {
-    fee: string;
     server: string;
+    fee: string;
     complianceCheckfeeAddress: string;
     feeServiceAddress: string;
 }
+
+// export interface XuperEndorseConf {
+//     /**
+//      * Endorse service name
+//      */
+//     name: string;
+//
+//     /**
+//      * Endorse service url
+//      */
+//     server: string;
+//
+//     /**
+//      * Endorse service sign address
+//      */
+//     endorseServiceAddr: string;
+//
+//     /**
+//      * Endorsement service sign address
+//      */
+//     endorseServiceFeeAddr: string;
+// }
 
 /**
  * Configuration Interface - Xuper otpions
@@ -228,6 +250,8 @@ export interface XuperOptions {
      * Blockchain name
      */
     chain: string;
+
+    preExecServer: string;
 
     /**
      * Endorse service

@@ -10,6 +10,7 @@
         "lint": "eslint src/*.ts",
         "lint:fix": "eslint src/*.ts --fix",
         "test": "jest",
+        "test:node": "jest --config jest.node.config.js",
         "commit": "git-cz",
         "release": "standard-version -a"
     },
@@ -69,6 +70,7 @@
         "@types/sha256": "^0.2.0",
         "bn.js": "^5.0.0",
         "elliptic": "^6.5.2",
+        "node-fetch": "^2.6.0",
         "pbkdf2": "^3.0.17",
         "ripemd160-min": "0.0.6",
         "sha256": "^0.2.0"

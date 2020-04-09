@@ -246,6 +246,7 @@ export default class XuperSDK implements XuperSDKInterface {
         });
 
         const preExecWithUtxos = await this.preExecTransactionWithUTXO(totalNeed, Object.keys(authRequires));
+
         const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
 
         return this.makeTransaction(ti, authRequires, preExecWithUtxosObj);
@@ -257,7 +258,7 @@ export default class XuperSDK implements XuperSDKInterface {
      * @param authRequires
      * @param preExecWithUtxosObj
      */
-    private async makeTransaction(
+    async makeTransaction(
         ti: TransactionInfomation,
         authRequires: {[propName: string]: AuthInterface},
         preExecWithUtxosObj: any
@@ -270,7 +271,7 @@ export default class XuperSDK implements XuperSDKInterface {
             throw Errors.ACCOUNT_NOT_EXIST;
         }
 
-        const {fee: endorseFee, complianceCheckfeeAddress} = this.options.endorseConf;
+        const {fee: endorseFee, complianceCheckfeeAddress} = this.options.endorseConf!;
 
         const {utxoOutput} = preExecWithUtxosObj;
 
@@ -301,6 +302,8 @@ export default class XuperSDK implements XuperSDKInterface {
             utxoList,
             totalSelected
         };
+
+        console.log(ti);
 
         let tx = generateTransaction(
             this.accountModel,

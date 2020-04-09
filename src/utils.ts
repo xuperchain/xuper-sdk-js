@@ -10,6 +10,21 @@
 import {PrivateKeyModel, PublicKeyModel} from './interfaces';
 
 /**
+ * Environment detection
+ */
+export function isNode(): boolean {
+    let nodeEnv = false;
+    if (typeof process === 'object') {
+        if (typeof process.versions === 'object') {
+            if (typeof process.versions.node !== 'undefined') {
+                nodeEnv = true;
+            }
+        }
+    }
+    return nodeEnv;
+}
+
+/**
  * Base58 - encode
  * @param data
  * @param alphabet
@@ -127,7 +142,15 @@ export function deepEqual(x: any, y: any): boolean {
  * Nonce
  */
 export function getNonce(): string {
-    return (~~(Date.now() / 1000).toString()) + crypto.getRandomValues(new Uint32Array(1))[0].toString();
+    let rs = '';
+    if (isNode()) {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires,global-require
+        const crypto = require('crypto');
+        rs = crypto.randomFillSync(new Uint32Array(1))[0].toString();
+    } else {
+        rs = crypto.getRandomValues(new Uint32Array(1))[0].toString();
+    }
+    return (~~(Date.now() / 1000).toString()) + rs;
 }
 
 /**
@@ -193,4 +216,14 @@ export function convert(tar: any): any {
     }
 
     return format;
+}
+
+if (isNode()) {
+    // @ts-ignore
+    global.btoa = (s: string) => Buffer.from(s).toString('base64');
+    // @ts-ignore
+    global.atob = (e: string) => Buffer.from(e, 'base64').toString();
+    // @ts-ignore
+    // eslint-disable-next-line global-require
+    global.fetch = require('node-fetch');
 }

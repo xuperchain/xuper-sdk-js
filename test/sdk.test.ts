@@ -7,14 +7,19 @@
 jest.setTimeout(10000);
 
 import XuperSDK, {Cryptography, Language, Strength} from '../src';
+import {isNode} from '../src/utils';
 
-require('whatwg-fetch');
+if (typeof process !== 'object') {
+    require('whatwg-fetch');
+} else {
+    require('dotenv').config();
+}
 
 const chain = 'xuper';
 const node = process.env.NODE || '';
 
 const endorseConf = {
-    fee: '10',
+    fee: '100',
     server: process.env.ENDORSE_SERVER || '',
     complianceCheckfeeAddress: process.env.FEEADDRESS || '',
     feeServiceAddress: process.env.FEESERVICEADDRESS || ''
@@ -126,6 +131,10 @@ describe('Xuper SDK', () => {
         );
 
         const balance = await xsdk.getBalance();
+
+
+        console.log(balance)
+
         expect(balance).toHaveProperty('bcs');
         expect(balance.bcs).toHaveLength(1);
         expect(balance.bcs[0]).toHaveProperty('bcname', chain);
@@ -135,7 +144,7 @@ describe('Xuper SDK', () => {
     test('get local account balance detail should return balance detail struct', async () => {
         const xsdk = new XuperSDK({node, chain});
 
-        xsdk.revertAccount(
+        const accountModel = xsdk.revertAccount(
             process.env.TEST_MNEMONIC || '',
             Language.SimplifiedChinese,
             Cryptography.EccFIPS
@@ -155,6 +164,26 @@ describe('Xuper SDK', () => {
     /**
      * Transaction
      */
+
+    test('generate simple transactions', async () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain
+        });
+
+        xsdk.revertAccount(
+            process.env.TEST_MNEMONIC || '',
+            Language.SimplifiedChinese,
+            Cryptography.EccFIPS
+        );
+
+        const result = await xsdk.preExecTransactionWithUTXO(
+            '1',
+            []
+        );
+
+        console.log(result);
+    });
 
     test('post pre-transaction with utxo should return bcname, response, utxoOutput', async () => {
         const xsdk = new XuperSDK({
@@ -184,9 +213,7 @@ describe('Xuper SDK', () => {
     test('post identity check failed pre-transaction with utxo should 500 status', async () => {
         const xsdk = new XuperSDK({
             node,
-            chain,
-            needEndorse: true,
-            endorseConf
+            chain
         });
 
         xsdk.revertAccount(
@@ -203,6 +230,31 @@ describe('Xuper SDK', () => {
         } catch (err) {
             expect(err).toHaveProperty('error');
         }
+    });
+
+    test('generate transaction should return transaction model', async () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain,
+            needEndorse: true,
+            endorseConf
+        });
+
+        xsdk.revertAccount(
+            process.env.TEST_MNEMONIC || '',
+            Language.SimplifiedChinese,
+            Cryptography.EccFIPS
+        );
+
+        const tx = await xsdk.generateTransaction({
+            to: process.env.TEST_TARGET_ADDRESS || '',
+            amount: '100',
+            fee: '0'
+        });
+
+        const result = await xsdk.postTransaction(tx);
+        expect(result.header).toHaveProperty('logid');
+        expect(result.header).not.toHaveProperty('error');
     });
 
     test('generate transaction should return transaction model', async () => {
@@ -320,8 +372,16 @@ describe('Xuper SDK', () => {
 
         const codeBuf: string[] = [];
 
-        // @ts-ignore
-        window.file.forEach(n => codeBuf.push(String.fromCharCode(n)));
+        if (isNode()) {
+            const fs = require('fs');
+            codeBuf.push(String.fromCharCode(
+                fs.readFileSync(`${__dirname}/contract_code/counter.wasm`)
+            ));
+        } else {
+            // test/jest/custom-test-env.js
+            // @ts-ignore
+            window.file.forEach(n => codeBuf.push(String.fromCharCode(n)));
+        }
 
         const result = await xsdk.deployWasmContract(
             'XC1234567890666660@xuper',

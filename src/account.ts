@@ -9,12 +9,13 @@ import pbkdf2 from 'pbkdf2';
 import {ec as EC} from 'elliptic';
 import {RIPEMD160} from 'ripemd160-min/dist-umd';
 import {Cryptography, Language, Strength} from './constants';
-
+import {
+    base58Encode, base58Decode, deepEqual, isNode
+} from './utils';
 import wordlist from './wordlist.json';
 import {
     PublicKeyModel, PrivateKeyModel, AccountInerface, AccountModel
 } from './interfaces';
-import {base58Encode, base58Decode, deepEqual} from './utils';
 
 /**
  * Class Account
@@ -135,6 +136,13 @@ export default class Account implements AccountInerface {
         if ((strength + 8) % 32 !== 0 || strength + 8 < 128 || strength + 8 > 256) {
             throw 'Invalid entropy length';
         }
+
+        if (isNode()) {
+            // eslint-disable-next-line @typescript-eslint/no-var-requires,global-require
+            const crypto = require('crypto');
+            return crypto.randomFillSync(new Uint8Array(strength / 8));
+        }
+
         return crypto.getRandomValues(new Uint8Array(strength / 8));
     }
 
