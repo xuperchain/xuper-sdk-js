@@ -12,16 +12,8 @@ import {PrivateKeyModel, PublicKeyModel} from './interfaces';
 /**
  * Environment detection
  */
-export function isNode(): boolean {
-    let nodeEnv = false;
-    if (typeof process === 'object') {
-        if (typeof process.versions === 'object') {
-            if (typeof process.versions.node !== 'undefined') {
-                nodeEnv = true;
-            }
-        }
-    }
-    return nodeEnv;
+export function isBrowser() {
+    return typeof window !== 'undefined' && typeof window.document !== 'undefined';
 }
 
 /**
@@ -143,12 +135,12 @@ export function deepEqual(x: any, y: any): boolean {
  */
 export function getNonce(): string {
     let rs = '';
-    if (isNode()) {
+    if (isBrowser()) {
+        rs = crypto.getRandomValues(new Uint32Array(1))[0].toString();
+    } else {
         // eslint-disable-next-line @typescript-eslint/no-var-requires,global-require
         const crypto = require('crypto');
         rs = crypto.randomFillSync(new Uint32Array(1))[0].toString();
-    } else {
-        rs = crypto.getRandomValues(new Uint32Array(1))[0].toString();
     }
     return (~~(Date.now() / 1000).toString()) + rs;
 }
@@ -188,7 +180,9 @@ export async function postRequest(t: string, b: object): Promise<any> {
             }
             return response.json();
         }
-    );
+    ).catch(err => {
+        throw err;
+    });
 }
 
 /**
@@ -205,25 +199,11 @@ export function convert(tar: any): any {
         const newTar = {...tar};
         Object.keys(newTar).forEach(key => {
             const value = newTar[key];
-            format[
-                /^[a-z]/.test(key)
-                    ? key.replace(/([A-Z]{1})/g, '_$1').toLowerCase()
-                    : key
-            ] = convert(value);
+            format[/^[a-z]/.test(key) ? key.replace(/([A-Z]{1})/g, '_$1').toLowerCase() : key] = convert(value);
         });
     } else {
         format = tar;
     }
 
     return format;
-}
-
-if (isNode()) {
-    // @ts-ignore
-    global.btoa = (s: string) => Buffer.from(s).toString('base64');
-    // @ts-ignore
-    global.atob = (e: string) => Buffer.from(e, 'base64').toString();
-    // @ts-ignore
-    // eslint-disable-next-line global-require
-    global.fetch = require('node-fetch');
 }

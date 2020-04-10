@@ -10,7 +10,7 @@ import {ec as EC} from 'elliptic';
 import {RIPEMD160} from 'ripemd160-min/dist-umd';
 import {Cryptography, Language, Strength} from './constants';
 import {
-    base58Encode, base58Decode, deepEqual, isNode
+    base58Encode, base58Decode, deepEqual, isBrowser
 } from './utils';
 import wordlist from './wordlist.json';
 import {
@@ -137,7 +137,7 @@ export default class Account implements AccountInerface {
             throw 'Invalid entropy length';
         }
 
-        if (isNode()) {
+        if (!isBrowser()) {
             // eslint-disable-next-line @typescript-eslint/no-var-requires,global-require
             const crypto = require('crypto');
             return crypto.randomFillSync(new Uint8Array(strength / 8));

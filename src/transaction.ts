@@ -65,12 +65,14 @@ function makeTxOutputs(
 
 function makeTxInputs(utxos: UTXO[]): TXInput[] {
     const txInputs: TXInput[] = [];
+
     utxos.forEach(utxo => txInputs.push({
         refTxid: utxo.refTxid,
         refOffset: utxo.refOffset,
         fromAddr: utxo.toAddr,
         amount: utxo.amount
     } as TXInput));
+
     return txInputs;
 }
 

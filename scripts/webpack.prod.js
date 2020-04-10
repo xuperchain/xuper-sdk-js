@@ -40,25 +40,31 @@ const clientConf = {
             })
         ]
     },
-    plugins: [new CleanWebpackPlugin({})]
+    plugins: []
 };
 
+console.log(path.join(process.cwd(), 'lib', 'node'));
+
 const serverConf = {
-    entry: {
-        index: './src/index.ts'
-    },
+    entry: [
+        './src/index.ts'
+    ],
     target: 'node',
     output: {
         path: path.join(process.cwd(), 'lib'),
-        filename: '[name].node.js',
+        filename: 'index.node.js',
         library: '[name]',
         libraryTarget: 'umd'
     },
     mode: 'production',
-    plugins: [new CleanWebpackPlugin({})]
+    optimization: {
+        nodeEnv: 'production',
+        minimize: false
+    },
+    plugins: [new CleanWebpackPlugin()]
 };
 
 module.exports = [
-    merge(commonConf, clientConf),
-    merge(commonConf, serverConf)
+    merge(Object.assign({}, commonConf), clientConf),
+    merge(Object.assign({}, commonConf), serverConf)
 ];

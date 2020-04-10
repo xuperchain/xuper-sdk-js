@@ -208,6 +208,7 @@ Configuration
 -------------------------------------------------------------------------------
  */
 
+/*
 export interface XuperEndorseConf {
     server: string;
     fee: string;
@@ -215,27 +216,34 @@ export interface XuperEndorseConf {
     feeServiceAddress: string;
 }
 
-// export interface XuperEndorseConf {
-//     /**
-//      * Endorse service name
-//      */
-//     name: string;
-//
-//     /**
-//      * Endorse service url
-//      */
-//     server: string;
-//
-//     /**
-//      * Endorse service sign address
-//      */
-//     endorseServiceAddr: string;
-//
-//     /**
-//      * Endorsement service sign address
-//      */
-//     endorseServiceFeeAddr: string;
-// }
+ */
+
+export interface XuperEndorseConf {
+    /**
+     * Endorse service name
+     */
+    name: string;
+
+    /**
+     * Endorse server url
+     */
+    server: string;
+
+    /**
+     * Endorsement service fee
+     */
+    fee: string;
+
+    /**
+     * Endorsement sign address
+     */
+    endorseServiceCheckAddr: string;
+
+    /**
+     * Endorsement service fee address
+     */
+    endorseServiceFeeAddr: string;
+}
 
 /**
  * Configuration Interface - Xuper otpions
@@ -247,21 +255,24 @@ export interface XuperOptions {
     node: string;
 
     /**
-     * Blockchain name
+     * Chain name
      */
     chain: string;
 
-    preExecServer: string;
+    /**
+     * Pre-exec server url
+     */
+    preExecServer?: string;
 
     /**
      * Endorse service
      */
-    needEndorse?: boolean;
+    needDefaultEndorse?: boolean;
 
     /**
      * Endorse conf
      */
-    endorseConf?: XuperEndorseConf;
+    defaultEndorseConf?: XuperEndorseConf;
 }
 
 /*
@@ -288,6 +299,11 @@ export interface XuperSDKInterface {
      * SDK conf
      */
     options: XuperOptions;
+
+    /**
+     * Pre-exec transaction server
+     */
+    preExecServer?: string;
 
     /**
      * Create new account
