@@ -51,7 +51,7 @@ describe('Xuper SDK', () => {
         );
 
         const revertAccountModel = xsdk.revertAccount(
-            accountModel.mnemonic,
+            accountModel.mnemonic!,
             Language.SimplifiedChinese,
             Cryptography.EccFIPS
         );
@@ -72,7 +72,7 @@ describe('Xuper SDK', () => {
         );
 
         const result = xsdk.checkMnemonic(
-            accountModel.mnemonic,
+            accountModel.mnemonic!,
             Language.SimplifiedChinese
         );
         expect(result).toBeTruthy();
@@ -87,7 +87,7 @@ describe('Xuper SDK', () => {
             Cryptography.EccFIPS
         );
 
-        const invaildMnemonic = accountModel.mnemonic.split(' ');
+        const invaildMnemonic = accountModel.mnemonic!.split(' ');
         invaildMnemonic[0] = '牁';
 
         const result = xsdk.checkMnemonic(
@@ -524,4 +524,13 @@ describe('Xuper SDK', () => {
         expect(result.header).toHaveProperty('logid');
         expect(result.header).not.toHaveProperty('error');
     });
+
+    test('import account', () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain,
+            preExecServer
+        });
+        // Todo
+    })
 });

@@ -112,6 +112,12 @@ export default class XuperSDK implements XuperSDKInterface {
         return model;
     }
 
+    importAccout(password: string, privateKeyStr: string, cryptography: Cryptography) {
+        const model = this.accountIns.decryptPrivateKey(password, privateKeyStr);
+        // this.accountModel = model;
+        // return model;
+    }
+
     /**
      * Check address valid
      * @param address

@@ -6,6 +6,7 @@
 import BN from 'bn.js';
 import sha256 from 'sha256';
 import pbkdf2 from 'pbkdf2';
+import aesjs from 'aes-js';
 import {ec as EC} from 'elliptic';
 import {RIPEMD160} from 'ripemd160-min/dist-umd';
 import {Cryptography, Language, Strength} from './constants';
@@ -97,6 +98,31 @@ export default class Account implements AccountInerface {
         return {
             address,
             mnemonic,
+            privateKey,
+            publicKey
+        };
+    }
+
+    import(password: string, privateKeyStr: string, cryptography: Cryptography): AccountModel {
+        const privateKeyObj = JSON.parse(this.decryptPrivateKey(password, privateKeyStr));
+
+        const privateKey: PrivateKeyModel = {
+            D: privateKeyObj.D,
+            X: privateKeyObj.X,
+            Y: privateKeyObj.Y,
+            Curvname: 'P-256'
+        };
+
+        const publicKey: PublicKeyModel = {
+            X: privateKey.X,
+            Y: privateKey.Y,
+            Curvname: privateKey.Curvname
+        };
+
+        const address = this.generateAddress(publicKey, cryptography);
+
+        return {
+            address,
             privateKey,
             publicKey
         };
@@ -248,6 +274,19 @@ export default class Account implements AccountInerface {
 
         const salt = `mnemonic${password}`;
         return pbkdf2.pbkdf2Sync(mnemonic, salt, 2048, keyLen, 'sha512');
+    }
+
+    decryptPrivateKey(password: string, keyStr: string) {
+        const bytes = atob(keyStr).split('').map(s => s.charCodeAt(0));
+        const blockSize = 16;
+        const key = sha256.x2(password, {asBytes: true});
+        const padding = blockSize - (bytes.length % blockSize);
+        bytes.concat(Array(padding).fill(padding));
+        // eslint-disable-next-line new-cap
+        const aesCbc = new aesjs.ModeOfOperation.cbc(key, key.slice(0, blockSize));
+        const decryptedBytes = aesCbc.decrypt(bytes);
+        const td = new TextDecoder();
+        return td.decode(decryptedBytes);
     }
 
     private generateKeyBySeed(curve: EC, seed: any): PrivateKeyModel {

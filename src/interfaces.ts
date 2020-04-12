@@ -38,11 +38,6 @@ export interface AccountModel {
     address: string;
 
     /**
-     * Account mnemonic
-     */
-    mnemonic: string;
-
-    /**
      * Account public key model
      */
     publicKey: PublicKeyModel;
@@ -51,6 +46,11 @@ export interface AccountModel {
      * Account private key model
      */
     privateKey: PrivateKeyModel;
+
+    /**
+     * Account mnemonic
+     */
+    mnemonic?: string;
 }
 
 export interface ContracRequesttModel {
