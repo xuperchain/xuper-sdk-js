@@ -15,8 +15,8 @@ else {
     require('dotenv').config();
 }
 
-const chain = 'xuper';
 const node = process.env.NODE || '';
+const chain = 'xuper';
 const preExecServer = process.env.PRE_EXEC_SERVER || '';
 
 const endorseConfs = {
@@ -27,8 +27,8 @@ const endorseConfs = {
     endorseServiceFeeAddr: process.env.SERVICE_FEE_ADDRESS || ''
 };
 
-describe('Xuper SDK', () => {
-    test('create new account with mnemonic should return account model', () => {
+describe('Xuper SDK Account', () => {
+    test('create an account with mnemonic should return account model', () => {
         const xsdk = new XuperSDK({node: '', chain: 'xuper'});
         const accountModel = xsdk.createAccount(
             Language.SimplifiedChinese,
@@ -41,36 +41,50 @@ describe('Xuper SDK', () => {
         expect(accountModel).toHaveProperty('privateKey');
     });
 
-    test('revert account info with mnemonic should return account model', () => {
-        const xsdk = new XuperSDK({node: '', chain: 'xuper'});
+    test('create an account with mnemonic should return account model', () => {});
 
+    test('recover account with mnemonic should return accout model', () => {});
+
+    test('export the account encryptd private key should return base64 string', () => {});
+
+    test('import encryptd private key should recovery the account', () => {});
+});
+
+describe('Xuper SDK Transaction', () => {});
+
+describe('Xuper SDK Contract', () => {});
+
+describe('Xuper SDK Query', () => {});
+
+
+describe('Xuper SDK', () => {
+    test('Use mnemonic to revert account should return account model', () => {
+        const xsdk = new XuperSDK({node: '', chain: 'xuper'});
         const accountModel = xsdk.createAccount(
             Language.SimplifiedChinese,
             Strength.Easy,
             Cryptography.EccFIPS
         );
-
         const revertAccountModel = xsdk.revertAccount(
             accountModel.mnemonic!,
             Language.SimplifiedChinese,
             Cryptography.EccFIPS
         );
-
         expect(revertAccountModel.mnemonic).toEqual(accountModel.mnemonic);
         expect(revertAccountModel.address).toEqual(accountModel.address);
         expect(revertAccountModel.privateKey).toEqual(accountModel.privateKey);
         expect(revertAccountModel.publicKey).toEqual(accountModel.publicKey);
     });
 
+    // process.env.TEST_MNEMONIC || ''
+
     test('check mnemonic valid should return true', () => {
         const xsdk = new XuperSDK({node: '', chain: 'xuper'});
-
         const accountModel = xsdk.createAccount(
             Language.SimplifiedChinese,
             Strength.Easy,
             Cryptography.EccFIPS
         );
-
         const result = xsdk.checkMnemonic(
             accountModel.mnemonic!,
             Language.SimplifiedChinese
@@ -80,16 +94,13 @@ describe('Xuper SDK', () => {
 
     test('check mnemonic valid should return false', () => {
         const xsdk = new XuperSDK({node: '', chain: 'xuper'});
-
         const accountModel = xsdk.createAccount(
             Language.SimplifiedChinese,
             Strength.Easy,
             Cryptography.EccFIPS
         );
-
         const invaildMnemonic = accountModel.mnemonic!.split(' ');
         invaildMnemonic[0] = '牁';
-
         const result = xsdk.checkMnemonic(
             invaildMnemonic.join(' '),
             Language.SimplifiedChinese
@@ -110,12 +121,12 @@ describe('Xuper SDK', () => {
             Cryptography.EccFIPS
         );
 
-        const result = accountModel.address.substr(accountModel.address.length - 5);
+        const result = accountModel.address.substr(accountModel.address.length - 1);
         expect(xsdk.checkAddress(result)).not.toBeTruthy();
     });
 
     if (process.env.LOCAL_ENV !== 'XuperOS') {
-        console.warn('Skip unsupported tests');
+        console.warn('Skip the no environment tests');
         return;
     }
 
@@ -532,5 +543,22 @@ describe('Xuper SDK', () => {
             preExecServer
         });
         // Todo
-    })
+    });
+
+    test('export account', () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain,
+            preExecServer
+        });
+
+        xsdk.revertAccount(
+            process.env.TEST_MNEMONIC || '',
+            Language.SimplifiedChinese,
+            Cryptography.EccFIPS
+        );
+
+        const resStr = xsdk.exportAccount('1');
+        console.log(xsdk.importAccout('1', resStr, Cryptography.EccFIPS));
+    });
 });

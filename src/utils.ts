@@ -207,3 +207,13 @@ export function convert(tar: any): any {
 
     return format;
 }
+
+if (!isBrowser()) {
+    // @ts-ignore
+    global.btoa = (s: string) => Buffer.from(s, 'binary').toString('base64');
+    // @ts-ignore
+    global.atob = (e: string) => Buffer.from(e, 'base64').toString('binary');
+    // @ts-ignore
+    // eslint-disable-next-line global-require
+    global.fetch = require('node-fetch').default;
+}

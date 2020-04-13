@@ -23,16 +23,6 @@ import Errors from './error';
 import Account from './account';
 import generateTransaction, {signTx} from './transaction';
 
-if (!isBrowser()) {
-    // @ts-ignore
-    global.btoa = (s: string) => Buffer.from(s, 'binary').toString('base64');
-    // @ts-ignore
-    global.atob = (e: string) => Buffer.from(e, 'base64').toString('binary');
-    // @ts-ignore
-    // eslint-disable-next-line global-require
-    global.fetch = require('node-fetch');
-}
-
 export default class XuperSDK implements XuperSDKInterface {
     static instance: XuperSDK;
 
@@ -101,7 +91,7 @@ export default class XuperSDK implements XuperSDKInterface {
     }
 
     /**
-     * Revert account with mnemonic
+     * Recover account with mnemonic
      * @param mnemonic
      * @param language
      * @param cryptography
@@ -114,8 +104,17 @@ export default class XuperSDK implements XuperSDKInterface {
 
     importAccout(password: string, privateKeyStr: string, cryptography: Cryptography) {
         const model = this.accountIns.decryptPrivateKey(password, privateKeyStr);
+        console.log(model);
         // this.accountModel = model;
         // return model;
+    }
+
+    exportAccount(password: string): string {
+        if (!this.accountModel || !this.accountModel.privateKey) {
+            throw Errors.ACCOUNT_NOT_EXIST;
+        }
+        // @ts-ignore
+        return btoa(this.accountIns.encryptPrivateKey(password, this.accountModel.privateKey));
     }
 
     /**

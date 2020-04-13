@@ -11,7 +11,7 @@ import {ec as EC} from 'elliptic';
 import {RIPEMD160} from 'ripemd160-min/dist-umd';
 import {Cryptography, Language, Strength} from './constants';
 import {
-    base58Encode, base58Decode, deepEqual, isBrowser
+    base58Encode, base58Decode, deepEqual, isBrowser, publicOrPrivateKeyToString
 } from './utils';
 import wordlist from './wordlist.json';
 import {
@@ -127,6 +127,8 @@ export default class Account implements AccountInerface {
             publicKey
         };
     }
+
+    // export(password: string, privateKeyStr: string): string {}
 
     /**
      * Check address is valid
@@ -287,6 +289,25 @@ export default class Account implements AccountInerface {
         const decryptedBytes = aesCbc.decrypt(bytes);
         const td = new TextDecoder();
         return td.decode(decryptedBytes);
+    }
+
+    encryptPrivateKey(password: string, privateKey: PrivateKeyModel) {
+        const keyStr = publicOrPrivateKeyToString(privateKey);
+        const te = new TextEncoder();
+        const keyBytes: Uint8Array = te.encode(keyStr);
+        // const keyArr: string[] = [];
+        // keyBytes.forEach(s => keyArr.push(String.fromCharCode(s)));
+        // console.warn(keyArr)
+        const blockSize = 16;
+        const key = sha256.x2(password, {asBytes: true});
+        const padding = blockSize - (keyBytes.length % blockSize);
+        const theBytes = Array.from(keyBytes).concat(Array(padding).fill(padding));
+        // eslint-disable-next-line new-cap
+        const aesCbc = new aesjs.ModeOfOperation.cbc(key, key.slice(0, blockSize));
+        const result = aesCbc.encrypt(theBytes);
+        console.log(result);
+        const ts = Array.from(result).map((s: number) => String.fromCharCode(s));
+        return ts.join('');
     }
 
     private generateKeyBySeed(curve: EC, seed: any): PrivateKeyModel {
