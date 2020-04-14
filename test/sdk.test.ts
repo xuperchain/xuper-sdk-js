@@ -27,7 +27,25 @@ const endorseConfs = {
     endorseServiceFeeAddr: process.env.SERVICE_FEE_ADDRESS || ''
 };
 
-describe('Xuper SDK Account', () => {
+// describe('Xuper SDK Account', () => {
+//
+//     test('create an account with mnemonic should return account model', () => {});
+//
+//     test('recover account with mnemonic should return accout model', () => {});
+//
+//     test('export the account encryptd private key should return base64 string', () => {});
+//
+//     test('import encryptd private key should recovery the account', () => {});
+// });
+//
+// describe('Xuper SDK Transaction', () => {});
+//
+// describe('Xuper SDK Contract', () => {});
+//
+// describe('Xuper SDK Query', () => {});
+
+describe('Xuper SDK', () => {
+
     test('create an account with mnemonic should return account model', () => {
         const xsdk = new XuperSDK({node: '', chain: 'xuper'});
         const accountModel = xsdk.createAccount(
@@ -41,23 +59,6 @@ describe('Xuper SDK Account', () => {
         expect(accountModel).toHaveProperty('privateKey');
     });
 
-    test('create an account with mnemonic should return account model', () => {});
-
-    test('recover account with mnemonic should return accout model', () => {});
-
-    test('export the account encryptd private key should return base64 string', () => {});
-
-    test('import encryptd private key should recovery the account', () => {});
-});
-
-describe('Xuper SDK Transaction', () => {});
-
-describe('Xuper SDK Contract', () => {});
-
-describe('Xuper SDK Query', () => {});
-
-
-describe('Xuper SDK', () => {
     test('Use mnemonic to revert account should return account model', () => {
         const xsdk = new XuperSDK({node: '', chain: 'xuper'});
         const accountModel = xsdk.createAccount(
@@ -144,7 +145,6 @@ describe('Xuper SDK', () => {
         );
 
         const balance = await xsdk.getBalance();
-
         expect(balance).toHaveProperty('bcs');
         expect(balance.bcs).toHaveLength(1);
         expect(balance.bcs[0]).toHaveProperty('bcname', chain);
@@ -536,16 +536,28 @@ describe('Xuper SDK', () => {
         expect(result.header).not.toHaveProperty('error');
     });
 
-    test('import account', () => {
+    test('import private key', () => {
         const xsdk = new XuperSDK({
             node,
             chain,
             preExecServer
         });
-        // Todo
+
+        const privateKeyStr = 'RziKPHM0e6icCkXe0t5g1XCoXEorf/u5KNNV+l55LeWYgyD5aNySqIpnFwmr/WGegCjPZjv69x2CVbT/WkxAUM7G9ccZre7iJfULLzMzrp4Vf3lRqt6iP883fCcTGrgSxJeIQBYtTw1olrFdC9lXqhEfD94UuK04lrxXYN1HOTZHkg0oCJRUM1eECfYXwWVaPf9xZ59ZEh5/D5UYKKdBwKQbuRe22Hj/5I0N0WOzGoa86FUZusrv2lLjUxe0BscCCVZ1rvFdIMWuOCySYs4oNDLhnT6lD3FeXSZbO0cYC3s2dsXasAkSk5ioE9umtxoZxI/AQAdavLJtgeYkakNgzL+qBdL/CoqbtJEJgD/4ZIo=';
+
+        const model = xsdk.importAccout('1', privateKeyStr);
+        expect(model).toHaveProperty('privateKey');
+        expect(model).toHaveProperty('publicKey');
+        expect(model).toHaveProperty('address');
+        expect(model.privateKey.X)
+            .toBe('61657808827957283567736545770323618905460909308953839100214462605424684649873');
+        expect(model.privateKey.Y)
+            .toBe('21136816327134648174270159577816004589179431005681578276352060189744400462107');
+        expect(model.privateKey.D)
+            .toBe('110228008083699463012557553888442674049800736891640220747520328148544543761263');
     });
 
-    test('export account', () => {
+    test('export encryptd private key', () => {
         const xsdk = new XuperSDK({
             node,
             chain,
@@ -558,7 +570,14 @@ describe('Xuper SDK', () => {
             Cryptography.EccFIPS
         );
 
-        const resStr = xsdk.exportAccount('1');
-        console.log(xsdk.importAccout('1', resStr, Cryptography.EccFIPS));
+        const address = xsdk.accountModel!.address;
+
+        const encryptdPrivateKey = xsdk.exportAccount('1');
+
+        expect(encryptdPrivateKey).toBe('RziKPHM0e6icCkXe0t5g1XCoXEorf/u5KNNV+l55LeWYgyD5aNySqIpnFwmr/WGegCjPZjv69x2CVbT/WkxAUM7G9ccZre7iJfULLzMzrp4Vf3lRqt6iP883fCcTGrgSxJeIQBYtTw1olrFdC9lXqhEfD94UuK04lrxXYN1HOTZHkg0oCJRUM1eECfYXwWVaPf9xZ59ZEh5/D5UYKKdBwKQbuRe22Hj/5I0N0WOzGoa86FUZusrv2lLjUxe0BscCCVZ1rvFdIMWuOCySYs4oNDLhnT6lD3FeXSZbO0cYC3s2dsXasAkSk5ioE9umtxoZxI/AQAdavLJtgeYkakNgzL+qBdL/CoqbtJEJgD/4ZIo=');
+
+        const model = xsdk.importAccout('1', encryptdPrivateKey);
+
+        expect(model.address).toEqual(address);
     });
 });

@@ -10,7 +10,7 @@ import {
 } from './constants';
 
 import {
-    publicOrPrivateKeyToString, postRequest, convert, isBrowser
+    publicOrPrivateKeyToString, postRequest, convert
 } from './utils';
 
 import {
@@ -102,11 +102,10 @@ export default class XuperSDK implements XuperSDKInterface {
         return model;
     }
 
-    importAccout(password: string, privateKeyStr: string, cryptography: Cryptography) {
-        const model = this.accountIns.decryptPrivateKey(password, privateKeyStr);
-        console.log(model);
-        // this.accountModel = model;
-        // return model;
+    importAccout(password: string, privateKeyStr: string) {
+        const model = this.accountIns.import(password, privateKeyStr);
+        this.accountModel = model;
+        return model;
     }
 
     exportAccount(password: string): string {

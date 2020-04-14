@@ -163,6 +163,27 @@ export function publicOrPrivateKeyToString(key: PrivateKeyModel | PublicKeyModel
 }
 
 /**
+ * Converting a public key or private key to a string
+ * @param key
+ */
+export function stringToPublicOrPrivateKey(keyStr: string) {
+    const replacer = ((match: string, p1: string, p2: string, p3: string) => {
+        const data = {
+            X: p1,
+            Y: p2,
+            D: p3
+        };
+
+        return Object.keys(data).map(key =>
+            // @ts-ignore
+            // eslint-disable-next-line implicit-arrow-linebreak
+            `\"${key}\":\"${data[key]}\"`).join(',');
+    });
+
+    return JSON.parse(keyStr.replace(/"X":(\d+),"Y":(\d+),"D":(\d+)/gi, replacer));
+}
+
+/**
  * Post request
  * @param t target host
  * @param b body object

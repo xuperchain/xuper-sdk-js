@@ -11,12 +11,15 @@ import {ec as EC} from 'elliptic';
 import {RIPEMD160} from 'ripemd160-min/dist-umd';
 import {Cryptography, Language, Strength} from './constants';
 import {
-    base58Encode, base58Decode, deepEqual, isBrowser, publicOrPrivateKeyToString
+    base58Decode,
+    base58Encode,
+    deepEqual,
+    isBrowser,
+    publicOrPrivateKeyToString,
+    stringToPublicOrPrivateKey
 } from './utils';
 import wordlist from './wordlist.json';
-import {
-    PublicKeyModel, PrivateKeyModel, AccountInerface, AccountModel
-} from './interfaces';
+import {AccountInerface, AccountModel, PrivateKeyModel, PublicKeyModel} from './interfaces';
 
 /**
  * Class Account
@@ -56,6 +59,7 @@ export default class Account implements AccountInerface {
         const password = 'jingbo is handsome!';
         const seed = this.generateSeed(mnemonic, password, 40, language);
 
+        // Todo: cryptography, default elliptic
         const curve = new EC('p256');
         const privateKey: PrivateKeyModel = this.generateKeyBySeed(curve, seed);
         const publicKey: PublicKeyModel = {
@@ -103,14 +107,15 @@ export default class Account implements AccountInerface {
         };
     }
 
-    import(password: string, privateKeyStr: string, cryptography: Cryptography): AccountModel {
-        const privateKeyObj = JSON.parse(this.decryptPrivateKey(password, privateKeyStr));
+    import(password: string, privateKeyStr: string): AccountModel {
+        const decryptStr = this.decryptPrivateKey(password, privateKeyStr);
+        const privateKeyObj = stringToPublicOrPrivateKey(decryptStr);
 
         const privateKey: PrivateKeyModel = {
             D: privateKeyObj.D,
             X: privateKeyObj.X,
             Y: privateKeyObj.Y,
-            Curvname: 'P-256'
+            Curvname: privateKeyObj.Curvname
         };
 
         const publicKey: PublicKeyModel = {
@@ -119,7 +124,7 @@ export default class Account implements AccountInerface {
             Curvname: privateKey.Curvname
         };
 
-        const address = this.generateAddress(publicKey, cryptography);
+        const address = this.generateAddress(publicKey, Cryptography.EccFIPS);
 
         return {
             address,
@@ -127,8 +132,6 @@ export default class Account implements AccountInerface {
             publicKey
         };
     }
-
-    // export(password: string, privateKeyStr: string): string {}
 
     /**
      * Check address is valid
@@ -286,7 +289,12 @@ export default class Account implements AccountInerface {
         bytes.concat(Array(padding).fill(padding));
         // eslint-disable-next-line new-cap
         const aesCbc = new aesjs.ModeOfOperation.cbc(key, key.slice(0, blockSize));
-        const decryptedBytes = aesCbc.decrypt(bytes);
+        let decryptedBytes = aesCbc.decrypt(bytes);
+        const unpadding = decryptedBytes[decryptedBytes.length - 1];
+        if (decryptedBytes.length - unpadding <= 0) {
+            throw 'password error';
+        }
+        decryptedBytes = decryptedBytes.slice(0, decryptedBytes.length - unpadding);
         const td = new TextDecoder();
         return td.decode(decryptedBytes);
     }
@@ -295,9 +303,6 @@ export default class Account implements AccountInerface {
         const keyStr = publicOrPrivateKeyToString(privateKey);
         const te = new TextEncoder();
         const keyBytes: Uint8Array = te.encode(keyStr);
-        // const keyArr: string[] = [];
-        // keyBytes.forEach(s => keyArr.push(String.fromCharCode(s)));
-        // console.warn(keyArr)
         const blockSize = 16;
         const key = sha256.x2(password, {asBytes: true});
         const padding = blockSize - (keyBytes.length % blockSize);
@@ -305,7 +310,6 @@ export default class Account implements AccountInerface {
         // eslint-disable-next-line new-cap
         const aesCbc = new aesjs.ModeOfOperation.cbc(key, key.slice(0, blockSize));
         const result = aesCbc.encrypt(theBytes);
-        console.log(result);
         const ts = Array.from(result).map((s: number) => String.fromCharCode(s));
         return ts.join('');
     }
