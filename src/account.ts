@@ -19,7 +19,9 @@ import {
     stringToPublicOrPrivateKey
 } from './utils';
 import wordlist from './wordlist.json';
-import {AccountInerface, AccountModel, PrivateKeyModel, PublicKeyModel} from './interfaces';
+import {
+    AccountInerface, AccountModel, PrivateKeyModel, PublicKeyModel
+} from './interfaces';
 
 /**
  * Class Account
