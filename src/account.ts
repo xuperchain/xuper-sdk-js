@@ -8,18 +8,20 @@ import sha256 from 'sha256';
 import pbkdf2 from 'pbkdf2';
 import {ec as EC} from 'elliptic';
 import {RIPEMD160} from 'ripemd160-min/dist-umd';
+import aesjs from 'aes-js';
 import {Cryptography, Language, Strength} from './constants';
-
 import wordlist from './wordlist.json';
 import {
     PublicKeyModel, PrivateKeyModel, AccountInerface, AccountModel
 } from './interfaces';
-import {base58Encode, base58Decode, deepEqual} from './utils';
+import {base58Encode, base58Decode, deepEqual, stringToPublicOrPrivateKey} from './utils';
 
 /**
  * Class Account
  */
 export default class Account implements AccountInerface {
+    private c: Promise<any> = new Promise<any>((resolve) => { resolve(true); });
+
     private last4BitsMask: BN = new BN(15);
 
     /**
@@ -99,6 +101,50 @@ export default class Account implements AccountInerface {
             privateKey,
             publicKey
         };
+    }
+
+    import(password: string, privateKeyStr: string): AccountModel {
+        const decryptStr = this.decryptPrivateKey(password, privateKeyStr);
+        const privateKeyObj = stringToPublicOrPrivateKey(decryptStr);
+
+        const privateKey: PrivateKeyModel = {
+            D: privateKeyObj.D,
+            X: privateKeyObj.X,
+            Y: privateKeyObj.Y,
+            Curvname: privateKeyObj.Curvname
+        };
+
+        const publicKey: PublicKeyModel = {
+            X: privateKey.X,
+            Y: privateKey.Y,
+            Curvname: privateKey.Curvname
+        };
+
+        const address = this.generateAddress(publicKey, Cryptography.EccFIPS);
+
+        return {
+            address,
+            privateKey,
+            publicKey
+        };
+    }
+
+    decryptPrivateKey(password: string, keyStr: string) {
+        const bytes = atob(keyStr).split('').map(s => s.charCodeAt(0));
+        const blockSize = 16;
+        const key = sha256.x2(password, {asBytes: true});
+        const padding = blockSize - (bytes.length % blockSize);
+        bytes.concat(Array(padding).fill(padding));
+        // eslint-disable-next-line new-cap
+        const aesCbc = new aesjs.ModeOfOperation.cbc(key, key.slice(0, blockSize));
+        let decryptedBytes = aesCbc.decrypt(bytes);
+        const unpadding = decryptedBytes[decryptedBytes.length - 1];
+        if (decryptedBytes.length - unpadding <= 0) {
+            throw 'password error';
+        }
+        decryptedBytes = decryptedBytes.slice(0, decryptedBytes.length - unpadding);
+        const td = new TextDecoder();
+        return td.decode(decryptedBytes);
     }
 
     /**

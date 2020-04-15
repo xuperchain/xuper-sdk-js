@@ -147,6 +147,23 @@ export function publicOrPrivateKeyToString(key: PrivateKeyModel | PublicKeyModel
     return str;
 }
 
+export function stringToPublicOrPrivateKey(keyStr: string) {
+    const replacer = ((match: string, p1: string, p2: string, p3: string) => {
+        const data = {
+            X: p1,
+            Y: p2,
+            D: p3
+        };
+
+        return Object.keys(data).map(key =>
+            // @ts-ignore
+            // eslint-disable-next-line implicit-arrow-linebreak
+            `\"${key}\":\"${data[key]}\"`).join(',');
+    });
+
+    return JSON.parse(keyStr.replace(/"X":(\d+),"Y":(\d+),"D":(\d+)/gi, replacer));
+}
+
 /**
  * Post request
  * @param t target host
@@ -186,7 +203,7 @@ export function convert(tar: any): any {
                 /^[a-z]/.test(key)
                     ? key.replace(/([A-Z]{1})/g, '_$1').toLowerCase()
                     : key
-            ] = convert(value);
+                ] = convert(value);
         });
     } else {
         format = tar;

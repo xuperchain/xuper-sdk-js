@@ -40,7 +40,7 @@ export interface AccountModel {
     /**
      * Account mnemonic
      */
-    mnemonic: string;
+    mnemonic?: string;
 
     /**
      * Account public key model

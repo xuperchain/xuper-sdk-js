@@ -21,7 +21,7 @@ const clientConf = {
     output: {
         path: path.join(process.cwd(), 'lib'),
         filename: '[name].js',
-        library: '[name]',
+        library: 'Xuper',
         libraryTarget: 'umd'
     },
     mode: 'production',
@@ -51,7 +51,7 @@ const serverConf = {
     output: {
         path: path.join(process.cwd(), 'lib'),
         filename: '[name].node.js',
-        library: '[name]',
+        library: 'Xuper',
         libraryTarget: 'umd'
     },
     mode: 'production',

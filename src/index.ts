@@ -88,6 +88,12 @@ export default class XuperSDK implements XuperSDKInterface {
         return model;
     }
 
+    importAccout(password: string, privateKeyStr: string): AccountModel {
+        const model = this.accountIns.import(password, privateKeyStr);
+        this.accountModel = model;
+        return model;
+    }
+
     /**
      * Revert account with mnemonic
      * @param mnemonic
