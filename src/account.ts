@@ -109,6 +109,11 @@ export default class Account implements AccountInerface {
         };
     }
 
+    /**
+     * Import private key
+     * @param password
+     * @param privateKeyStr
+     */
     import(password: string, privateKeyStr: string): AccountModel {
         const decryptStr = this.decryptPrivateKey(password, privateKeyStr);
         const privateKeyObj = stringToPublicOrPrivateKey(decryptStr);

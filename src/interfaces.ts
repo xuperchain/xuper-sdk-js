@@ -314,12 +314,25 @@ export interface XuperSDKInterface {
     createAccount(language: Language, strength: Strength, cryptography: Cryptography): AccountModel;
 
     /**
-     * Revert account with mnemonic
+     * Recover account with mnemonic
      * @param mnemonic
-     * @param language
-     * @param cryptography
+     * @param language - easy: 12, middle: 16，hard: 24
+     * @param cryptography - EccFIPS
      */
     revertAccount(mnemonic: string, language: Language, cryptography: Cryptography): AccountModel;
+
+    /**
+     * Import private key recover account
+     * @param password
+     * @param privateKeyStr
+     */
+    importAccout(password: string, privateKeyStr: string): AccountModel;
+
+    /**
+     * Export encryptd private string
+     * @param password
+     */
+    exportAccount(password: string): string;
 
     /**
      * Local account balance or target address
@@ -445,4 +458,26 @@ export interface AccountInerface {
      * @param language
      */
     checkMnemonic(mnemonic: string, language: Language): boolean;
+}
+
+/**
+ * Interface - Transaction
+ */
+export interface TransactionInterface {
+    /**
+     * Generate transaction
+     * @param account
+     * @param preExecWithUtxos
+     * @param authRequires
+     * @param ti
+     */
+    generateTransaction(
+        account: AccountModel, preExecWithUtxos: any, authRequires: any, ti: TransactionInfomation
+    ): Transaction;
+
+    /**
+     * Transaction signature
+     * @param tx
+     */
+    signTx(tx: Transaction): Transaction;
 }

@@ -66,13 +66,6 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-comment">
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>Configuration Interface - Xuper otpions</p>
-					</div>
-				</div>
-			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -89,9 +82,10 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="xuperoptions.html#chain" class="tsd-kind-icon">chain</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="xuperoptions.html#endorseconf" class="tsd-kind-icon">endorse<wbr>Conf</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="xuperoptions.html#needendorse" class="tsd-kind-icon">need<wbr>Endorse</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="xuperoptions.html#defaultendorseconf" class="tsd-kind-icon">default<wbr>Endorse<wbr>Conf</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="xuperoptions.html#needdefaultendorse" class="tsd-kind-icon">need<wbr>Default<wbr>Endorse</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="xuperoptions.html#node" class="tsd-kind-icon">node</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="xuperoptions.html#preexecserver" class="tsd-kind-icon">pre<wbr>Exec<wbr>Server</a></li>
 							</ul>
 						</section>
 					</div>
@@ -105,44 +99,29 @@
 					<div class="tsd-signature tsd-kind-icon">chain<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/79d59e7/src/interfaces.ts#L230">interfaces.ts:230</a></li>
+							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/239f944/src/interfaces.ts#L260">interfaces.ts:260</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Blockchain name</p>
-						</div>
-					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="endorseconf" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> endorse<wbr>Conf</h3>
-					<div class="tsd-signature tsd-kind-icon">endorse<wbr>Conf<span class="tsd-signature-symbol">:</span> <a href="xuperendorseconf.html" class="tsd-signature-type">XuperEndorseConf</a></div>
+					<a name="defaultendorseconf" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> default<wbr>Endorse<wbr>Conf</h3>
+					<div class="tsd-signature tsd-kind-icon">default<wbr>Endorse<wbr>Conf<span class="tsd-signature-symbol">:</span> <a href="xuperendorseconf.html" class="tsd-signature-type">XuperEndorseConf</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/79d59e7/src/interfaces.ts#L240">interfaces.ts:240</a></li>
+							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/239f944/src/interfaces.ts#L275">interfaces.ts:275</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Endorse conf</p>
-						</div>
-					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="needendorse" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> need<wbr>Endorse</h3>
-					<div class="tsd-signature tsd-kind-icon">need<wbr>Endorse<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
+					<a name="needdefaultendorse" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> need<wbr>Default<wbr>Endorse</h3>
+					<div class="tsd-signature tsd-kind-icon">need<wbr>Default<wbr>Endorse<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/79d59e7/src/interfaces.ts#L235">interfaces.ts:235</a></li>
+							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/239f944/src/interfaces.ts#L270">interfaces.ts:270</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Endorse service</p>
-						</div>
-					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="node" class="tsd-anchor"></a>
@@ -150,14 +129,19 @@
 					<div class="tsd-signature tsd-kind-icon">node<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/79d59e7/src/interfaces.ts#L225">interfaces.ts:225</a></li>
+							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/239f944/src/interfaces.ts#L255">interfaces.ts:255</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Peer ip &amp; port</p>
-						</div>
-					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="preexecserver" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> pre<wbr>Exec<wbr>Server</h3>
+					<div class="tsd-signature tsd-kind-icon">pre<wbr>Exec<wbr>Server<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/239f944/src/interfaces.ts#L265">interfaces.ts:265</a></li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 		</div>
@@ -211,6 +195,9 @@
 						<a href="transaction.html" class="tsd-kind-icon">Transaction</a>
 					</li>
 					<li class=" tsd-kind-interface">
+						<a href="transactioninterface.html" class="tsd-kind-icon">Transaction<wbr>Interface</a>
+					</li>
+					<li class=" tsd-kind-interface">
 						<a href="xuperendorseconf.html" class="tsd-kind-icon">Xuper<wbr>Endorse<wbr>Conf</a>
 					</li>
 				</ul>
@@ -222,13 +209,16 @@
 								<a href="xuperoptions.html#chain" class="tsd-kind-icon">chain</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="xuperoptions.html#endorseconf" class="tsd-kind-icon">endorse<wbr>Conf</a>
+								<a href="xuperoptions.html#defaultendorseconf" class="tsd-kind-icon">default<wbr>Endorse<wbr>Conf</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="xuperoptions.html#needendorse" class="tsd-kind-icon">need<wbr>Endorse</a>
+								<a href="xuperoptions.html#needdefaultendorse" class="tsd-kind-icon">need<wbr>Default<wbr>Endorse</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="xuperoptions.html#node" class="tsd-kind-icon">node</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="xuperoptions.html#preexecserver" class="tsd-kind-icon">pre<wbr>Exec<wbr>Server</a>
 							</li>
 						</ul>
 					</li>

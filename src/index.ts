@@ -43,6 +43,10 @@ export default class XuperSDK implements XuperSDKInterface {
         return this.instance;
     }
 
+    /**
+     * Constructor
+     * @param opts
+     */
     constructor(opts: XuperOptions) {
         this.options = {...opts};
         this.accountIns = new Account();
@@ -93,8 +97,8 @@ export default class XuperSDK implements XuperSDKInterface {
     /**
      * Recover account with mnemonic
      * @param mnemonic
-     * @param language
-     * @param cryptography
+     * @param language - easy: 12, middle: 16，hard: 24
+     * @param cryptography - EccFIPS
      */
     revertAccount(mnemonic: string, language: Language, cryptography: Cryptography): AccountModel {
         const model = this.accountIns.revert(mnemonic, language, cryptography);
@@ -102,18 +106,28 @@ export default class XuperSDK implements XuperSDKInterface {
         return model;
     }
 
-    importAccout(password: string, privateKeyStr: string) {
+    /**
+     * Import private key
+     * @param password
+     * @param privateKeyStr
+     */
+    importAccout(password: string, privateKeyStr: string): AccountModel {
         const model = this.accountIns.import(password, privateKeyStr);
         this.accountModel = model;
         return model;
     }
 
+    /**
+     * Export encryptd private string
+     * @param password
+     */
     exportAccount(password: string): string {
         if (!this.accountModel || !this.accountModel.privateKey) {
             throw Errors.ACCOUNT_NOT_EXIST;
         }
-        // @ts-ignore
-        return btoa(this.accountIns.encryptPrivateKey(password, this.accountModel.privateKey));
+        return btoa(
+            this.accountIns.encryptPrivateKey(password, this.accountModel.privateKey)
+        );
     }
 
     /**
@@ -250,7 +264,7 @@ export default class XuperSDK implements XuperSDKInterface {
             throw Errors.INVALID_CONFIGURATION;
         }
 
-        const authRequires: {[propName: string]: AuthInterface} = {...this.defaultRequire};
+        const authRequires: { [propName: string]: AuthInterface } = {...this.defaultRequire};
 
         const {amount, fee} = ti;
 

@@ -9,7 +9,7 @@ import {ec as EC} from 'elliptic';
 import {VERSION} from './constants';
 import Errors from './error';
 import {
-    AccountModel, Transaction, TXOutput, TXInput, TransactionInfomation, UTXO
+    AccountModel, Transaction, TXOutput, TXInput, TransactionInfomation, UTXO, AccountInerface
 } from './interfaces';
 import {
     getNonce, jsonEncode, publicOrPrivateKeyToString, convert
@@ -243,6 +243,10 @@ export default function generateTransaction(
     return tx;
 }
 
+/**
+ * Transaction signature
+ * @param tx
+ */
 export function signTx(tx: Transaction): Transaction {
     const digest = encodeDataForDigestHash(tx, true);
     tx.txid = btoa(digest.map(v => String.fromCharCode(v)).join(''));

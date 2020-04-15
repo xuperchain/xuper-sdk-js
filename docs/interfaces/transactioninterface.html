@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>AccountInerface | Xuper SDK (JS/TS)</title>
+	<title>TransactionInterface | Xuper SDK (JS/TS)</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,10 +56,10 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="accountinerface.html">AccountInerface</a>
+					<a href="transactioninterface.html">TransactionInterface</a>
 				</li>
 			</ul>
-			<h1>Interface AccountInerface</h1>
+			<h1>Interface TransactionInterface</h1>
 		</div>
 	</div>
 </header>
@@ -70,14 +70,8 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">AccountInerface</span>
+						<span class="target">TransactionInterface</span>
 					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel">
-				<h3>Implemented by</h3>
-				<ul class="tsd-hierarchy">
-					<li><a href="../classes/account.html" class="tsd-signature-type">Account</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -87,10 +81,12 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accountinerface.html#checkaddress" class="tsd-kind-icon">check<wbr>Address</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accountinerface.html#checkmnemonic" class="tsd-kind-icon">check<wbr>Mnemonic</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accountinerface.html#create" class="tsd-kind-icon">create</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accountinerface.html#revert" class="tsd-kind-icon">revert</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="transactioninterface.html#encodedatafordigesthash" class="tsd-kind-icon">encode<wbr>Data<wbr>For<wbr>Digest<wbr>Hash</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="transactioninterface.html#generatetransaction" class="tsd-kind-icon">generate<wbr>Transaction</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="transactioninterface.html#maketxinputs" class="tsd-kind-icon">make<wbr>TxInputs</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="transactioninterface.html#maketxoutput" class="tsd-kind-icon">make<wbr>TxOutput</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="transactioninterface.html#maketxoutputs" class="tsd-kind-icon">make<wbr>TxOutputs</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="transactioninterface.html#signtx" class="tsd-kind-icon">sign<wbr>Tx</a></li>
 							</ul>
 						</section>
 					</div>
@@ -99,109 +95,164 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="checkaddress" class="tsd-anchor"></a>
-					<h3>check<wbr>Address</h3>
+					<a name="encodedatafordigesthash" class="tsd-anchor"></a>
+					<h3>encode<wbr>Data<wbr>For<wbr>Digest<wbr>Hash</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">check<wbr>Address<span class="tsd-signature-symbol">(</span>address<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon">encode<wbr>Data<wbr>For<wbr>Digest<wbr>Hash<span class="tsd-signature-symbol">(</span>tx<span class="tsd-signature-symbol">: </span><a href="transaction.html" class="tsd-signature-type">Transaction</a>, include_signs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/239f944/src/interfaces.ts#L453">interfaces.ts:453</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/239f944/src/interfaces.ts#L500">interfaces.ts:500</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>address: <span class="tsd-signature-type">string</span></h5>
+									<h5>tx: <a href="transaction.html" class="tsd-signature-type">Transaction</a></h5>
+								</li>
+								<li>
+									<h5>include_signs: <span class="tsd-signature-type">boolean</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="checkmnemonic" class="tsd-anchor"></a>
-					<h3>check<wbr>Mnemonic</h3>
+					<a name="generatetransaction" class="tsd-anchor"></a>
+					<h3>generate<wbr>Transaction</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">check<wbr>Mnemonic<span class="tsd-signature-symbol">(</span>mnemonic<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, language<span class="tsd-signature-symbol">: </span><a href="../enums/language.html" class="tsd-signature-type">Language</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon">generate<wbr>Transaction<span class="tsd-signature-symbol">(</span>account<span class="tsd-signature-symbol">: </span><a href="accountmodel.html" class="tsd-signature-type">AccountModel</a>, preExecWithUtxos<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, authRequires<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, ti<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TransactionInfomation</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="transaction.html" class="tsd-signature-type">Transaction</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/239f944/src/interfaces.ts#L460">interfaces.ts:460</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/239f944/src/interfaces.ts#L509">interfaces.ts:509</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>mnemonic: <span class="tsd-signature-type">string</span></h5>
+									<h5>account: <a href="accountmodel.html" class="tsd-signature-type">AccountModel</a></h5>
 								</li>
 								<li>
-									<h5>language: <a href="../enums/language.html" class="tsd-signature-type">Language</a></h5>
+									<h5>preExecWithUtxos: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>authRequires: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>ti: <span class="tsd-signature-type">TransactionInfomation</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="transaction.html" class="tsd-signature-type">Transaction</a></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="create" class="tsd-anchor"></a>
-					<h3>create</h3>
+					<a name="maketxinputs" class="tsd-anchor"></a>
+					<h3>make<wbr>TxInputs</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">create<span class="tsd-signature-symbol">(</span>language<span class="tsd-signature-symbol">: </span><a href="../enums/language.html" class="tsd-signature-type">Language</a>, strength<span class="tsd-signature-symbol">: </span><a href="../enums/strength.html" class="tsd-signature-type">Strength</a>, cryptography<span class="tsd-signature-symbol">: </span><a href="../enums/cryptography.html" class="tsd-signature-type">Cryptography</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="accountmodel.html" class="tsd-signature-type">AccountModel</a></li>
+						<li class="tsd-signature tsd-kind-icon">make<wbr>TxInputs<span class="tsd-signature-symbol">(</span>utxos<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">UTXO</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TXInput</span><span class="tsd-signature-symbol">[]</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/239f944/src/interfaces.ts#L439">interfaces.ts:439</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/239f944/src/interfaces.ts#L471">interfaces.ts:471</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>language: <a href="../enums/language.html" class="tsd-signature-type">Language</a></h5>
-								</li>
-								<li>
-									<h5>strength: <a href="../enums/strength.html" class="tsd-signature-type">Strength</a></h5>
-								</li>
-								<li>
-									<h5>cryptography: <a href="../enums/cryptography.html" class="tsd-signature-type">Cryptography</a></h5>
+									<h5>utxos: <span class="tsd-signature-type">UTXO</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="accountmodel.html" class="tsd-signature-type">AccountModel</a></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">TXInput</span><span class="tsd-signature-symbol">[]</span></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="revert" class="tsd-anchor"></a>
-					<h3>revert</h3>
+					<a name="maketxoutput" class="tsd-anchor"></a>
+					<h3>make<wbr>TxOutput</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">revert<span class="tsd-signature-symbol">(</span>mnemonic<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, language<span class="tsd-signature-symbol">: </span><a href="../enums/language.html" class="tsd-signature-type">Language</a>, cryptography<span class="tsd-signature-symbol">: </span><a href="../enums/cryptography.html" class="tsd-signature-type">Cryptography</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="accountmodel.html" class="tsd-signature-type">AccountModel</a></li>
+						<li class="tsd-signature tsd-kind-icon">make<wbr>TxOutput<span class="tsd-signature-symbol">(</span>totalSelected<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BN</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, totalNeed<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BN</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, toAddress<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TXOutput</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/239f944/src/interfaces.ts#L447">interfaces.ts:447</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/239f944/src/interfaces.ts#L479">interfaces.ts:479</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>mnemonic: <span class="tsd-signature-type">string</span></h5>
+									<h5>totalSelected: <span class="tsd-signature-type">BN</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
 								</li>
 								<li>
-									<h5>language: <a href="../enums/language.html" class="tsd-signature-type">Language</a></h5>
+									<h5>totalNeed: <span class="tsd-signature-type">BN</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
 								</li>
 								<li>
-									<h5>cryptography: <a href="../enums/cryptography.html" class="tsd-signature-type">Cryptography</a></h5>
+									<h5>toAddress: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="accountmodel.html" class="tsd-signature-type">AccountModel</a></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">TXOutput</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="maketxoutputs" class="tsd-anchor"></a>
+					<h3>make<wbr>TxOutputs</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">make<wbr>TxOutputs<span class="tsd-signature-symbol">(</span>amount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BN</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, fee<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BN</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TXOutput</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/239f944/src/interfaces.ts#L489">interfaces.ts:489</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>amount: <span class="tsd-signature-type">BN</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> fee: <span class="tsd-signature-type">BN</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> to: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">TXOutput</span><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="signtx" class="tsd-anchor"></a>
+					<h3>sign<wbr>Tx</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">sign<wbr>Tx<span class="tsd-signature-symbol">(</span>tx<span class="tsd-signature-symbol">: </span><a href="transaction.html" class="tsd-signature-type">Transaction</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="transaction.html" class="tsd-signature-type">Transaction</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/239f944/src/interfaces.ts#L517">interfaces.ts:517</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>tx: <a href="transaction.html" class="tsd-signature-type">Transaction</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="transaction.html" class="tsd-signature-type">Transaction</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -232,27 +283,9 @@
 					<li class=" tsd-kind-class">
 						<a href="../classes/xupersdk.html" class="tsd-kind-icon">XuperSDK</a>
 					</li>
-				</ul>
-				<ul class="current">
-					<li class="current tsd-kind-interface">
+					<li class=" tsd-kind-interface">
 						<a href="accountinerface.html" class="tsd-kind-icon">Account<wbr>Inerface</a>
-						<ul>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="accountinerface.html#checkaddress" class="tsd-kind-icon">check<wbr>Address</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="accountinerface.html#checkmnemonic" class="tsd-kind-icon">check<wbr>Mnemonic</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="accountinerface.html#create" class="tsd-kind-icon">create</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="accountinerface.html#revert" class="tsd-kind-icon">revert</a>
-							</li>
-						</ul>
 					</li>
-				</ul>
-				<ul class="after-current">
 					<li class=" tsd-kind-interface">
 						<a href="accountmodel.html" class="tsd-kind-icon">Account<wbr>Model</a>
 					</li>
@@ -274,9 +307,33 @@
 					<li class=" tsd-kind-interface">
 						<a href="transaction.html" class="tsd-kind-icon">Transaction</a>
 					</li>
-					<li class=" tsd-kind-interface">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface">
 						<a href="transactioninterface.html" class="tsd-kind-icon">Transaction<wbr>Interface</a>
+						<ul>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="transactioninterface.html#encodedatafordigesthash" class="tsd-kind-icon">encode<wbr>Data<wbr>For<wbr>Digest<wbr>Hash</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="transactioninterface.html#generatetransaction" class="tsd-kind-icon">generate<wbr>Transaction</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="transactioninterface.html#maketxinputs" class="tsd-kind-icon">make<wbr>TxInputs</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="transactioninterface.html#maketxoutput" class="tsd-kind-icon">make<wbr>TxOutput</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="transactioninterface.html#maketxoutputs" class="tsd-kind-icon">make<wbr>TxOutputs</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="transactioninterface.html#signtx" class="tsd-kind-icon">sign<wbr>Tx</a>
+							</li>
+						</ul>
 					</li>
+				</ul>
+				<ul class="after-current">
 					<li class=" tsd-kind-interface">
 						<a href="xuperendorseconf.html" class="tsd-kind-icon">Xuper<wbr>Endorse<wbr>Conf</a>
 					</li>
