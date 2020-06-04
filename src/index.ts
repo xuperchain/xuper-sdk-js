@@ -10,7 +10,7 @@ import {
 } from './constants';
 
 import {
-    publicOrPrivateKeyToString, postRequest, convert
+    publicOrPrivateKeyToString, postRequest, convert, txidToHex
 } from './utils';
 
 import {
@@ -104,6 +104,10 @@ export default class XuperSDK implements XuperSDKInterface {
         const model = this.accountIns.revert(mnemonic, language, cryptography);
         this.accountModel = model;
         return model;
+    }
+
+    txidToHex(txid: string): string {
+        return txidToHex(txid);
     }
 
     /**
@@ -426,6 +430,62 @@ export default class XuperSDK implements XuperSDKInterface {
             to: ''
         }, authRequires, preExecWithUtxosObj);
         return this.postTransaction(tx);
+    }
+
+    /**
+     * Invoke contract
+     * @param contractName
+     * @param methodName
+     * @param moduleName
+     * @param args
+     */
+    async simpleInvokeContract(
+        contractName: string,
+        methodName: string,
+        moduleName: string,
+        args: any
+    ): Promise<any> {
+        if (!this.accountModel) {
+            throw 'No account information';
+        }
+
+        if (!this.options.endorseConf) {
+            throw Errors.INVALID_CONFIGURATION;
+        }
+
+        const invokeRequests: ContracRequesttModel[] = [{
+            module_name: moduleName,
+            method_name: methodName,
+            contract_name: contractName,
+            args
+        }];
+
+        const authRequires: {[propName: string]: AuthInterface} = {...this.defaultRequire};
+
+        let totalNeed = new BN(0);
+
+        totalNeed = totalNeed.add(new BN('0'));
+        totalNeed = totalNeed.add(new BN('0'));
+
+        Object.keys(authRequires).forEach((key: string) => {
+            const auth = authRequires[key];
+            totalNeed = totalNeed.add(new BN(auth.fee || 0));
+        });
+
+        const preExecWithUtxos = await this.preExecTransactionWithUTXO(
+            totalNeed, Object.keys(authRequires), invokeRequests
+        );
+        return {
+            preExec: JSON.parse(atob(preExecWithUtxos.ResponseData)),
+            authRequires
+        };
+        // const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
+        // const tx = await this.makeTransaction({
+        //     amount: '0',
+        //     fee: gasUsed.toString(),
+        //     to: ''
+        // }, authRequires, preExecWithUtxosObj);
+        // return this.postTransaction(tx);
     }
 
     /**

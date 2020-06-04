@@ -203,11 +203,15 @@ export function convert(tar: any): any {
                 /^[a-z]/.test(key)
                     ? key.replace(/([A-Z]{1})/g, '_$1').toLowerCase()
                     : key
-                ] = convert(value);
+            ] = convert(value);
         });
     } else {
         format = tar;
     }
 
     return format;
+}
+
+export function txidToHex(txid: string): string {
+    return atob(txid).split('').map(s => s.charCodeAt(0).toString(16).padStart(2, '0')).join('');
 }
