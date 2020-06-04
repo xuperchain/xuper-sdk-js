@@ -229,6 +229,13 @@ export function convert(tar: any): any {
     return format;
 }
 
+export function arrayPadStart(arr: any[], len: number) {
+    if (arr.length < len) {
+        return new Array(len - arr.length).fill(0).concat(arr);
+    }
+    return arr;
+}
+
 if (!isBrowser()) {
     // @ts-ignore
     global.btoa = (s: string) => Buffer.from(s, 'binary').toString('base64');

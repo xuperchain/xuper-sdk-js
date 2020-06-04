@@ -16,7 +16,8 @@ import {
     deepEqual,
     isBrowser,
     publicOrPrivateKeyToString,
-    stringToPublicOrPrivateKey
+    stringToPublicOrPrivateKey,
+    arrayPadStart
 } from './utils';
 import wordlist from './wordlist.json';
 import {
@@ -349,12 +350,16 @@ export default class Account implements AccountInerface {
         };
     }
 
-    private generateAddress(publicKey: PublicKeyModel, cryptography: Cryptography) {
+    generateAddress(publicKey: PublicKeyModel, cryptography: Cryptography) {
         const flagByte = [4];
+
         const xBytes = new BN(publicKey.X).toArray();
         const yBytes = new BN(publicKey.Y).toArray();
 
-        const data = flagByte.concat(xBytes).concat(yBytes);
+        // 256 + 7 >> 3
+        const data = flagByte
+            .concat(arrayPadStart(xBytes, 32))
+            .concat(arrayPadStart(yBytes, 32));
 
         const outputSha256 = sha256(data, {asBytes: true});
 
