@@ -14,7 +14,9 @@ import wordlist from './wordlist.json';
 import {
     PublicKeyModel, PrivateKeyModel, AccountInerface, AccountModel
 } from './interfaces';
-import {base58Encode, base58Decode, deepEqual, stringToPublicOrPrivateKey} from './utils';
+import {
+    base58Encode, base58Decode, deepEqual, stringToPublicOrPrivateKey, arrayPadStart
+} from './utils';
 
 /**
  * Class Account
@@ -321,7 +323,12 @@ export default class Account implements AccountInerface {
         const xBytes = new BN(publicKey.X).toArray();
         const yBytes = new BN(publicKey.Y).toArray();
 
-        const data = flagByte.concat(xBytes).concat(yBytes);
+        // const data = flagByte.concat(xBytes).concat(yBytes);
+
+        // 256 + 7 >> 3
+        const data = flagByte
+            .concat(arrayPadStart(xBytes, 32))
+            .concat(arrayPadStart(yBytes, 32));
 
         const outputSha256 = sha256(data, {asBytes: true});
 

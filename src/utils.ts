@@ -211,6 +211,13 @@ export function convert(tar: any): any {
     return format;
 }
 
+export function arrayPadStart(arr: any[], len: number) {
+    if (arr.length < len) {
+        return new Array(len - arr.length).fill(0).concat(arr);
+    }
+    return arr;
+}
+
 export function txidToHex(txid: string): string {
     return atob(txid).split('').map(s => s.charCodeAt(0).toString(16).padStart(2, '0')).join('');
 }
