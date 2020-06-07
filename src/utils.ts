@@ -24,8 +24,7 @@ export function base58Encode(
     let j: any;
     let n;
 
-    // @ts-ignore
-    for (const i: number in data) {
+    data.forEach((_, i) => {
         j = 0;
         c = data[i];
 
@@ -39,7 +38,7 @@ export function base58Encode(
             d[j] = n % 58;
             j++;
         }
-    }
+    });
 
     while (j--) {
         str += alphabet[d[j]];
