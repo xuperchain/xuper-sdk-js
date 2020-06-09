@@ -208,11 +208,41 @@ Configuration
 -------------------------------------------------------------------------------
  */
 
+/*
 export interface XuperEndorseConf {
     fee: string;
     server: string;
     complianceCheckfeeAddress: string;
     feeServiceAddress: string;
+}
+
+ */
+
+export interface XuperEndorseConf {
+    /**
+     * Endorse service name
+     */
+    name: string;
+
+    /**
+     * Endorse server url
+     */
+    server: string;
+
+    /**
+     * Endorsement service fee
+     */
+    fee: string;
+
+    /**
+     * Endorsement sign address
+     */
+    endorseServiceCheckAddr: string;
+
+    /**
+     * Endorsement service fee address
+     */
+    endorseServiceFeeAddr: string;
 }
 
 /**
@@ -225,19 +255,24 @@ export interface XuperOptions {
     node: string;
 
     /**
-     * Blockchain name
+     * Chain name
      */
     chain: string;
 
     /**
+     * Pre-exec server url
+     */
+    preExecServer?: string;
+
+    /**
      * Endorse service
      */
-    needEndorse?: boolean;
+    needDefaultEndorse?: boolean;
 
     /**
      * Endorse conf
      */
-    endorseConf?: XuperEndorseConf;
+    defaultEndorseConf?: XuperEndorseConf;
 }
 
 /*
@@ -280,6 +315,19 @@ export interface XuperSDKInterface {
      * @param cryptography
      */
     revertAccount(mnemonic: string, language: Language, cryptography: Cryptography): AccountModel;
+
+    /**
+     * Import private key recover account
+     * @param password
+     * @param privateKeyStr
+     */
+    importAccout(password: string, privateKeyStr: string): AccountModel;
+
+    /**
+     * Export encryptd private string
+     * @param password
+     */
+    exportAccount(password: string): string;
 
     /**
      * Local account balance or target address
@@ -405,4 +453,26 @@ export interface AccountInerface {
      * @param language
      */
     checkMnemonic(mnemonic: string, language: Language): boolean;
+}
+
+/**
+ * Interface - Transaction
+ */
+export interface TransactionInterface {
+    /**
+     * Generate transaction
+     * @param account
+     * @param preExecWithUtxos
+     * @param authRequires
+     * @param ti
+     */
+    generateTransaction(
+        account: AccountModel, preExecWithUtxos: any, authRequires: any, ti: TransactionInfomation
+    ): Transaction;
+
+    /**
+     * Transaction signature
+     * @param tx
+     */
+    signTx(tx: Transaction): Transaction;
 }

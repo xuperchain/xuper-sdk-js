@@ -75,7 +75,9 @@
         "resolveJsonModule": true,
         "lib": [
             "dom",
-            "es2015"
+            "es5",
+            "scripthost",
+            "es2015.promise"
         ]
     },
     "exclude": [

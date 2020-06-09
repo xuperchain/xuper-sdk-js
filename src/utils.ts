@@ -10,6 +10,13 @@
 import {PrivateKeyModel, PublicKeyModel} from './interfaces';
 
 /**
+ * Environment detection
+ */
+export function isBrowser() {
+    return typeof window !== 'undefined' && typeof window.document !== 'undefined';
+}
+
+/**
  * Base58 - encode
  * @param data
  * @param alphabet
@@ -126,7 +133,15 @@ export function deepEqual(x: any, y: any): boolean {
  * Nonce
  */
 export function getNonce(): string {
-    return (~~(Date.now() / 1000).toString()) + crypto.getRandomValues(new Uint32Array(1))[0].toString();
+    let rs = '';
+    if (isBrowser()) {
+        rs = crypto.getRandomValues(new Uint32Array(1))[0].toString();
+    } else {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires,global-require
+        const crypto = require('crypto');
+        rs = crypto.randomFillSync(new Uint32Array(1))[0].toString();
+    }
+    return (~~(Date.now() / 1000).toString()) + rs;
 }
 
 /**
@@ -146,6 +161,10 @@ export function publicOrPrivateKeyToString(key: PrivateKeyModel | PublicKeyModel
     return str;
 }
 
+/**
+ * Converting a public key or private key to a string
+ * @param key
+ */
 export function stringToPublicOrPrivateKey(keyStr: string) {
     const replacer = ((match: string, p1: string, p2: string, p3: string) => {
         const data = {
@@ -181,7 +200,9 @@ export async function postRequest(t: string, b: object): Promise<any> {
             }
             return response.json();
         }
-    );
+    ).catch(err => {
+        throw err;
+    });
 }
 
 /**
@@ -198,11 +219,7 @@ export function convert(tar: any): any {
         const newTar = {...tar};
         Object.keys(newTar).forEach(key => {
             const value = newTar[key];
-            format[
-                /^[a-z]/.test(key)
-                    ? key.replace(/([A-Z]{1})/g, '_$1').toLowerCase()
-                    : key
-            ] = convert(value);
+            format[/^[a-z]/.test(key) ? key.replace(/([A-Z]{1})/g, '_$1').toLowerCase() : key] = convert(value);
         });
     } else {
         format = tar;
@@ -220,4 +237,14 @@ export function arrayPadStart(arr: any[], len: number) {
 
 export function txidToHex(txid: string): string {
     return atob(txid).split('').map(s => s.charCodeAt(0).toString(16).padStart(2, '0')).join('');
+}
+
+if (!isBrowser()) {
+    // @ts-ignore
+    global.btoa = (s: string) => Buffer.from(s, 'binary').toString('base64');
+    // @ts-ignore
+    global.atob = (e: string) => Buffer.from(e, 'base64').toString('binary');
+    // @ts-ignore
+    // eslint-disable-next-line global-require
+    global.fetch = require('node-fetch').default;
 }

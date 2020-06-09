@@ -17,7 +17,7 @@ module.exports = {
         sourceType: 'module'
     },
     plugins: ['@typescript-eslint'],
-    ignorePatterns: ['*.test.ts', 'node_modules/*'],
+    ignorePatterns: ['*.test.ts', 'node_modules/*', 'scripts/*'],
     rules: {
         'indent': ['error', 4],
         'no-multi-spaces': 'error',

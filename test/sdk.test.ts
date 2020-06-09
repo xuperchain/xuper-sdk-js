@@ -4,24 +4,32 @@
  */
 
 /* eslint-disable no-undef */
-jest.setTimeout(10000);
-
+jest.setTimeout(100000000);
+import {isBrowser} from '../src/utils';
 import XuperSDK, {Cryptography, Language, Strength} from '../src';
 
-require('whatwg-fetch');
+if (isBrowser()) {
+    require('whatwg-fetch');
+}
+else {
+    require('dotenv').config();
+}
 
-const chain = 'xuper';
 const node = process.env.NODE || '';
+const chain = 'xuper';
+const preExecServer = process.env.PRE_EXEC_SERVER || '';
 
-const endorseConf = {
-    fee: '10',
+const endorseConfs = {
+    name: 'Compliance',
+    fee: process.env.FEE || '',
     server: process.env.ENDORSE_SERVER || '',
-    complianceCheckfeeAddress: process.env.FEEADDRESS || '',
-    feeServiceAddress: process.env.FEESERVICEADDRESS || ''
+    endorseServiceCheckAddr: process.env.SERVICE_SIGN_ADDRESS || '',
+    endorseServiceFeeAddr: process.env.SERVICE_FEE_ADDRESS || ''
 };
 
 describe('Xuper SDK', () => {
-    test('create new account with mnemonic should return account model', () => {
+
+    test('create an account with mnemonic should return account model', () => {
         const xsdk = new XuperSDK({node: '', chain: 'xuper'});
         const accountModel = xsdk.createAccount(
             Language.SimplifiedChinese,
@@ -160,8 +168,33 @@ describe('Xuper SDK', () => {
         const xsdk = new XuperSDK({
             node,
             chain,
-            needEndorse: true,
-            endorseConf
+            preExecServer,
+            needDefaultEndorse: true,
+            defaultEndorseConf: endorseConfs
+        });
+
+        xsdk.revertAccount(
+            process.env.TEST_MNEMONIC || '',
+            Language.SimplifiedChinese,
+            Cryptography.EccFIPS
+        );
+
+        const result = await xsdk.preExecTransactionWithUTXO(
+            '1',
+            []
+        );
+
+        const resultObj = JSON.parse(atob(result.ResponseData));
+        expect(resultObj.bcname).toEqual(chain);
+        expect(resultObj.header).toHaveProperty('logid');
+        expect(resultObj.utxoOutput).toHaveProperty('utxoList');
+    });
+
+    test('post pre-transaction without endorse service should return bcname, response, utxoOutput', async () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain,
+            preExecServer
         });
 
         xsdk.revertAccount(
@@ -185,8 +218,9 @@ describe('Xuper SDK', () => {
         const xsdk = new XuperSDK({
             node,
             chain,
-            needEndorse: true,
-            endorseConf
+            preExecServer,
+            needDefaultEndorse: true,
+            defaultEndorseConf: endorseConfs
         });
 
         xsdk.revertAccount(
@@ -209,8 +243,9 @@ describe('Xuper SDK', () => {
         const xsdk = new XuperSDK({
             node,
             chain,
-            needEndorse: true,
-            endorseConf
+            preExecServer,
+            needDefaultEndorse: true,
+            defaultEndorseConf: endorseConfs
         });
 
         xsdk.revertAccount(
@@ -222,7 +257,32 @@ describe('Xuper SDK', () => {
         const tx = await xsdk.generateTransaction({
             to: process.env.TEST_TARGET_ADDRESS || '',
             amount: '100',
-            fee: '0'
+            fee: '100'
+        });
+
+        const result = await xsdk.postTransaction(tx);
+
+        expect(result.header).toHaveProperty('logid');
+        expect(result.header).not.toHaveProperty('error');
+    });
+
+    test('generate transaction without endorse service should return transaction model', async () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain,
+            preExecServer
+        });
+
+        xsdk.revertAccount(
+            process.env.TEST_MNEMONIC || '',
+            Language.SimplifiedChinese,
+            Cryptography.EccFIPS
+        );
+
+        const tx = await xsdk.generateTransaction({
+            to: process.env.TEST_TARGET_ADDRESS || '',
+            amount: '100',
+            fee: '100'
         });
 
         const result = await xsdk.postTransaction(tx);
@@ -234,8 +294,9 @@ describe('Xuper SDK', () => {
         const xsdk = new XuperSDK({
             node,
             chain,
-            needEndorse: true,
-            endorseConf
+            preExecServer,
+            needDefaultEndorse: true,
+            defaultEndorseConf: endorseConfs
         });
 
         xsdk.revertAccount(
@@ -260,8 +321,9 @@ describe('Xuper SDK', () => {
         const xsdk = new XuperSDK({
             node,
             chain,
-            needEndorse: true,
-            endorseConf
+            preExecServer,
+            needDefaultEndorse: true,
+            defaultEndorseConf: endorseConfs
         });
 
         const txid = '/aGXihDS0VmgQCzazB2gtTHD77P1UPh4wRicDp5jdZA=';
@@ -284,8 +346,9 @@ describe('Xuper SDK', () => {
         const xsdk = new XuperSDK({
             node,
             chain,
-            needEndorse: true,
-            endorseConf
+            preExecServer,
+            needDefaultEndorse: true,
+            defaultEndorseConf: endorseConfs
         });
 
         xsdk.revertAccount(
@@ -295,7 +358,7 @@ describe('Xuper SDK', () => {
         );
 
         const result = await xsdk.createContractAccount(
-            parseInt('1234567890' + (~~(Math.random() * 10 ** 6 - 10 ** 6) + 10 ** 6).toString())
+             parseInt('1234567890' + (~~(Math.random() * (999999 - 100000) + 100000).toString()))
         );
 
         expect(result.header).toHaveProperty('logid');
@@ -307,8 +370,9 @@ describe('Xuper SDK', () => {
         const xsdk = new XuperSDK({
             node,
             chain,
-            needEndorse: true,
-            endorseConf
+            preExecServer,
+            needDefaultEndorse: true,
+            defaultEndorseConf: endorseConfs
         });
 
         xsdk.revertAccount(
@@ -320,12 +384,21 @@ describe('Xuper SDK', () => {
 
         const codeBuf: string[] = [];
 
-        // @ts-ignore
-        window.file.forEach(n => codeBuf.push(String.fromCharCode(n)));
+        if (isBrowser()) {
+            // test/jest/custom-test-env.js
+            // @ts-ignore
+            window.file.forEach(n => codeBuf.push(String.fromCharCode(n)));
+        } else {
+            const fs = require('fs');
+            let f = Uint8Array.from(fs.readFileSync(`${__dirname}/contract_code/counter.wasm`))
+            f.forEach(n => codeBuf.push(String.fromCharCode(n)));
+        }
+
+        const contractName = `counter${~~(Math.random() * 10 ** 3 - 10 ** 3) + 10 ** 3}`;
 
         const result = await xsdk.deployWasmContract(
-            'XC1234567890666660@xuper',
-            `counter${~~(Math.random() * 10 ** 3 - 10 ** 3) + 10 ** 3}`,
+            'XC1234567890145964@xuper',
+            contractName,
             codeBuf.join(''),
             'c',
             {
@@ -337,13 +410,58 @@ describe('Xuper SDK', () => {
         expect(result.header).not.toHaveProperty('error');
     });
 
+    test('deploy webassembly contract without endorse should return successful transaction result', async () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain,
+            preExecServer
+        });
+
+        xsdk.revertAccount(
+            process.env.TEST_MNEMONIC || '',
+
+            Language.SimplifiedChinese,
+            Cryptography.EccFIPS
+        );
+
+        const codeBuf: string[] = [];
+
+        if (isBrowser()) {
+            // test/jest/custom-test-env.js
+            // @ts-ignore
+            window.file.forEach(n => codeBuf.push(String.fromCharCode(n)));
+        } else {
+            const fs = require('fs');
+            let f = Uint8Array.from(fs.readFileSync(`${__dirname}/contract_code/counter.wasm`))
+            f.forEach(n => codeBuf.push(String.fromCharCode(n)));
+        }
+
+        const contractName = `counter${~~(Math.random() * 10 ** 3 - 10 ** 3) + 10 ** 3}`;
+
+        const result = await xsdk.deployWasmContract(
+            'XC1234567890145964@xuper',
+            contractName,
+            codeBuf.join(''),
+            'c',
+            {
+                creator: 'xchain'
+            }
+        );
+
+        console.log(contractName);
+
+        expect(result.header).toHaveProperty('logid');
+        expect(result.header).not.toHaveProperty('error');
+    });
+
     // invoke contract
     test('invoke webassembly contract should return successful transaction result', async () => {
         const xsdk = new XuperSDK({
             node,
             chain,
-            needEndorse: true,
-            endorseConf
+            preExecServer,
+            needDefaultEndorse: true,
+            defaultEndorseConf: endorseConfs
         });
 
         xsdk.revertAccount(
@@ -352,12 +470,79 @@ describe('Xuper SDK', () => {
             Cryptography.EccFIPS
         );
 
-        const result = await xsdk.invokeContract('', 'Get', 'xkernel', {
+        const result = await xsdk.invokeContract('counter715', 'get', 'wasm', {
             Bucket: btoa('XCAccount'),
-            Key: btoa('XC1111111111111111@xuper')
+            Key: btoa('XC1234567890145964@xuper')
         });
 
         expect(result.header).toHaveProperty('logid');
         expect(result.header).not.toHaveProperty('error');
+    });
+
+    test('invoke webassembly contract without endorse should return successful transaction result', async () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain,
+            preExecServer
+        });
+
+        xsdk.revertAccount(
+            process.env.TEST_MNEMONIC || '',
+            Language.SimplifiedChinese,
+            Cryptography.EccFIPS
+        );
+
+        const result = await xsdk.invokeContract('counter715', 'get', 'wasm', {
+            Bucket: btoa('XCAccount'),
+            Key: btoa('XC1234567890145964@xuper')
+        });
+
+        expect(result.header).toHaveProperty('logid');
+        expect(result.header).not.toHaveProperty('error');
+    });
+
+    test('import private key', () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain,
+            preExecServer
+        });
+
+        const privateKeyStr = 'RziKPHM0e6icCkXe0t5g1XCoXEorf/u5KNNV+l55LeWYgyD5aNySqIpnFwmr/WGegCjPZjv69x2CVbT/WkxAUM7G9ccZre7iJfULLzMzrp4Vf3lRqt6iP883fCcTGrgSxJeIQBYtTw1olrFdC9lXqhEfD94UuK04lrxXYN1HOTZHkg0oCJRUM1eECfYXwWVaPf9xZ59ZEh5/D5UYKKdBwKQbuRe22Hj/5I0N0WOzGoa86FUZusrv2lLjUxe0BscCCVZ1rvFdIMWuOCySYs4oNDLhnT6lD3FeXSZbO0cYC3s2dsXasAkSk5ioE9umtxoZxI/AQAdavLJtgeYkakNgzL+qBdL/CoqbtJEJgD/4ZIo=';
+
+        const model = xsdk.importAccout('1', privateKeyStr);
+        expect(model).toHaveProperty('privateKey');
+        expect(model).toHaveProperty('publicKey');
+        expect(model).toHaveProperty('address');
+        expect(model.privateKey.X)
+            .toBe('61657808827957283567736545770323618905460909308953839100214462605424684649873');
+        expect(model.privateKey.Y)
+            .toBe('21136816327134648174270159577816004589179431005681578276352060189744400462107');
+        expect(model.privateKey.D)
+            .toBe('110228008083699463012557553888442674049800736891640220747520328148544543761263');
+    });
+
+    test('export encryptd private key', () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain,
+            preExecServer
+        });
+
+        xsdk.revertAccount(
+            process.env.TEST_MNEMONIC || '',
+            Language.SimplifiedChinese,
+            Cryptography.EccFIPS
+        );
+
+        const address = xsdk.accountModel!.address;
+
+        const encryptdPrivateKey = xsdk.exportAccount('1');
+
+        expect(encryptdPrivateKey).toBe('RziKPHM0e6icCkXe0t5g1XCoXEorf/u5KNNV+l55LeWYgyD5aNySqIpnFwmr/WGegCjPZjv69x2CVbT/WkxAUM7G9ccZre7iJfULLzMzrp4Vf3lRqt6iP883fCcTGrgSxJeIQBYtTw1olrFdC9lXqhEfD94UuK04lrxXYN1HOTZHkg0oCJRUM1eECfYXwWVaPf9xZ59ZEh5/D5UYKKdBwKQbuRe22Hj/5I0N0WOzGoa86FUZusrv2lLjUxe0BscCCVZ1rvFdIMWuOCySYs4oNDLhnT6lD3FeXSZbO0cYC3s2dsXasAkSk5ioE9umtxoZxI/AQAdavLJtgeYkakNgzL+qBdL/CoqbtJEJgD/4ZIo=');
+
+        const model = xsdk.importAccout('1', encryptdPrivateKey);
+
+        expect(model.address).toEqual(address);
     });
 });

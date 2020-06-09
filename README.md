@@ -1,4 +1,4 @@
-# Xuper SDK JS 
+# Xuper SDK JS
 
 [![Build Status](https://travis-ci.org/xuperchain/xuper-sdk-js.svg?branch=master)](https://travis-ci.org/xuperchain/xuper-sdk-js)
 [![npm version](https://badge.fury.io/js/%40xuperchain%2Fxuper-sdk.svg)](https://badge.fury.io/js/%40xuperchain%2Fxuper-sdk)
@@ -26,14 +26,40 @@ A simple JS(TS) SDK for XuperOS
 
 ```javascript
 
+// for browser
+
 import XuperSDK, {Cryptography, Language, Strength} from '@xuperchain/xuper-sdk'
 
 const xsdk = new XuperSDK({
     node,
     chain,
-    needEndorse: true,
-    endorseConf
+    preExecServer: '',
+    needDefaultEndorse: true,
+    defaultEndorseConf
 })
+
+xsdk.createAccount(
+    Language.SimplifiedChinese,
+    Strength.Easy,
+    Cryptography.EccFIPS
+)
+
+```
+
+```javascript
+
+// for nodejs
+// without endorse
+
+
+const {default: XuperSDK, Language, Strength, Cryptography} = require('@xuperchain/xuper-sdk/lib/index.node');
+
+const xsdk = new XuperSDK({
+    node,
+    chain,
+    preExecServer,
+    needDefaultEndorse: false
+});
 
 xsdk.createAccount(
     Language.SimplifiedChinese,
@@ -48,7 +74,7 @@ xsdk.createAccount(
 - Create new account [Detail](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#createaccount)
 
 - Revert exist account [Detail](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#revertaccount)
-    
+
 - Query transaction [Detail](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#querytransaction)
 
 - [More...](https://xuperchain.github.io/xuper-sdk-js/)

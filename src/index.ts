@@ -32,7 +32,9 @@ export default class XuperSDK implements XuperSDKInterface {
 
     options: XuperOptions;
 
-    defaultRequire: {[propName: string]: AuthInterface} = {};
+    preExecServer?: string;
+
+    defaultRequire: { [propName: string]: AuthInterface } = {};
 
     public static getInstance(opts: XuperOptions): XuperSDK {
         if (!this.instance) {
@@ -41,12 +43,16 @@ export default class XuperSDK implements XuperSDKInterface {
         return this.instance;
     }
 
+    /**
+     * Constructor
+     * @param opts
+     */
     constructor(opts: XuperOptions) {
         this.options = {...opts};
         this.accountIns = new Account();
-        if (opts.endorseConf) {
-            const {fee: endorseFee, feeServiceAddress} = opts.endorseConf;
-            this.defaultRequire[feeServiceAddress] = {
+        if (opts.needDefaultEndorse && opts.defaultEndorseConf) {
+            const {fee: endorseFee, endorseServiceCheckAddr, server} = opts.defaultEndorseConf;
+            this.defaultRequire[endorseServiceCheckAddr] = {
                 fee: endorseFee,
                 sign: async (checkTx: Transaction, tx: Transaction): Promise<Transaction> => {
                     const obj = {
@@ -61,7 +67,7 @@ export default class XuperSDK implements XuperSDKInterface {
                         RequestData: btoa(JSON.stringify(obj))
                     };
 
-                    const tar = `${this.options.endorseConf!.server}/v1/endorsercall`;
+                    const tar = `${server}/v1/endorsercall`;
 
                     return postRequest(tar, body)
                         .then((result: any) => {
@@ -88,17 +94,11 @@ export default class XuperSDK implements XuperSDKInterface {
         return model;
     }
 
-    importAccout(password: string, privateKeyStr: string): AccountModel {
-        const model = this.accountIns.import(password, privateKeyStr);
-        this.accountModel = model;
-        return model;
-    }
-
     /**
-     * Revert account with mnemonic
+     * Recover account with mnemonic
      * @param mnemonic
-     * @param language
-     * @param cryptography
+     * @param language - easy: 12, middle: 16，hard: 24
+     * @param cryptography - EccFIPS
      */
     revertAccount(mnemonic: string, language: Language, cryptography: Cryptography): AccountModel {
         const model = this.accountIns.revert(mnemonic, language, cryptography);
@@ -108,6 +108,30 @@ export default class XuperSDK implements XuperSDKInterface {
 
     txidToHex(txid: string): string {
         return txidToHex(txid);
+    }
+
+    /**
+     * Import private key
+     * @param password
+     * @param privateKeyStr
+     */
+    importAccout(password: string, privateKeyStr: string): AccountModel {
+        const model = this.accountIns.import(password, privateKeyStr);
+        this.accountModel = model;
+        return model;
+    }
+
+    /**
+     * Export encryptd private string
+     * @param password
+     */
+    exportAccount(password: string): string {
+        if (!this.accountModel || !this.accountModel.privateKey) {
+            throw Errors.ACCOUNT_NOT_EXIST;
+        }
+        return btoa(
+            this.accountIns.encryptPrivateKey(password, this.accountModel.privateKey)
+        );
     }
 
     /**
@@ -201,7 +225,9 @@ export default class XuperSDK implements XuperSDKInterface {
         if (!this.accountModel) {
             throw Errors.ACCOUNT_NOT_EXIST;
         }
-        if (!this.options.endorseConf) {
+
+        if (this.options.needDefaultEndorse
+            && !this.options.defaultEndorseConf) {
             throw Errors.INVALID_CONFIGURATION;
         }
 
@@ -225,7 +251,7 @@ export default class XuperSDK implements XuperSDKInterface {
             RequestData: btoa(JSON.stringify(data))
         };
 
-        return postRequest(`${this.options.endorseConf.server}/v1/endorsercall`, body);
+        return postRequest(`${this.options.preExecServer}/v1/endorsercall`, body);
     }
 
     /**
@@ -233,15 +259,16 @@ export default class XuperSDK implements XuperSDKInterface {
      * @param ti
      */
     async generateTransaction(ti: TransactionInfomation): Promise<Transaction> {
-        if (!this.options.endorseConf) {
-            throw Errors.INVALID_CONFIGURATION;
-        }
-
         if (!this.accountModel) {
             throw Errors.ACCOUNT_NOT_EXIST;
         }
 
-        const authRequires: {[propName: string]: AuthInterface} = {...this.defaultRequire};
+        if (this.options.needDefaultEndorse
+            && !this.options.defaultEndorseConf) {
+            throw Errors.INVALID_CONFIGURATION;
+        }
+
+        const authRequires: { [propName: string]: AuthInterface } = {...this.defaultRequire};
 
         const {amount, fee} = ti;
 
@@ -272,61 +299,86 @@ export default class XuperSDK implements XuperSDKInterface {
         authRequires: {[propName: string]: AuthInterface},
         preExecWithUtxosObj: any
     ): Promise<Transaction> {
-        if (!this.options.endorseConf) {
-            throw Errors.INVALID_CONFIGURATION;
-        }
-
         if (!this.accountModel) {
             throw Errors.ACCOUNT_NOT_EXIST;
         }
 
-        const {fee: endorseFee, complianceCheckfeeAddress} = this.options.endorseConf;
+        if (this.options.needDefaultEndorse
+            && !this.options.defaultEndorseConf) {
+            throw Errors.INVALID_CONFIGURATION;
+        }
 
-        const {utxoOutput} = preExecWithUtxosObj;
+        const account = this.accountModel;
 
-        const checkTx = await generateTransaction(
-            this.accountModel, {utxoOutput}, [], {amount: endorseFee, fee: 0, to: complianceCheckfeeAddress}
-        );
+        let newPreExecWithUtxosObj = {...preExecWithUtxosObj};
 
-        let totalSelected: number[] = [];
-        const utxoList: UTXO[] = [];
+        let tx: Transaction;
 
-        checkTx.txOutputs.forEach((
-            txOutput: TXOutput, index: number
-        ) => {
+        if (this.options.needDefaultEndorse) {
+            const {fee: endorseFee, endorseServiceFeeAddr} = this.options.defaultEndorseConf!;
+
+            const {utxoOutput} = preExecWithUtxosObj;
+
+            const checkTx = await generateTransaction(
+                this.accountModel, {utxoOutput}, [], {amount: endorseFee, fee: 0, to: endorseServiceFeeAddr}
+            );
+
+            let totalSelected: number[] = [];
+            const utxoList: UTXO[] = [];
+
+            checkTx.txOutputs.forEach((
+                txOutput: TXOutput, index: number
+            ) => {
+                // @ts-ignore
+                if (txOutput.toAddr === btoa(this.accountModel.address)) {
+                    const utxo: UTXO = {
+                        amount: txOutput.amount,
+                        toAddr: txOutput.toAddr,
+                        refTxid: checkTx.txid!,
+                        refOffset: index
+                    };
+                    utxoList.push(utxo);
+                    totalSelected = atob(utxo.amount).split('').map(w => w.charCodeAt(0));
+                }
+            });
+
+            const newUtxoOutput = {
+                utxoList,
+                totalSelected
+            };
+
+            newPreExecWithUtxosObj = {...newPreExecWithUtxosObj, utxoOutput: newUtxoOutput};
+
+            tx = generateTransaction(
+                account,
+                newPreExecWithUtxosObj,
+                Object.keys(authRequires),
+                ti
+            );
+
             // @ts-ignore
-            if (txOutput.toAddr === btoa(this.accountModel.address)) {
-                const utxo: UTXO = {
-                    amount: txOutput.amount,
-                    toAddr: txOutput.toAddr,
-                    refTxid: checkTx.txid!,
-                    refOffset: index
-                };
-                utxoList.push(utxo);
-                totalSelected = atob(utxo.amount).split('').map(w => w.charCodeAt(0));
-            }
-        });
+            tx = await Object.keys(authRequires).reduce(async (prov: any, cur: any): Promise<any> => {
+                if (prov) {
+                    tx = prov;
+                }
+                const auth = authRequires[cur];
+                return auth.sign(checkTx, await tx);
+            }, 0);
+        } else {
+            tx = generateTransaction(
+                account,
+                newPreExecWithUtxosObj,
+                Object.keys(authRequires),
+                ti
+            );
 
-        const newUtxoOutput = {
-            utxoList,
-            totalSelected
-        };
-
-        let tx = generateTransaction(
-            this.accountModel,
-            {...preExecWithUtxosObj, utxoOutput: newUtxoOutput},
-            Object.keys(authRequires),
-            ti
-        );
-
-        // @ts-ignore
-        tx = await Object.keys(authRequires).reduce(async (prov: any, cur: any): Promise<any> => {
-            if (prov) {
-                tx = prov;
-            }
-            const auth = authRequires[cur];
-            return auth.sign(checkTx, await tx);
-        }, 0);
+            // @ts-ignore
+            await Object.keys(authRequires).reduce(async (prov: any, cur: any): Promise<any> => {
+                const auth = authRequires[cur];
+                tx = await auth.sign(null, await tx);
+                return tx;
+            }, 0);
+        }
 
         return convert(signTx(tx));
     }
@@ -393,10 +445,11 @@ export default class XuperSDK implements XuperSDKInterface {
         args: any
     ): Promise<any> {
         if (!this.accountModel) {
-            throw 'No account information';
+            throw Errors.ACCOUNT_NOT_EXIST;
         }
 
-        if (!this.options.endorseConf) {
+        if (this.options.needDefaultEndorse
+            && !this.options.defaultEndorseConf) {
             throw Errors.INVALID_CONFIGURATION;
         }
 
@@ -449,7 +502,8 @@ export default class XuperSDK implements XuperSDKInterface {
             throw 'No account information';
         }
 
-        if (!this.options.endorseConf) {
+        if (this.options.needDefaultEndorse
+            && !this.options.defaultEndorseConf) {
             throw Errors.INVALID_CONFIGURATION;
         }
 
@@ -494,7 +548,7 @@ export default class XuperSDK implements XuperSDKInterface {
      */
     async createContractAccount(contractAccountName: number) {
         if (!this.accountModel) {
-            throw 'No account information';
+            throw Errors.ACCOUNT_NOT_EXIST;
         }
 
         if (contractAccountName < 10 ** 15
@@ -567,7 +621,7 @@ export default class XuperSDK implements XuperSDKInterface {
         initArgs: any
     ): Promise<any> {
         if (!this.accountModel) {
-            throw 'No account information';
+            throw Errors.ACCOUNT_NOT_EXIST;
         }
 
         const newInitArgs = {
