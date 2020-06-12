@@ -160,6 +160,8 @@ export default class XuperSDK implements XuperSDKInterface {
             throw 'No account information or target address';
         }
 
+        console.warn(this.options.node);
+
         return fetch(`${this.options.node}/v1/get_balance`, {
             method: 'POST',
             body: JSON.stringify({
@@ -518,8 +520,7 @@ export default class XuperSDK implements XuperSDKInterface {
 
         let totalNeed = new BN(0);
 
-        totalNeed = totalNeed.add(new BN('0'));
-        totalNeed = totalNeed.add(new BN('0'));
+        // totalNeed = totalNeed.add(new BN('0'));
 
         Object.keys(authRequires).forEach((key: string) => {
             const auth = authRequires[key];
@@ -674,7 +675,6 @@ export default class XuperSDK implements XuperSDKInterface {
 
         let totalNeed = new BN(0);
 
-        totalNeed = totalNeed.add(new BN('0'));
         totalNeed = totalNeed.add(new BN('0'));
 
         Object.keys(authRequires).forEach((key: string) => {

@@ -8,7 +8,7 @@ import sha256 from 'sha256';
 import pbkdf2 from 'pbkdf2';
 import aesjs from 'aes-js';
 import {ec as EC} from 'elliptic';
-import {RIPEMD160} from 'ripemd160-min/dist-umd';
+import {RIPEMD160} from 'ripemd160-min';
 import {Cryptography, Language, Strength} from './constants';
 import {
     base58Decode,
@@ -28,8 +28,6 @@ import {
  * Class Account
  */
 export default class Account implements AccountInerface {
-    private c: Promise<any> = new Promise<any>((resolve) => { resolve(true); });
-
     private last4BitsMask: BN = new BN(15);
 
     /**
@@ -279,7 +277,6 @@ export default class Account implements AccountInerface {
 
         const bn = this.addChecksum(entropyBytes).toString(10);
         const newBN = new BN(bn);
-
 
         if (JSON.stringify(newBN.toArray().slice(0, fullByteSize))
             !== JSON.stringify(entropyWithChecksumBytes)) {

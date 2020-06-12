@@ -54,8 +54,7 @@ const serverConf = {
         library: 'Xuper',
         libraryTarget: 'umd'
     },
-    mode: 'production',
-    plugins: [new CleanWebpackPlugin({})]
+    mode: 'production'
 };
 
 module.exports = [

@@ -36,6 +36,7 @@ describe('Xuper SDK', () => {
             Strength.Easy,
             Cryptography.EccFIPS
         );
+
         expect(accountModel).toHaveProperty('mnemonic');
         expect(accountModel).toHaveProperty('address');
         expect(accountModel).toHaveProperty('publicKey');
@@ -134,6 +135,7 @@ describe('Xuper SDK', () => {
         );
 
         const balance = await xsdk.getBalance();
+        console.warn(JSON.stringify(balance, null, 4));
         expect(balance).toHaveProperty('bcs');
         expect(balance.bcs).toHaveLength(1);
         expect(balance.bcs[0]).toHaveProperty('bcname', chain);
@@ -150,6 +152,7 @@ describe('Xuper SDK', () => {
         );
 
         const balanceDetail = await xsdk.getBalanceDetail();
+        console.warn(JSON.stringify(balanceDetail, null, 4));
         expect(balanceDetail).toHaveProperty('tfds');
         expect(balanceDetail.tfds).toHaveLength(1);
         expect(balanceDetail.tfds[0]).toHaveProperty('bcname', chain);
@@ -183,6 +186,8 @@ describe('Xuper SDK', () => {
             '1',
             []
         );
+
+        console.warn(JSON.stringify(result, null, 4));
 
         const resultObj = JSON.parse(atob(result.ResponseData));
         expect(resultObj.bcname).toEqual(chain);
@@ -285,7 +290,10 @@ describe('Xuper SDK', () => {
             fee: '100'
         });
 
+        console.log(tx);
+
         const result = await xsdk.postTransaction(tx);
+        console.log(result);
         expect(result.header).toHaveProperty('logid');
         expect(result.header).not.toHaveProperty('error');
     });
@@ -308,7 +316,7 @@ describe('Xuper SDK', () => {
         const tx = await xsdk.generateTransaction({
             to: process.env.TEST_TARGET_ADDRESS || '',
             amount: '100',
-            fee: '10',
+            fee: '100',
             desc: 'Hi 你好 こんにちは'
         });
 
