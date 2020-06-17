@@ -256,6 +256,59 @@ export default class XuperSDK implements XuperSDKInterface {
         return postRequest(`${this.options.preExecServer}/v1/endorsercall`, body);
     }
 
+    async preExecTransaction(
+        sum: string | number | BN,
+        authRequire: string[] = [],
+        invokeRequests: ContracRequesttModel[] = []
+    ): Promise<any> {
+        if (!this.accountModel) {
+            throw Errors.ACCOUNT_NOT_EXIST;
+        }
+
+        if (this.options.needDefaultEndorse
+            && !this.options.defaultEndorseConf) {
+            throw Errors.INVALID_CONFIGURATION;
+        }
+
+        const bnSum = new BN(sum);
+
+        const data: any = {
+            // bcname: this.options.chain,
+            // address: this.accountModel.address,
+            // totalAmount: bnSum.toNumber(),
+            request: {
+                initiator: this.accountModel.address,
+                bcname: this.options.chain,
+                auth_require: authRequire,
+                requests: invokeRequests
+            }
+        };
+
+        const body = {
+            initiator: this.accountModel.address,
+            bcname: this.options.chain,
+            auth_require: authRequire,
+            requests: invokeRequests
+        };
+
+
+        return fetch(`${this.options.node}/v1/preexec`, {
+            method: 'POST',
+            body: JSON.stringify(body)
+        }).then(
+            response => {
+                if (!response.ok) {
+                    return response.json().then(res => {
+                        throw res;
+                    });
+                }
+                return response.json();
+            }
+        );
+
+        // return postRequest(`${this.options.preExecServer}/v1/endorsercall`, body);
+    }
+
     /**
      * Generate simple transaction
      * @param ti
@@ -534,6 +587,9 @@ export default class XuperSDK implements XuperSDKInterface {
             preExec: JSON.parse(atob(preExecWithUtxos.ResponseData)),
             authRequires
         };
+
+        // Todo：打成交易
+
         // const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
         // const tx = await this.makeTransaction({
         //     amount: '0',
@@ -604,6 +660,117 @@ export default class XuperSDK implements XuperSDKInterface {
             to: ''
         }, authRequires, preExecWithUtxosObj);
         return this.postTransaction(tx);
+    }
+
+    async contractList(account: string) {
+
+        const body = {
+            bcname: this.options.chain,
+            account
+        };
+
+        return fetch(`${this.options.node}/v1/get_account_contracts`, {
+            method: 'POST',
+            body: JSON.stringify(body)
+        }).then(
+            response => {
+                if (!response.ok) {
+                    return response.json().then(res => {
+                        throw res;
+                    });
+                }
+                return response.json();
+            }
+        );
+    }
+
+    async simpleDeployWasmContract(
+        contractAccount: string,
+        contractName: string,
+        code: string,
+        runtime: string,
+        initArgs: any
+    ): Promise<any> {
+        if (!this.accountModel) {
+            throw Errors.ACCOUNT_NOT_EXIST;
+        }
+
+        const newInitArgs = {
+            ...initArgs
+        };
+
+        Object.keys(initArgs).forEach(key => {
+            newInitArgs[key] = btoa(initArgs[key]);
+        });
+
+        const desc = new Uint8Array([10, 1].concat(runtime.split('').map(w => w.charCodeAt(0))));
+        const descBuf = Object.values(desc).map(n => String.fromCharCode(n));
+
+        const args = {
+            account_name: contractAccount,
+            contract_name: contractName,
+            contract_desc: descBuf.join(''),
+            contract_code: code,
+            init_args: JSON.stringify(newInitArgs)
+        };
+
+        const contractArgs = {
+            ...args
+        };
+
+        Object.keys(contractArgs).forEach(key => {
+            // @ts-ignore
+            contractArgs[key] = btoa(contractArgs[key]);
+        });
+
+        const invokeRequests: ContracRequesttModel[] = [{
+            module_name: 'xkernel',
+            method_name: 'Deploy',
+            args: contractArgs
+        }];
+
+        const authRequires: { [propName: string]: AuthInterface } = {
+            ...this.defaultRequire,
+            [`${contractAccount}/${this.accountModel.address}`]: {
+                fee: 0,
+                sign: (checkTx: Transaction, tx: Transaction) => {
+                    if (!tx.authRequireSigns) {
+                        tx.authRequireSigns = [];
+                    }
+                    tx.authRequireSigns = tx.authRequireSigns.concat(tx.initiatorSigns);
+                    return tx;
+                }
+            }
+        };
+
+        let totalNeed = new BN(0);
+
+        totalNeed = totalNeed.add(new BN('0'));
+
+        Object.keys(authRequires).forEach((key: string) => {
+            const auth = authRequires[key];
+            totalNeed = totalNeed.add(new BN(auth.fee || 0));
+        });
+
+        const preExecWithUtxos = await this.preExecTransactionWithUTXO(
+            totalNeed, Object.keys(authRequires), invokeRequests
+        );
+
+        const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
+        const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
+        const tx = await this.makeTransaction({
+            amount: '0',
+            fee: gasUsed.toString(),
+            to: ''
+        }, authRequires, preExecWithUtxosObj);
+
+        return {
+            preExecutionTransaction: preExecWithUtxosObj,
+            transaction: tx
+        };
+
+        // const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
+        // const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
     }
 
     /**

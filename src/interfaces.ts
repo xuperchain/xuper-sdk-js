@@ -366,6 +366,12 @@ export interface XuperSDKInterface {
         invokeRequests: ContracRequesttModel[]
     ): Promise<any>;
 
+    preExecTransaction(
+        sum: string | number | BN,
+        authRequire: string[],
+        invokeRequests: ContracRequesttModel[]
+    ): Promise<any>;
+
     /**
      * Generate transaction
      * @param ti
@@ -419,6 +425,8 @@ export interface XuperSDKInterface {
         runtime: string,
         initArgs: any
     ): Promise<any>;
+
+    contractList(account: string): Promise<any>
 }
 
 /**

@@ -313,9 +313,18 @@ describe('Xuper SDK', () => {
             Cryptography.EccFIPS
         );
 
+        // YMC4ooV8ZXYtCGqLcpiZiyehc91MMFmMS
+
+        // const tx = await xsdk.generateTransaction({
+        //     to: process.env.TEST_TARGET_ADDRESS || '',
+        //     amount: '100',
+        //     fee: '100',
+        //     desc: 'Hi 你好 こんにちは'
+        // });
+
         const tx = await xsdk.generateTransaction({
-            to: process.env.TEST_TARGET_ADDRESS || '',
-            amount: '100',
+            to: 'Zyzy2u7oACJKM45XgVF9qXsRnR35Tpf8K',
+            amount: '1000000',
             fee: '100',
             desc: 'Hi 你好 こんにちは'
         });
@@ -371,6 +380,48 @@ describe('Xuper SDK', () => {
 
         expect(result.header).toHaveProperty('logid');
         expect(result.header).not.toHaveProperty('error');
+    });
+
+    // simple perdeploy contract
+    test('simple deploy webassembly contract should return successful transaction result', async () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain,
+            preExecServer,
+            needDefaultEndorse: true,
+            defaultEndorseConf: endorseConfs
+        });
+
+        xsdk.revertAccount(
+            process.env.TEST_MNEMONIC || '',
+
+            Language.SimplifiedChinese,
+            Cryptography.EccFIPS
+        );
+
+        const codeBuf: string[] = [];
+
+        if (isBrowser()) {
+            // test/jest/custom-test-env.js
+            // @ts-ignore
+            window.file.forEach(n => codeBuf.push(String.fromCharCode(n)));
+        } else {
+            const fs = require('fs');
+            let f = Uint8Array.from(fs.readFileSync(`${__dirname}/contract_code/counter.wasm`))
+            f.forEach(n => codeBuf.push(String.fromCharCode(n)));
+        }
+
+        const contractName = `counter${~~(Math.random() * 10 ** 3 - 10 ** 3) + 10 ** 3}`;
+
+        const result = await xsdk.simpleDeployWasmContract(
+            'XC1234567890145964@xuper',
+            contractName,
+            codeBuf.join(''),
+            'c',
+            {
+                creator: 'xchain'
+            }
+        );
     });
 
     // deploy contract
