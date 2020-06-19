@@ -583,12 +583,25 @@ export default class XuperSDK implements XuperSDKInterface {
         const preExecWithUtxos = await this.preExecTransactionWithUTXO(
             totalNeed, Object.keys(authRequires), invokeRequests
         );
-        return {
-            preExec: JSON.parse(atob(preExecWithUtxos.ResponseData)),
-            authRequires
-        };
+        // return {
+        //     preExec: JSON.parse(atob(preExecWithUtxos.ResponseData)),
+        //     authRequires
+        // };
 
-        // Todo：打成交易
+        const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
+        const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
+        const tx = await this.makeTransaction({
+            amount: '0',
+            fee: gasUsed.toString(),
+            to: ''
+        }, authRequires, preExecWithUtxosObj);
+
+        console.log(preExecWithUtxosObj);
+
+        return {
+            preExecutionTransaction: preExecWithUtxosObj,
+            transaction: tx
+        };
 
         // const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
         // const tx = await this.makeTransaction({
