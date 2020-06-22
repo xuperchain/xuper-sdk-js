@@ -508,19 +508,29 @@ export default class XuperSDK implements XuperSDKInterface {
             throw Errors.INVALID_CONFIGURATION;
         }
 
+        const newArgs = {
+            ...args
+        };
+
+        const te = new TextEncoder();
+
+        Object.keys(args).forEach(key => {
+            const bytes = te.encode(args[key]);
+            const valueBuf: Array<any> = [];
+            bytes.forEach(b => valueBuf.push(String.fromCharCode(b)));
+            newArgs[key] = btoa(valueBuf.join(''));
+        });
+
         const invokeRequests: ContracRequesttModel[] = [{
             module_name: moduleName,
             method_name: methodName,
             contract_name: contractName,
-            args
+            args: newArgs
         }];
 
         const authRequires: {[propName: string]: AuthInterface} = {...this.defaultRequire};
 
         let totalNeed = new BN(0);
-
-        totalNeed = totalNeed.add(new BN('0'));
-        totalNeed = totalNeed.add(new BN('0'));
 
         Object.keys(authRequires).forEach((key: string) => {
             const auth = authRequires[key];
@@ -562,12 +572,28 @@ export default class XuperSDK implements XuperSDKInterface {
             throw Errors.INVALID_CONFIGURATION;
         }
 
+
+        const newArgs = {
+            ...args
+        };
+
+        const te = new TextEncoder();
+
+        Object.keys(args).forEach(key => {
+            const bytes = te.encode(args[key]);
+            const valueBuf: Array<any> = [];
+            bytes.forEach(b => valueBuf.push(String.fromCharCode(b)));
+            newArgs[key] = btoa(valueBuf.join(''));
+        });
+
         const invokeRequests: ContracRequesttModel[] = [{
             module_name: moduleName,
             method_name: methodName,
             contract_name: contractName,
-            args
+            args: newArgs
         }];
+
+        console.log(invokeRequests);
 
         const authRequires: {[propName: string]: AuthInterface} = {...this.defaultRequire};
 
@@ -712,8 +738,13 @@ export default class XuperSDK implements XuperSDKInterface {
             ...initArgs
         };
 
+        const te = new TextEncoder();
+
         Object.keys(initArgs).forEach(key => {
-            newInitArgs[key] = btoa(initArgs[key]);
+            const bytes = te.encode(initArgs[key]);
+            const valueBuf: Array<any> = [];
+            bytes.forEach(b => valueBuf.push(String.fromCharCode(b)));
+            newInitArgs[key] = btoa(valueBuf.join(''));
         });
 
         const desc = new Uint8Array([10, 1].concat(runtime.split('').map(w => w.charCodeAt(0))));
@@ -809,8 +840,13 @@ export default class XuperSDK implements XuperSDKInterface {
             ...initArgs
         };
 
+        const te = new TextEncoder();
+
         Object.keys(initArgs).forEach(key => {
-            newInitArgs[key] = btoa(initArgs[key]);
+            const bytes = te.encode(initArgs[key]);
+            const valueBuf: Array<any> = [];
+            bytes.forEach(b => valueBuf.push(String.fromCharCode(b)));
+            newInitArgs[key] = btoa(valueBuf.join(''));
         });
 
         const desc = new Uint8Array([10, 1].concat(runtime.split('').map(w => w.charCodeAt(0))));
@@ -873,6 +909,29 @@ export default class XuperSDK implements XuperSDKInterface {
             to: ''
         }, authRequires, preExecWithUtxosObj);
         return this.postTransaction(tx);
+    }
+
+    status(): Promise<any> {
+
+        const body = {
+            bcname: this.options.chain
+        };
+
+        return fetch(`${this.options.node}/v1/get_bcstatus`, {
+            method: 'POST',
+            body: JSON.stringify(body)
+        }).then(
+            response => {
+                if (!response.ok) {
+                    return response.json().then(res => {
+                        throw res;
+                    });
+                }
+                return response.json();
+            }
+        );
+
+
     }
 }
 

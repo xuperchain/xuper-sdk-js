@@ -530,8 +530,8 @@ describe('Xuper SDK', () => {
         );
 
         const result = await xsdk.invokeContract('counter715', 'get', 'wasm', {
-            Bucket: btoa('XCAccount'),
-            Key: btoa('XC1234567890145964@xuper')
+            Bucket: 'XCAccount',
+            Key: 'XC1234567890145964@xuper'
         });
 
         expect(result.header).toHaveProperty('logid');
@@ -604,4 +604,14 @@ describe('Xuper SDK', () => {
 
         expect(model.address).toEqual(address);
     });
+
+    test('status',async () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain,
+            preExecServer
+        });
+
+        console.log(await xsdk.status());
+    })
 });
