@@ -39,8 +39,7 @@ const clientConf = {
                 }
             })
         ]
-    },
-    plugins: [new CleanWebpackPlugin({})]
+    }
 };
 
 const serverConf = {
@@ -54,7 +53,8 @@ const serverConf = {
         library: 'Xuper',
         libraryTarget: 'umd'
     },
-    mode: 'production'
+    mode: 'production',
+    plugins: [new CleanWebpackPlugin({})]
 };
 
 module.exports = [
