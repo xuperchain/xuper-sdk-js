@@ -170,7 +170,7 @@ export default class Account implements AccountInerface {
         return mnemonic.split(' ').every(w => words.indexOf(w) > -1);
     }
 
-    private generateEntropy(strength: Strength) {
+    private generateEntropy(strength: Strength): Uint8Array {
         if ((strength + 8) % 32 !== 0 || strength + 8 < 128 || strength + 8 > 256) {
             throw 'Invalid entropy length';
         }
@@ -184,7 +184,7 @@ export default class Account implements AccountInerface {
         return crypto.getRandomValues(new Uint8Array(strength / 8));
     }
 
-    private generateMnemonic(entropy: ArrayBuffer, language: Language) {
+    private generateMnemonic(entropy: ArrayBuffer, language: Language): string {
         const entropyBitLength = entropy.byteLength * 8;
 
         const invalidEntropyLength = new Error('Entropy length must within [120, 248] and after +8 be multiples of 32');
@@ -218,7 +218,7 @@ export default class Account implements AccountInerface {
         return words.join(' ');
     }
 
-    private getWordListByLanguage(language: Language) {
+    private getWordListByLanguage(language: Language): Array<string> {
         if (!wordlist[language]) {
             throw new Error('This language has not been supported yet');
         }
@@ -248,7 +248,7 @@ export default class Account implements AccountInerface {
         return dataBigInt;
     }
 
-    private generateSeed(mnemonic: string, password: string, keyLen: number, language: Language) {
+    private generateSeed(mnemonic: string, password: string, keyLen: number, language: Language): any {
         const wordList = this.getWordListByLanguage(language);
         const originMnemonic = mnemonic.split(' ').map(word => wordList.indexOf(word));
 
@@ -287,7 +287,7 @@ export default class Account implements AccountInerface {
         return pbkdf2.pbkdf2Sync(mnemonic, salt, 2048, keyLen, 'sha512');
     }
 
-    decryptPrivateKey(password: string, keyStr: string) {
+    decryptPrivateKey(password: string, keyStr: string): string {
         const bytes = atob(keyStr).split('').map(s => s.charCodeAt(0));
         const blockSize = 16;
         const key = sha256.x2(password, {asBytes: true});
@@ -305,7 +305,7 @@ export default class Account implements AccountInerface {
         return td.decode(decryptedBytes);
     }
 
-    encryptPrivateKey(password: string, privateKey: PrivateKeyModel) {
+    encryptPrivateKey(password: string, privateKey: PrivateKeyModel): string {
         const keyStr = publicOrPrivateKeyToString(privateKey);
         const te = new TextEncoder();
         const keyBytes: Uint8Array = te.encode(keyStr);
@@ -322,7 +322,7 @@ export default class Account implements AccountInerface {
 
     private generateKeyBySeed(curve: EC, seed: any): PrivateKeyModel {
         const key = curve.genKeyPair();
-        const pub = key.getPublic();
+        // const pub = key.getPublic();
         let k = new BN(seed);
         const keyN = key.ec.n;
         const one = new BN(1);
@@ -348,7 +348,7 @@ export default class Account implements AccountInerface {
         };
     }
 
-    private generateAddress(publicKey: PublicKeyModel, cryptography: Cryptography) {
+    private generateAddress(publicKey: PublicKeyModel, cryptography: Cryptography): string {
         const flagByte = [4];
         const xBytes = new BN(publicKey.X).toArray();
         const yBytes = new BN(publicKey.Y).toArray();

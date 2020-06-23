@@ -160,8 +160,6 @@ export default class XuperSDK implements XuperSDKInterface {
             throw 'No account information or target address';
         }
 
-        console.warn(this.options.node);
-
         return fetch(`${this.options.node}/v1/get_balance`, {
             method: 'POST',
             body: JSON.stringify({
@@ -351,7 +349,7 @@ export default class XuperSDK implements XuperSDKInterface {
      */
     private async makeTransaction(
         ti: TransactionInfomation,
-        authRequires: {[propName: string]: AuthInterface},
+        authRequires: { [propName: string]: AuthInterface },
         preExecWithUtxosObj: any
     ): Promise<Transaction> {
         if (!this.accountModel) {
@@ -528,7 +526,7 @@ export default class XuperSDK implements XuperSDKInterface {
             args: newArgs
         }];
 
-        const authRequires: {[propName: string]: AuthInterface} = {...this.defaultRequire};
+        const authRequires: { [propName: string]: AuthInterface } = {...this.defaultRequire};
 
         let totalNeed = new BN(0);
 
@@ -595,7 +593,7 @@ export default class XuperSDK implements XuperSDKInterface {
 
         console.log(invokeRequests);
 
-        const authRequires: {[propName: string]: AuthInterface} = {...this.defaultRequire};
+        const authRequires: { [propName: string]: AuthInterface } = {...this.defaultRequire};
 
         let totalNeed = new BN(0);
 
@@ -676,7 +674,7 @@ export default class XuperSDK implements XuperSDKInterface {
             args
         }];
 
-        const authRequires: {[propName: string]: AuthInterface} = {...this.defaultRequire};
+        const authRequires: { [propName: string]: AuthInterface } = {...this.defaultRequire};
 
         let totalNeed = new BN(0);
 
@@ -702,7 +700,6 @@ export default class XuperSDK implements XuperSDKInterface {
     }
 
     async contractList(account: string) {
-
         const body = {
             bcname: this.options.chain,
             account
@@ -912,7 +909,6 @@ export default class XuperSDK implements XuperSDKInterface {
     }
 
     status(): Promise<any> {
-
         const body = {
             bcname: this.options.chain
         };
@@ -930,8 +926,6 @@ export default class XuperSDK implements XuperSDKInterface {
                 return response.json();
             }
         );
-
-
     }
 }
 

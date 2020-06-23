@@ -426,7 +426,7 @@ export interface XuperSDKInterface {
         initArgs: any
     ): Promise<any>;
 
-    contractList(account: string): Promise<any>
+    contractList(account: string): Promise<any>;
 
     status(): Promise<any>;
 }
