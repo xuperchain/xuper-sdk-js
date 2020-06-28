@@ -103,7 +103,12 @@ dist
 # TernJS port file
 .tern-port
 
+# IDE
 .idea/
+
+# Output of build
 lib/
-.DS_Store
 example/
+
+# OS
+.DS_Store

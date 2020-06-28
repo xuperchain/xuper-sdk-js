@@ -14,8 +14,8 @@ const TerserPlugin = require('terser-webpack-plugin');
 // webpack conf
 const clientConf = {
     entry: {
-        index: './src/index.ts',
-        'index.min': './src/index.ts'
+        xuper: './src/index.ts',
+        'xuper.min': './src/index.ts'
     },
     target: 'web',
     output: {
