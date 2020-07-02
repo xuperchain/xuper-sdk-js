@@ -5,6 +5,6 @@
 
 describe('Xuper SDK', () => {
     test('v2 demo', () => {
-        console.log('1')
+        expect(true).toBeTruthy();
     })
 });

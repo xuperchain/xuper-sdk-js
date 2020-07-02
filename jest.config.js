@@ -4,8 +4,8 @@ module.exports = {
             displayName: 'browser',
             browser: true,
             preset: 'ts-jest',
-            testPathIgnorePatterns: ['node_modules', 'sdk-*'],
             testEnvironment: './test/jest/custom-test-env.js',
+            testPathIgnorePatterns: ['node_modules', 'sdk-*'],
             transform: {
                 '^.+\\.tsx?$': 'ts-jest'
             },
