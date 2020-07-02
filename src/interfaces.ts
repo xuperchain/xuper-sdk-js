@@ -5,7 +5,27 @@
 
 /* ---------- Xuper SDK ---------- */
 
+export interface XuperSDKInterface extends
+    AccountInterface, TransactionInterface, ContractInterface
+{
+    getBalance(): Promise<any>;
+    getBalanceDetail(): Promise<any>;
+}
+
 /* ---------- Configuration ---------- */
+
+/* ---------- Transaction ---------- */
+
+export interface TransactionInterface {
+    preExec(): Promise<any>;
+    preExecWithUTXO(): Promise<any>;
+
+    makeTransaction(): Promise<any>;
+    postTransaction(): Promise<any>;
+    queryTransaction(): Promise<any>;
+
+    chainStatus(): Promise<any>;
+}
 
 /* ---------- Account ---------- */
 
@@ -20,14 +40,26 @@ export interface PrivateKey extends PublickKey {
 }
 
 export interface Account {
-    address: string;
-    mnemonic?: string;
     publickKey: PublickKey;
     privateKey: PrivateKey;
+    mnemonic?: string;
+    address: string;
 }
 
 export interface AccountInterface {
     create(): Account;
+    recover(): Account;
+    import(): boolean;
+    export(): boolean;
     checkAddress(): boolean;
     checkCheckMnemonic(): boolean;
+}
+
+/* ---------- Contract ---------- */
+
+export interface ContractInterface {
+    createContractAccount(): Promise<any>;
+    deployContract(): Promise<any>;
+    imvokeContract(): Promise<any>;
+    contractList(): Promise<any>;
 }

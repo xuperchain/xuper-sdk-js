@@ -1,6 +1,6 @@
 /**
- * @file Xuper SDK test
- * Created by SmilingXinyi <smilingxinyi@gmail.com> on 2020/6/2
+ * @file (account.test)
+ * Created by SmilingXinyi <smilingxinyi@gmail.com> on 2020/7/2
  */
 
 describe('Xuper SDK', () => {
