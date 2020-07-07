@@ -1,25 +1,19 @@
+const conf = {
+    preset: 'ts-jest',
+    testPathIgnorePatterns: ['node_modules', 'sdk-1.*']
+};
+
 module.exports = {
     projects: [
+        // {
+        //     displayName: 'Browser',
+        //     testEnvironment: './test/jest/custom-test-env.js',
+        //     ...conf
+        // },
         {
-            displayName: 'browser',
-            browser: true,
-            preset: 'ts-jest',
-            testEnvironment: './test/jest/custom-test-env.js',
-            testPathIgnorePatterns: ['node_modules', 'sdk-*'],
-            transform: {
-                '^.+\\.tsx?$': 'ts-jest'
-            },
-            moduleFileExtensions: ['ts', 'js']
-        },
-        {
-            displayName: 'node',
-            preset: 'ts-jest',
+            displayName: 'Nodejs',
             testEnvironment: 'node',
-            testPathIgnorePatterns: ['node_modules', 'sdk-*'],
-            transform: {
-                '^.+\\.tsx?$': 'ts-jest'
-            },
-            moduleFileExtensions: ['ts', 'js']
+            ...conf
         }
     ]
 };

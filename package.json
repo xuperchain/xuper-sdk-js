@@ -13,7 +13,7 @@
         "release": "standard-version -a",
         "start": "tsdx watch",
         "build": "tsdx build",
-        "test": "jest --passWithNoTests",
+        "test": "jest",
         "prepare": "tsdx build"
     },
     "files": [
@@ -41,7 +41,7 @@
     },
     "homepage": "https://github.com/xuperchain/xuper-sdk-js#readme",
     "devDependencies": {
-        "@types/jest": "^24.9.1",
+        "@types/jest": "^26.0.4",
         "@typescript-eslint/eslint-plugin": "^2.12.0",
         "@typescript-eslint/parser": "^2.12.0",
         "clean-webpack-plugin": "^3.0.0",
@@ -53,7 +53,7 @@
         "eslint-plugin-import": "^2.19.1",
         "git-cz": "^4.7.0",
         "husky": "^3.1.0",
-        "jest": "^25.5.4",
+        "jest": "^26.1.0",
         "jest-environment-jsdom-fourteen": "^1.0.1",
         "standard-version": "^7.0.1",
         "ts-jest": "^26.1.1",
@@ -75,14 +75,9 @@
     "publishConfig": {
         "access": "public"
     },
-    "prettier": {
-        "printWidth": 80,
-        "semi": true,
-        "singleQuote": true,
-        "trailingComma": "es5",
-        "endOfLine": "auto"
-    },
     "dependencies": {
+        "@grpc/grpc-js": "^1.1.1",
+        "@grpc/proto-loader": "^0.5.4",
         "@types/aes-js": "^3.1.1",
         "@types/bn.js": "^4.11.5",
         "@types/elliptic": "^6.4.10",
@@ -92,6 +87,9 @@
         "awesome-typescript-loader": "^5.2.1",
         "bn.js": "^5.0.0",
         "elliptic": "^6.5.2",
+        "google-protobuf": "^3.12.2",
+        "grpc": "^1.24.3",
+        "grpc-tools": "^1.9.0",
         "node-fetch": "^2.6.0",
         "pbkdf2": "^3.0.17",
         "ripemd160-min": "0.0.6",

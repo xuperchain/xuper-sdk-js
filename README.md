@@ -16,6 +16,16 @@ A simple JS(TS) SDK for XuperOS
 - Pre-Execution
 - Endorser check and signature
 
+## Docker镜像
+
+##### 安装 [Repo](https://github.com/SmilingXinyi/xuperchain)
+
+> docker pull smilingxinyi/xuperchain
+
+##### 启动
+
+> docker run -d -p 8098:8098  -p 37101:37101 -p 47101:47101 --name xc smilingxinyi/xuperchain
+
 ## Usage
 
 ### Install package
@@ -82,3 +92,5 @@ xsdk.createAccount(
 ## Todos
 
 - Support xuperchain/xuperunion
+
+grpc_tools_node_protoc --js_out=import_style=commonjs,binary:./src/proto/ --grpc_out=./src/proto --plugin=protoc-gen-grpc=`which grpc_tools_node_protoc_plugin` ./src/proto/xuper.proto

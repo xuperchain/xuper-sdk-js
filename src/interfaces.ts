@@ -1,15 +1,17 @@
 /**
- * @file Xuper SDK interfaces
+ * @file Interfaces
  * Created by SmilingXinyi <smilingxinyi@gmail.com> on 2019/12/19
  */
 
 /* ---------- Xuper SDK ---------- */
 
-export interface XuperSDKInterface extends
-    AccountInterface, TransactionInterface, ContractInterface
+export interface XuperSDKInterface
+    // extends
+    // AccountInterface, TransactionInterface, ContractInterface
 {
-    getBalance(): Promise<any>;
-    getBalanceDetail(): Promise<any>;
+    getBalance(address?: string): Promise<any>;
+    // getBalanceDetail(address?: string): Promise<any>;
+    checkStatus(): Promise<any>;
 }
 
 /* ---------- Configuration ---------- */
@@ -23,8 +25,6 @@ export interface TransactionInterface {
     makeTransaction(): Promise<any>;
     postTransaction(): Promise<any>;
     queryTransaction(): Promise<any>;
-
-    chainStatus(): Promise<any>;
 }
 
 /* ---------- Account ---------- */

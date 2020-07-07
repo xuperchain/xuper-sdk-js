@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package xuperchain;
+
 enum XChainErrorEnum {
     SUCCESS = 0;
     UNKNOW_ERROR = 1;
@@ -305,7 +307,7 @@ message InternalBlock {
     int32 targetBits = 19;
 
     // Justify used in chained-bft
-    QuorumCert Justify = 20;
+//    QuorumCert Justify = 20;
 
     // 下面的属性会动态变化
     // If the block is on the trunk
@@ -842,3 +844,6 @@ message AddressContractsResponse {
     map<string, ContractList> contracts = 2;
 }
 
+service XChain {
+    rpc GetBlockChainStatus(BCStatus) returns (BCStatus) {}
+}
