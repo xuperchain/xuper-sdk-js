@@ -3,22 +3,21 @@
  * Created by SmilingXinyi <smilingxinyi@gmail.com> on 2020/6/2
  */
 
-// import * as grpc from '@grpc/grpc-js';
-// import * as protoLoader from '@grpc/proto-loader';
+import * as grpc from '@grpc/grpc-js';
+import * as protoLoader from '@grpc/proto-loader';
 
-const pbxuper = require('./proto/xuper_pb');
-const servicexuper = require('./proto/xuper_grpc_pb');
+const PROTO_PATH = `${__dirname}/proto/xuper.proto`;
 
-// const PROTO_PATH = __dirname + '/proto/xuper_pb.js';
-
-// var packageDefinition = protoLoader.loadSync(
-//     PROTO_PATH,
-//     {keepCase: true,
-//         longs: String,
-//         enums: String,
-//         defaults: true,
-//         oneofs: true
-//     });
+const packageDefinition = protoLoader.loadSync(
+    PROTO_PATH,
+    {
+        keepCase: true,
+        longs: String,
+        enums: String,
+        defaults: true,
+        oneofs: true
+    }
+);
 
 export const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
 
@@ -52,16 +51,12 @@ export async function postRequest(t: string, b: any): Promise<any> {
 //     });
 // }
 
-// export const xchainProto = grpc.loadPackageDefinition(packageDefinition).xuperchain;
-
-export const pb = pbxuper;
-
-console.log(servicexuper)
-
-// const z = grpc.credentials.createInsecure();
+export const xchainProto = grpc.loadPackageDefinition(packageDefinition);
 
 // @ts-ignore
-export const grpcClient = servicexuper.XChainClient('localhost:37101');
+export const grpcClient = new xchainProto.XChain('localhost:47101', grpc.credentials.createInsecure());
+
+console.warn(grpcClient);
 
 if (!isBrowser) {
     // @ts-ignore

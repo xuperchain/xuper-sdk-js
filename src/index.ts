@@ -8,7 +8,6 @@ import {Options} from './types';
 import {
     // xchainProto,
     grpcClient,
-    pb,
     postRequest,
     isBrowser
 } from './utils';
@@ -31,25 +30,24 @@ export default class XuperSDK implements XuperSDKInterface {
 
     checkStatus(): Promise<any> {
         const node = this.options.node;
-        const target = `${node}/v1/get_bcstatus`;
         const body = {
-            bcname: this.options.chain,
+            bcname: this.options.chain
         };
         if (isBrowser) {
+            const target = `${node}/v1/get_bcstatus`;
             return postRequest(target, body);
-        }
-        else {
-            // @ts-ignore
-            // request.setMessage(body);
-            // @ts-ignore
-
-            // console.log(pb.Header);
-
-            // const request = new xchainProto.Header();
-
-            const request = pb.BCStatus(body);
-            // console.log(body);
-            return grpcClient.GetBlockChainStatus(body);
+        } else {
+            return new Promise<any>((resolve, reject) =>
+                grpcClient.GetBlockChainStatus(body, (err: Error, response: any) => {
+                    if (!err) {
+                        resolve(response);
+                    }
+                    else {
+                        console.warn(err);
+                        reject(err);
+                    }
+                })
+            )
         }
     }
 
@@ -59,25 +57,24 @@ export default class XuperSDK implements XuperSDKInterface {
 
         if (!addr && this.account) {
             addr = this.account.address;
+        } else {
+            // Todo: throw error of wrong parameter
         }
-        else {
 
-        }
+        // Todo: check addr
+
+        const body = {
+            address: addr,
+            bcs: [{
+                bcname: this.options.chain
+            }]
+        };
 
         if (isBrowser) {
-            console.log('browser');
-            const body = {
-                address: addr,
-                bcs: [{
-                    bcname: this.options.chain
-                }]
-            };
             const target = `${node}/v1/get_balance`;
             return postRequest(target, body);
-        }
-        else {
-            console.log('nodejs');
-            return grpcClient.GetBlockChainStatus({bcname: 'xuper'});
+        } else {
+            return grpcClient.GetBalance(body);
         }
     }
 

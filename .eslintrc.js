@@ -5,7 +5,6 @@ module.exports = {
         node: true
     },
     extends: [
-        'airbnb-base',
         'plugin:@typescript-eslint/recommended'
     ],
     globals: {
@@ -15,19 +14,18 @@ module.exports = {
     parser: '@typescript-eslint/parser',
     parserOptions: {
         ecmaVersion: 2018,
-        sourceType: 'module'
+        sourceType: 'module',
+        project: './tsconfig.json'
     },
     plugins: ['@typescript-eslint'],
-    ignorePatterns: ['node_modules/**', 'scripts/**', 'sdk-*/**'],
+    ignorePatterns: ['node_modules/**', 'scripts/**', 'sdk-1.*/**'],
     rules: {
         'indent': ['error', 4],
-        'comma-dangle': 'off'
-    },
-    settings: {
-        'import/resolver': {
-            node: {
-                extensions: ['.js', '.jsx', '.ts', '.tsx']
-            }
-        }
+        '@typescript-eslint/indent': ['error', 4],
+        'comma-dangle': 'off',
+        '@typescript-eslint/ban-ts-ignore': 'off',
+        'arrow-parens': 'off',
+        'object-curly-spacing': 'off',
+
     }
 };

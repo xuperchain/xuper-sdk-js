@@ -1,6 +1,9 @@
 syntax = "proto3";
 
-package xuperchain;
+service XChain {
+    rpc GetBlockChainStatus(BCStatus) returns (BCStatus) {}
+    rpc GetBalance(AddressStatus) returns (AddressStatus) {}
+}
 
 enum XChainErrorEnum {
     SUCCESS = 0;
@@ -842,8 +845,4 @@ message ContractList {
 message AddressContractsResponse {
     Header header = 1;
     map<string, ContractList> contracts = 2;
-}
-
-service XChain {
-    rpc GetBlockChainStatus(BCStatus) returns (BCStatus) {}
 }
