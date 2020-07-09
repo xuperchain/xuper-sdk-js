@@ -4,12 +4,12 @@
  */
 
 export type Plugin = {
-    name: string
-    func: Function
+    name: string;
+    func: Function;
 }
 
 export type Options = {
-    node: string
-    chain: string
-    plugins?: Plugin[]
+    node: string;
+    chain: string;
+    plugins?: Plugin[];
 }

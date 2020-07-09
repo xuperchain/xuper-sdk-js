@@ -6,8 +6,8 @@
 /* ---------- Xuper SDK ---------- */
 
 export interface XuperSDKInterface
-    // extends
-    // AccountInterface, TransactionInterface, ContractInterface
+// extends
+// AccountInterface, TransactionInterface, ContractInterface
 {
     getBalance(address?: string): Promise<any>;
     // getBalanceDetail(address?: string): Promise<any>;

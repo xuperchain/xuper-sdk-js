@@ -9,8 +9,10 @@ import {isBrowser} from '../src/utils';
 
 isBrowser && require('whatwg-fetch');
 
+console.log(process.env);
+
 const
-    node = process.env.NODE || 'http://localhost:8098',
+    node = process.env.HOST || 'http://localhost:8098',
     chain = process.env.CHAIN || 'xuper';
 
 describe('Xuper SDK', () => {
@@ -36,7 +38,12 @@ describe('Xuper SDK', () => {
             });
 
             const balance = await xsdk.getBalance('nuSMPvo6UUoTaT8mMQmHbfiRbJNbAymGh');
-            console.warn(balance);
+
+            expect(balance).toHaveProperty('bcs');
+            expect(balance.bcs).toHaveLength(1);
+            expect(balance.bcs[0]).toHaveProperty('bcname', chain);
+            expect(balance.bcs[0]).toHaveProperty('balance');
+
         });
 
         // test('the recovered address balance should return current account balance structure', async () => {

@@ -14,18 +14,18 @@ module.exports = {
     parser: '@typescript-eslint/parser',
     parserOptions: {
         ecmaVersion: 2018,
-        sourceType: 'module',
-        project: './tsconfig.json'
+        sourceType: 'module'
     },
     plugins: ['@typescript-eslint'],
     ignorePatterns: ['node_modules/**', 'scripts/**', 'sdk-1.*/**'],
     rules: {
-        'indent': ['error', 4],
-        '@typescript-eslint/indent': ['error', 4],
-        'comma-dangle': 'off',
+        '@typescript-eslint/no-var-requires': 'off',
         '@typescript-eslint/ban-ts-ignore': 'off',
-        'arrow-parens': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/indent': ['error', 4],
+        'indent': ['error', 4],
         'object-curly-spacing': 'off',
-
+        'comma-dangle': 'off',
+        'arrow-parens': 'off'
     }
 };

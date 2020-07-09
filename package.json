@@ -13,7 +13,7 @@
         "release": "standard-version -a",
         "start": "tsdx watch",
         "build": "tsdx build",
-        "test": "jest",
+        "test": "jest --passWithNoTests",
         "prepare": "tsdx build"
     },
     "files": [

@@ -5,12 +5,7 @@
 
 import {XuperSDKInterface, Account} from './interfaces';
 import {Options} from './types';
-import {
-    // xchainProto,
-    grpcClient,
-    postRequest,
-    isBrowser
-} from './utils';
+import * as Requests from './requests';
 
 export default class XuperSDK implements XuperSDKInterface {
     static instance: XuperSDK;
@@ -33,22 +28,8 @@ export default class XuperSDK implements XuperSDKInterface {
         const body = {
             bcname: this.options.chain
         };
-        if (isBrowser) {
-            const target = `${node}/v1/get_bcstatus`;
-            return postRequest(target, body);
-        } else {
-            return new Promise<any>((resolve, reject) =>
-                grpcClient.GetBlockChainStatus(body, (err: Error, response: any) => {
-                    if (!err) {
-                        resolve(response);
-                    }
-                    else {
-                        console.warn(err);
-                        reject(err);
-                    }
-                })
-            )
-        }
+
+        return Requests.getStatus(node, body);
     }
 
     getBalance(address?: string): Promise<any> {
@@ -70,13 +51,24 @@ export default class XuperSDK implements XuperSDKInterface {
             }]
         };
 
-        if (isBrowser) {
-            const target = `${node}/v1/get_balance`;
-            return postRequest(target, body);
-        } else {
-            return grpcClient.GetBalance(body);
-        }
+        return Requests.getBalance(node, body);
     }
+
+    // getBalanceDetail(address?: string): Promise<any> {
+    // const node = this.options.node;
+    // let addr = address;
+
+
+    /*
+    body: JSON.stringify({
+            address: address || this.accountModel!.address,
+            tfds: [{
+                bcname: this.options.chain
+            }]
+        })
+     */
+    // return undefined;
+    // }
 
     /*
     checkAddress(address: string): boolean {
@@ -95,18 +87,4 @@ export default class XuperSDK implements XuperSDKInterface {
         }
     }
      */
-
-    // getBalanceDetail(address?: string): Promise<any> {
-    //     const node = this.options.node;
-    //     let addr = address;
-    //     /*
-    //     body: JSON.stringify({
-    //             address: address || this.accountModel!.address,
-    //             tfds: [{
-    //                 bcname: this.options.chain
-    //             }]
-    //         })
-    //      */
-    //     return undefined;
-    // }
 }
