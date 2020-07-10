@@ -3,14 +3,18 @@
  * Created by SmilingXinyi <smilingxinyi@gmail.com> on 2020/6/2
  */
 
-import {XuperSDKInterface, Account} from './interfaces';
-import {Options} from './types';
+import XuperSDKInterface from './interfaces';
 import * as Requests from './requests';
+import XuperErrors, {XuperError} from './error';
+import Account from './account';
+import {Cryptography, Language, Strength} from './constants';
+import {AccountModel, Options} from './types';
 
 export default class XuperSDK implements XuperSDKInterface {
     static instance: XuperSDK;
     private options: Options;
-    private account?: Account;
+    private account?: AccountModel;
+    private accountInstance: Account;
 
     public static getInstance(opts: Options): XuperSDK {
         if (!this.instance) {
@@ -21,6 +25,7 @@ export default class XuperSDK implements XuperSDKInterface {
 
     constructor(opts: Options) {
         this.options = {...opts};
+        this.accountInstance = new Account();
     }
 
     checkStatus(): Promise<any> {
@@ -28,36 +33,55 @@ export default class XuperSDK implements XuperSDKInterface {
         const body = {
             bcname: this.options.chain
         };
-
         return Requests.getStatus(node, body);
     }
 
-    getBalance(address?: string): Promise<any> {
-        const node = this.options.node;
-        let addr = address;
+    checkAddress(address?: string): boolean {
+        const addr = address || this.account?.address;
 
-        if (!addr && this.account) {
-            addr = this.account.address;
-        } else {
-            // Todo: throw error of wrong parameter
+        if (addr) {
+            return this.accountInstance.checkAddress(addr);
         }
-
-        // Todo: check addr
-
-        const body = {
-            address: addr,
-            bcs: [{
-                bcname: this.options.chain
-            }]
-        };
-
-        return Requests.getBalance(node, body);
+        else {
+            throw XuperError.or([XuperErrors.ACCOUNT_NOT_EXIST, XuperErrors.PARAMETER_ERROR]);
+        }
     }
+
+    create(
+        language: Language = Language.SimplifiedChinese,
+        strength: Strength = Strength.Easy,
+        cryptography: Cryptography = Cryptography.EccFIPS
+    ): AccountModel {
+        return this.accountInstance.create(language, strength, cryptography);
+    }
+
+    recover(
+        mnemonic: string,
+        language: Language = Language.SimplifiedChinese,
+        cryptography: Cryptography = Cryptography.EccFIPS
+    ): AccountModel {
+        if (mnemonic) {
+            return this.accountInstance.recover(mnemonic, language, cryptography);
+        }
+        else {
+            throw XuperErrors.PARAMETER_ERROR;
+        }
+    }
+
+    import(password: string, privateKeyStr: string): AccountModel {
+
+    }
+
+
+
+
+    // checkAddress(address: string): boolean {
+    //
+    // }
 
     // getBalanceDetail(address?: string): Promise<any> {
     // const node = this.options.node;
     // let addr = address;
-
 
     /*
     body: JSON.stringify({

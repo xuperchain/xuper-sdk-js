@@ -5,12 +5,13 @@
 
 /* ---------- Xuper SDK ---------- */
 
-export interface XuperSDKInterface
-// extends
-// AccountInterface, TransactionInterface, ContractInterface
+import {Cryptography, Language, Strength} from './constants';
+
+import {AccountModel} from './types';
+
+export default interface XuperSDKInterface extends AccountInterface
+// TransactionInterface, ContractInterface
 {
-    getBalance(address?: string): Promise<any>;
-    // getBalanceDetail(address?: string): Promise<any>;
     checkStatus(): Promise<any>;
 }
 
@@ -21,38 +22,21 @@ export interface XuperSDKInterface
 export interface TransactionInterface {
     preExec(): Promise<any>;
     preExecWithUTXO(): Promise<any>;
-
     makeTransaction(): Promise<any>;
     postTransaction(): Promise<any>;
     queryTransaction(): Promise<any>;
 }
 
-/* ---------- Account ---------- */
-
-export interface PublickKey {
-    X: string;
-    Y: string;
-    Curvname: string;
-}
-
-export interface PrivateKey extends PublickKey {
-    D: string;
-}
-
-export interface Account {
-    publickKey: PublickKey;
-    privateKey: PrivateKey;
-    mnemonic?: string;
-    address: string;
-}
-
 export interface AccountInterface {
-    create(): Account;
-    recover(): Account;
-    import(): boolean;
-    export(): boolean;
-    checkAddress(): boolean;
-    checkCheckMnemonic(): boolean;
+    create(language: Language, strength: Strength, cryptography: Cryptography): AccountModel;
+    recover(mnemonic: string, language: Language, cryptography: Cryptography): AccountModel
+    import(password: string, privateKeyStr: string): AccountModel;
+
+    checkAddress(address?: string): boolean;
+
+    // checkCheckMnemonic(): boolean;
+    // getBalanceDetail(address?: string): Promise<any>;
+    // getBalance(address?: string): Promise<any>;
 }
 
 /* ---------- Contract ---------- */
