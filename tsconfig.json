@@ -17,6 +17,7 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "noImplicitReturns": true,
+        "experimentalDecorators": true,
         "noFallthroughCasesInSwitch": true,
         "moduleResolution": "node",
         "baseUrl": "./",

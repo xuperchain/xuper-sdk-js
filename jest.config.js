@@ -6,14 +6,14 @@ const conf = {
 module.exports = {
     projects: [
         {
-            displayName: 'Browser',
+            displayName: 'browser',
             testEnvironment: './test/jest/custom-test-env.js',
             ...conf
         },
-        {
-            displayName: 'Nodejs',
-            testEnvironment: 'node',
-            ...conf
-        }
+        // {
+        //     displayName: 'Nodejs',
+        //     testEnvironment: 'node',
+        //     ...conf
+        // }
     ]
 };

@@ -1,3 +1,5 @@
+import {PrivateKey, PublicKey} from './types';
+
 /**
  * @file Utils
  * Created by SmilingXinyi <smilingxinyi@gmail.com> on 2020/6/2
@@ -125,6 +127,10 @@ export async function postRequest(t: string, b: any): Promise<any> {
     });
 }
 
+export function txidToHex(txid: string): string {
+    return atob(txid).split('').map(s => s.charCodeAt(0).toString(16).padStart(2, '0')).join('');
+}
+
 /*
 
 export async function getRequest(t: string, b: any): Promise<any> {
@@ -190,4 +196,89 @@ export function deepEqual(x: any, y: any): boolean {
         }
     }
     return true;
+}
+
+/**
+ * Converting a public key or private key to a string
+ * @param key
+ */
+export function publicOrPrivateKeyToString(key: PrivateKey | PublicKey): string {
+    let str = `\{\"Curvname\":\"${key.Curvname}\",\"X\":${key.X},\"Y\":${key.Y}`;
+
+    // @ts-ignore
+    if (key.D) {
+        // @ts-ignore
+        str += `,\"D\":${key.D}`;
+    }
+    str += '\}';
+
+    return str;
+}
+
+/**
+ * Converting a public key or private key to a string
+ * @param key
+ */
+export function stringToPublicOrPrivateKey(keyStr: string) {
+    const replacer = ((_match: string, p1: string, p2: string, p3: string) => {
+        const data = {
+            X: p1,
+            Y: p2,
+            D: p3
+        };
+
+        return Object.keys(data).map(key =>
+            // @ts-ignore
+            // eslint-disable-next-line implicit-arrow-linebreak
+            `\"${key}\":\"${data[key]}\"`).join(',');
+    });
+
+    return JSON.parse(keyStr.replace(/"X":(\d+),"Y":(\d+),"D":(\d+)/gi, replacer));
+}
+
+/**
+ * Nonce
+ */
+export function getNonce(): string {
+    let rs = '';
+    if (isBrowser) {
+        rs = crypto.getRandomValues(new Uint32Array(1))[0].toString();
+    } else {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires,global-require
+        const crypto = require('crypto');
+        rs = crypto.randomFillSync(new Uint32Array(1))[0].toString();
+    }
+    return (~~(Date.now() / 1000).toString()) + rs;
+}
+
+/**
+ * Camel to underline
+ * @param tar
+ */
+export function convert(tar: any): any {
+    let format: any = {};
+
+    if (tar instanceof Array) {
+        const newTar = [...tar];
+        format = Object.assign([], newTar.map(v => convert(v)));
+    } else if (tar instanceof Object) {
+        const newTar = {...tar};
+        Object.keys(newTar).forEach(key => {
+            const value = newTar[key];
+            format[/^[a-z]/.test(key) ? key.replace(/([A-Z]{1})/g, '_$1').toLowerCase() : key] = convert(value);
+        });
+    } else {
+        format = tar;
+    }
+
+    return format;
+}
+
+/**
+ * JSON stringify
+ * @param t
+ */
+export function jsonEncode(t: any): string {
+    if (typeof t === 'undefined') return `${JSON.stringify(null)}\n`;
+    return `${JSON.stringify(t)}\n`;
 }

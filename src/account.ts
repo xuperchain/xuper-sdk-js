@@ -8,18 +8,17 @@ import sha256 from 'sha256';
 import pbkdf2 from 'pbkdf2';
 import {ec as EC} from 'elliptic';
 import {RIPEMD160} from 'ripemd160-min';
+import aesjs from 'aes-js';
 
 import {PrivateKey, PublicKey, AccountModel} from './types';
 import {Cryptography, Language, Strength} from './constants';
-import {arrayPadStart, base58Decode, base58Encode, deepEqual, isBrowser} from './utils';
+import {
+    arrayPadStart, base58Decode, base58Encode, deepEqual,
+    isBrowser, stringToPublicOrPrivateKey
+} from './utils';
 
 import * as Requests from './requests';
-
 import wordlist from './wordlist.json';
-import {publicOrPrivateKeyToString, stringToPublicOrPrivateKey} from 'utils';
-import {PrivateKeyModel, PublicKeyModel} from 'interfaces';
-import aesjs from '@types/aes-js';
-// import XuperErrors, {XuperError} from './error';
 
 export default class Account {
     private last4BitsMask: BN = new BN(15);
@@ -114,6 +113,11 @@ export default class Account {
         }
     }
 
+    checkMnemonic(mnemonic: string, language: Language): boolean {
+        const words = wordlist[language];
+        return mnemonic.split(' ').every(w => words.indexOf(w) > -1);
+    }
+
     getBalance(address: string, node: string, chain: string): Promise<any> {
         const body = {
             address: address,
@@ -125,18 +129,29 @@ export default class Account {
         return Requests.getBalance(node, body);
     }
 
+    getBalanceDetail(address: string, node: string, chain: string): Promise<any> {
+        const body = {
+            address: address,
+            tfds: [{
+                bcname: chain
+            }]
+        };
+
+        return Requests.getBalanceDetail(node, body);
+    }
+
     import(password: string, privateKeyStr: string): AccountModel {
         const decryptStr = this.decryptPrivateKey(password, privateKeyStr);
         const privateKeyObj = stringToPublicOrPrivateKey(decryptStr);
 
-        const privateKey: PrivateKeyModel = {
+        const privateKey: PrivateKey = {
             D: privateKeyObj.D,
             X: privateKeyObj.X,
             Y: privateKeyObj.Y,
             Curvname: privateKeyObj.Curvname
         };
 
-        const publicKey: PublicKeyModel = {
+        const publicKey: PublicKey = {
             X: privateKey.X,
             Y: privateKey.Y,
             Curvname: privateKey.Curvname

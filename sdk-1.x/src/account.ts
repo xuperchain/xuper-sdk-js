@@ -10,19 +10,19 @@ import aesjs from 'aes-js';
 import {ec as EC} from 'elliptic';
 import {RIPEMD160} from 'ripemd160-min';
 import {Cryptography, Language, Strength} from './constants';
-import {
-    base58Decode,
-    base58Encode,
-    deepEqual,
-    isBrowser,
-    publicOrPrivateKeyToString,
-    stringToPublicOrPrivateKey,
-    arrayPadStart
-} from './utils';
 import wordlist from './wordlist.json';
 import {
     AccountInerface, AccountModel, PrivateKeyModel, PublicKeyModel
 } from './interfaces';
+import {
+    isBrowser,
+    base58Decode,
+    base58Encode,
+    deepEqual,
+    publicOrPrivateKeyToString,
+    stringToPublicOrPrivateKey,
+    arrayPadStart
+} from './utils';
 
 /**
  * Class Account

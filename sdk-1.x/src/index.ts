@@ -271,9 +271,6 @@ export default class XuperSDK implements XuperSDKInterface {
         const bnSum = new BN(sum);
 
         const data: any = {
-            // bcname: this.options.chain,
-            // address: this.accountModel.address,
-            // totalAmount: bnSum.toNumber(),
             request: {
                 initiator: this.accountModel.address,
                 bcname: this.options.chain,
@@ -766,7 +763,7 @@ export default class XuperSDK implements XuperSDKInterface {
 
         const invokeRequests: ContracRequesttModel[] = [{
             module_name: 'xkernel',
-            method_name: 'Deploy',
+            method_name: 'Deploy', // Upgrade
             args: contractArgs
         }];
 

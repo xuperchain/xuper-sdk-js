@@ -23,6 +23,7 @@ module.exports = {
         '@typescript-eslint/ban-ts-ignore': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/indent': ['error', 4],
+        '@typescript-eslint/camelcase': 'off',
         'indent': ['error', 4],
         'object-curly-spacing': 'off',
         'comma-dangle': 'off',

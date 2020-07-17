@@ -7,6 +7,78 @@ service Xchain {
     rpc GetBalance (AddressStatus) returns (AddressStatus) {}
     rpc GetBalanceDetail (AddressBalanceStatus) returns (AddressBalanceStatus) {}
     rpc GetBlockChainStatus (BCStatus) returns (BCStatus) {}
+    rpc PreExec (InvokeRPCRequest) returns (InvokeRPCResponse) {}
+    rpc PostTx(TxStatus) returns (CommonReply) {}
+    rpc QueryTx(TxStatus) returns (TxStatus) {}
+
+    rpc GetSigns(AccessTokenRequest) returns (AccessTokenResponse)
+    rpc CheckSigns(CheckRequest) returns (CheckResult)
+}
+
+message AccessTokenRequest
+{
+    // Header信息
+    Header header = 1;
+    // 请求的插件名称
+    repeated PluginVerifyInfo pluginVerifyInfos = 2;
+    // 本次请求所对应的链名
+    string bcName = 3;
+    // 代表插件验证总手续费的交易
+    Transaction fee = 4;
+    // 交易发起方的地址
+    bytes initiatorAddress = 5;
+}
+
+message PluginVerifyInfo
+{
+    // 请求的插件名称
+    string pluginName = 1;
+    // 需要被该插件处理/验证的内容被json化之后的字节数组
+    bytes contents = 2;
+}
+
+message AccessTokenResponse {
+    // Header信息, 使用logid 追踪问题 其余字段为空
+    Header header = 1;
+    // 交易发起者所获得的各个插件验证通过后给予的签名的集合
+    repeated AccessToken accessTokens = 2;
+}
+message CheckRequest {
+    // Header信息, 使用logid 追踪问题 其余字段为空
+    Header header = 1;
+    // 不同插件服务的签名列表
+    repeated AccessToken accessTokens = 2;
+}
+message CheckResult {
+    // Header信息, 使用logid 追踪问题 其余字段为空
+    Header header = 1;
+    // 对应的插件校验结果
+    repeated PluginCheckResult pluginCheckResults = 2;
+}
+
+
+message AccessToken {
+    // 插件服务的地址，由插件服务的验签公钥所生成的
+    bytes pluginAddress = 1;
+    // 时间戳，AccessToken在到达该时间戳之前保持有效
+    int64 timestamp = 2;
+    // 插件服务所需要验证的内容
+    bytes contents = 3;
+    // 交易发起者的地址
+    bytes initiatorAddress = 4;
+    // 本次请求所对应的链名
+    string bcName = 5;
+    // 插件服务验证通过后，使用自己的私钥所签发的签名。签名内容是前5项内容的集合。如果没通过，是空。
+    bytes sign = 6;
+}
+
+message PluginCheckResult {
+    // 插件节点的地址
+    bytes pluginAddress = 1;
+    // 插件节点的名称，与地址可以二选一
+    string pluginName = 2;
+    // 通过校验true，校验失败false
+    bool isPass = 3;
 }
 
 enum XChainErrorEnum {

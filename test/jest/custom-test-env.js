@@ -27,6 +27,8 @@ class CustomEnvironment extends NodeEnvironment {
             }
         };
 
+        this.global.cert = Uint8Array.from(fs.readFileSync(`${__dirname}/../cert/cfca.cert`));
+
         // contract release
         // this.global.file = Uint8Array.from(fs.readFileSync(`${__dirname}/../contract_code/counter.wasm`));
     }

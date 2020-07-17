@@ -45,7 +45,8 @@ export {
 
 const Errors = {
     ACCOUNT_NOT_EXIST: XuperError(6001, 'Account not exist'),
-    PARAMETER_ERROR: XuperError(6002, 'Parameter error')
+    PARAMETER_ERROR: XuperError(6002, 'Parameter error'),
+    UTXO_NOT_ENOUGH: XuperError(1001, 'Utxo is not enough')
 };
 
 export default Errors;
