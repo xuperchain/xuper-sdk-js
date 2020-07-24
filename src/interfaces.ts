@@ -9,9 +9,7 @@ import {Cryptography, Language, Strength} from './constants';
 
 import {AccountModel, TransactionModel} from './types';
 
-export default interface XuperSDKInterface extends AccountInterface
-    , TransactionInterface
-    // , ContractInterface
+export default interface XuperSDKInterface extends AccountInterface, TransactionInterface, ContractInterface
 {
     checkStatus(): Promise<any>;
     txidToHex(txid: string): string;
@@ -46,9 +44,9 @@ export interface TransactionInterface {
 /* ---------- Contract ---------- */
 
 export interface ContractInterface {
-    createContractAccount(): Promise<any>;
-    deployContract(): Promise<any>;
-    upgradeContract(): Promise<any>;
-    imvokeContract(): Promise<any>;
-    contractList(): Promise<any>;
+    createContractAccount(contractAccountName: number, address: string): Promise<any>;
+    // deployContract(): Promise<any>;
+    // upgradeContract(): Promise<any>;
+    // imvokeContract(): Promise<any>;
+    // contractList(): Promise<any>;
 }

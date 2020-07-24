@@ -91,6 +91,7 @@ export const endorser = (node: string, body: any): Promise<any> => {
         );
     } else {
         const target = `${node}/v1/endorsercall`;
+        console.warn(JSON.stringify(body, null, 4));
         return postRequest(target, body);
     }
 };
@@ -108,6 +109,7 @@ export const postTransaction = (node: string, body: any): Promise<any> => {
         );
     } else {
         const target = `${node}/v1/post_tx`;
+        console.warn(JSON.stringify(body, null, 4));
         return postRequest(target, body);
     }
 };

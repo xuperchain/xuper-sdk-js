@@ -8,8 +8,16 @@ import * as Requests from './requests';
 import XuperErrors, {XuperError} from './error';
 import Account from './account';
 import Transaction from './transaction';
+import Contract from './Contract';
 import {Cryptography, Language, Strength} from './constants';
-import {Options, AccountModel, TransactionInfomationModel, TransactionModel, AuthModel, Plugin} from './types';
+import {
+    Options,
+    AccountModel,
+    TransactionInfomationModel,
+    TransactionModel,
+    AuthModel,
+    Plugin, ContractRequesttModel
+} from './types';
 import BN from 'bn.js';
 import {txidToHex} from './utils';
 
@@ -19,6 +27,7 @@ export default class XuperSDK implements XuperSDKInterface {
     private plugins: Plugin[];
     private accountInstance: Account;
     private transactionInstance: Transaction;
+    private ContractInstance: Contract;
     private account?: AccountModel;
 
     public static getInstance(opts: Options): XuperSDK {
@@ -33,6 +42,7 @@ export default class XuperSDK implements XuperSDKInterface {
         this.plugins = opts.plugins || [];
         this.accountInstance = new Account();
         this.transactionInstance = new Transaction(opts.plugins);
+        this.ContractInstance = new Contract();
     }
 
     checkStatus(): Promise<any> {
@@ -125,8 +135,6 @@ export default class XuperSDK implements XuperSDKInterface {
     }
 
     async transfer(ti: TransactionInfomationModel, account?: AccountModel): Promise<TransactionModel> {
-        // Todo: check ti
-
         const {node, chain} = this.options;
         let authRequires: { [propName: string]: AuthModel} = {};
 
@@ -156,22 +164,101 @@ export default class XuperSDK implements XuperSDKInterface {
         });
 
         // @ts-ignore
-        const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(node, chain, acc.address, totalNeed, Object.keys(authRequires))
-
-        console.warn(preExecWithUtxos);
+        const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(node, chain, acc.address, totalNeed, Object.keys(authRequires), null, acc)
         const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
 
         return this.transactionInstance.makeTransaction(acc, ti, authRequires, preExecWithUtxosObj);
     }
 
-    async postTransaction(tx: TransactionModel) {
+    async postTransaction(tx: TransactionModel, account?: AccountModel) {
+        const acc = account || this.account;
         const {node, chain} = this.options;
-        return this.transactionInstance.post(node, chain, tx);
+        if (acc) {
+            return this.transactionInstance.post(node, chain, tx, acc);
+        }
+        else {
+            throw 'err'
+        }
     }
 
     async queryTransaction(txid: string): Promise<any> {
         const {node, chain} = this.options;
         return this.transactionInstance.queryTransaction(node, chain, txid);
+    }
+
+    async createContractAccount(contractAccountName: number, address? : string): Promise<any> {
+
+        const addr = address || this.account?.address;
+
+        console.warn(addr);
+        if (addr) {
+            const contractRequest = this.ContractInstance.createContractAccount(contractAccountName, addr);
+
+            return this.invoke(contractRequest);
+        }
+        else {
+            throw XuperError.or([XuperErrors.ACCOUNT_NOT_EXIST, XuperErrors.PARAMETER_ERROR]);
+        }
+
+        // auth requires
+        // amount
+
+        // const preExecWithUtxos = this.transactionInstance.preExecWithUTXO(
+        //     totalNeed, Object.keys(authRequires), invokeRequests
+        // );
+
+    }
+
+    async invoke(
+        invokeRequests: ContractRequesttModel[],
+        account?: AccountModel,
+    ): Promise<any> {
+
+        const {node, chain} = this.options;
+
+        const acc = account || this.account;
+
+        if (!acc) {
+            throw XuperError.or([XuperErrors.ACCOUNT_NOT_EXIST, XuperErrors.PARAMETER_ERROR]);
+        }
+
+        console.log(invokeRequests);
+
+        let authRequires: { [propName: string]: AuthModel} = {};
+
+        if (this.plugins.length > 0 && this.plugins.every(item => item.hookFuncs.indexOf('transfer') > -1)) {
+            for (const plugin of this.plugins) {
+                authRequires = {...await plugin.func['transfer'](plugin.args['transfer'], chain)};
+            }
+        }
+
+        let totalNeed = new BN(0);
+
+        // totalNeed = totalNeed.add(new BN('0'));
+
+        Object.keys(authRequires).forEach((key: string) => {
+            const auth = authRequires[key];
+            totalNeed = totalNeed.add(new BN(auth.fee || 0));
+        });
+
+        const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(
+            node, chain, acc.address,
+            totalNeed, Object.keys(authRequires), invokeRequests
+        );
+
+        const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
+        const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
+
+        const tx = await this.transactionInstance.makeTransaction(acc, {
+            amount: '0',
+            fee: gasUsed.toString(),
+            to: ''
+        }, authRequires, preExecWithUtxosObj);
+
+        return {
+            preExecutionTransaction: preExecWithUtxosObj,
+            transaction: tx
+        };
     }
 
     txidToHex(txid: Required<string>): string {

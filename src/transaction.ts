@@ -43,7 +43,8 @@ export default class Transaction {
         address: string,
         sum: string | number | BN,
         authRequire: string[] = [],
-        invokeRequests: ContractRequesttModel[] = []
+        invokeRequests: ContractRequesttModel[] = [],
+        account?: AccountModel
     ): Promise<any> {
         const bnSum = new BN(sum);
 
@@ -59,11 +60,21 @@ export default class Transaction {
             }
         };
 
-        const body = {
+        let body = {
             RequestName: 'PreExecWithFee',
             BcName: chain,
             RequestData: btoa(JSON.stringify(data))
         };
+
+
+        if (this.plugins.length > 0 && this.plugins.findIndex(item => item.hookFuncs.indexOf('postTx') > -1) > -1) {
+            for (const plugin of this.plugins) {
+                if (plugin.func['postTx']) {
+                    body = await plugin.func['postTx'].call(this, plugin.args['postTx'],
+                        'http://10.64.27.48:8094', chain, body, account);
+                }
+            }
+        }
 
         return Requests.endorser(node, body);
     }
@@ -298,7 +309,7 @@ export default class Transaction {
         return tx;
     }
 
-    async post(node: string, chain: string, tx: any): Promise<any> {
+    async post(node: string, chain: string, tx: any, account?: AccountModel): Promise<any> {
 
         let body = {
             bcname: chain,
@@ -307,14 +318,14 @@ export default class Transaction {
             txid: tx.txid
         };
 
-        if (this.plugins.length > 0 && this.plugins.every(item => item.hookFuncs.indexOf('postTx') > -1)) {
+        if (this.plugins.length > 0 && this.plugins.findIndex(item => item.hookFuncs.indexOf('postTx') > -1) > -1) {
             for (const plugin of this.plugins) {
-                body = await plugin.func['postTx'].call(this, plugin.args['postTx'],
-                    'http://10.64.27.48:8094', chain, body);
+                if (plugin.func['postTx']) {
+                    body = await plugin.func['postTx'].call(this, plugin.args['postTx'],
+                        'http://10.64.27.48:8094', chain, body, account);
+                }
             }
         }
-
-        console.log(body);
 
         return Requests.postTransaction(node, body);
     }

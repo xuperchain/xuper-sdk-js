@@ -10,6 +10,9 @@ export const isBrowser =
     typeof window.document !== 'undefined';
 
 if (!isBrowser) {
+
+    console.log('===========')
+
     // @ts-ignore
     global.btoa = (s: string) => Buffer.from(s, 'binary').toString('base64');
     // @ts-ignore
@@ -130,28 +133,6 @@ export async function postRequest(t: string, b: any): Promise<any> {
 export function txidToHex(txid: string): string {
     return atob(txid).split('').map(s => s.charCodeAt(0).toString(16).padStart(2, '0')).join('');
 }
-
-/*
-
-export async function getRequest(t: string, b: any): Promise<any> {
-    return fetch(t, {
-        body: JSON.stringify(b)
-    }).then(
-        response => {
-            if (!response.ok) {
-                return response.json().then(res => {
-                    throw res;
-                });
-            }
-            return response.json();
-        }
-    ).catch(err => {
-        throw err;
-    });
-}
-
- */
-
 
 export const grpcClient = (PROTO_PATH = `${__dirname}/proto/xuper.proto`) => {
     if (!isBrowser)
