@@ -10,9 +10,6 @@ export const isBrowser =
     typeof window.document !== 'undefined';
 
 if (!isBrowser) {
-
-    console.log('===========')
-
     // @ts-ignore
     global.btoa = (s: string) => Buffer.from(s, 'binary').toString('base64');
     // @ts-ignore
@@ -113,6 +110,8 @@ export function arrayPadStart(arr: any[], len: number): any[] {
 }
 
 export async function postRequest(t: string, b: any): Promise<any> {
+
+    console.warn(t, b);
     return fetch(t, {
         method: 'POST',
         body: JSON.stringify(b)
@@ -130,12 +129,12 @@ export async function postRequest(t: string, b: any): Promise<any> {
     });
 }
 
-export function txidToHex(txid: string): string {
+export function toHex(txid: string): string {
     return atob(txid).split('').map(s => s.charCodeAt(0).toString(16).padStart(2, '0')).join('');
 }
 
 export const grpcClient = (PROTO_PATH = `${__dirname}/proto/xuper.proto`) => {
-    if (!isBrowser)
+    if (isBrowser)
         return null;
 
     const grpc = require('@grpc/grpc-js');
@@ -154,6 +153,28 @@ export const grpcClient = (PROTO_PATH = `${__dirname}/proto/xuper.proto`) => {
     const xchainProto = grpc.loadPackageDefinition(packageDefinition).pb;
     // @ts-ignore
     return new xchainProto.Xchain('localhost:37101', grpc.credentials.createInsecure())
+};
+
+export const grpcEndorserClient = (PROTO_PATH = `${__dirname}/proto/xendorser.proto`) => {
+    if (isBrowser)
+        return null;
+
+    const grpc = require('@grpc/grpc-js');
+    const protoLoader = require('@grpc/proto-loader');
+
+    const packageDefinition = protoLoader.loadSync(
+        PROTO_PATH,
+        {
+            keepCase: true,
+            longs: String,
+            enums: String,
+            defaults: true,
+            oneofs: true
+        }
+    );
+    const xendorserProto = grpc.loadPackageDefinition(packageDefinition).pb;
+    // @ts-ignore
+    return new xendorserProto.xendorser('localhost:37101', grpc.credentials.createInsecure())
 };
 
 export function deepEqual(x: any, y: any): boolean {

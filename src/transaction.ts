@@ -66,7 +66,6 @@ export default class Transaction {
             RequestData: btoa(JSON.stringify(data))
         };
 
-
         if (this.plugins.length > 0 && this.plugins.findIndex(item => item.hookFuncs.indexOf('postTx') > -1) > -1) {
             for (const plugin of this.plugins) {
                 if (plugin.func['postTx']) {

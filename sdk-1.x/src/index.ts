@@ -567,7 +567,6 @@ export default class XuperSDK implements XuperSDKInterface {
             throw Errors.INVALID_CONFIGURATION;
         }
 
-
         const newArgs = {
             ...args
         };
@@ -617,20 +616,10 @@ export default class XuperSDK implements XuperSDKInterface {
             to: ''
         }, authRequires, preExecWithUtxosObj);
 
-        console.log(preExecWithUtxosObj);
-
         return {
             preExecutionTransaction: preExecWithUtxosObj,
             transaction: tx
         };
-
-        // const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
-        // const tx = await this.makeTransaction({
-        //     amount: '0',
-        //     fee: gasUsed.toString(),
-        //     to: ''
-        // }, authRequires, preExecWithUtxosObj);
-        // return this.postTransaction(tx);
     }
 
     /**

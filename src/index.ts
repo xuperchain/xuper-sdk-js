@@ -5,11 +5,12 @@
 
 import XuperSDKInterface from './interfaces';
 import * as Requests from './requests';
-import XuperErrors, {XuperError} from './error';
+import Errors, {XuperError} from './error';
+import {Cryptography, Language, Strength} from './constants';
+import {toHex} from './utils';
 import Account from './account';
 import Transaction from './transaction';
 import Contract from './Contract';
-import {Cryptography, Language, Strength} from './constants';
 import {
     Options,
     AccountModel,
@@ -19,7 +20,6 @@ import {
     Plugin, ContractRequesttModel
 } from './types';
 import BN from 'bn.js';
-import {txidToHex} from './utils';
 
 export default class XuperSDK implements XuperSDKInterface {
     static instance: XuperSDK;
@@ -27,7 +27,7 @@ export default class XuperSDK implements XuperSDKInterface {
     private plugins: Plugin[];
     private accountInstance: Account;
     private transactionInstance: Transaction;
-    private ContractInstance: Contract;
+    private contractInstance: Contract;
     private account?: AccountModel;
 
     public static getInstance(opts: Options): XuperSDK {
@@ -42,7 +42,7 @@ export default class XuperSDK implements XuperSDKInterface {
         this.plugins = opts.plugins || [];
         this.accountInstance = new Account();
         this.transactionInstance = new Transaction(opts.plugins);
-        this.ContractInstance = new Contract();
+        this.contractInstance = new Contract();
     }
 
     checkStatus(): Promise<any> {
@@ -76,13 +76,13 @@ export default class XuperSDK implements XuperSDKInterface {
                 return account;
             }
         } else {
-            throw XuperErrors.PARAMETER_ERROR;
+            throw Errors.PARAMETER_ERROR;
         }
     }
 
     import(password: string, privateKeyStr: string, cache = false): AccountModel {
         if (!password || !privateKeyStr) {
-            throw XuperErrors.PARAMETER_ERROR;
+            throw Errors.PARAMETER_ERROR;
         }
         const account = this.accountInstance.import(password, privateKeyStr);
         if (cache) {
@@ -99,7 +99,7 @@ export default class XuperSDK implements XuperSDKInterface {
         if (addr) {
             return this.accountInstance.checkAddress(addr);
         } else {
-            throw XuperError.or([XuperErrors.ACCOUNT_NOT_EXIST, XuperErrors.PARAMETER_ERROR]);
+            throw XuperError.or([Errors.ACCOUNT_NOT_EXIST, Errors.PARAMETER_ERROR]);
         }
     }
 
@@ -108,7 +108,7 @@ export default class XuperSDK implements XuperSDKInterface {
             return this.accountInstance.checkMnemonic(mnemonic, language);
         }
         else {
-            throw XuperErrors.PARAMETER_ERROR;
+            throw Errors.PARAMETER_ERROR;
         }
     }
 
@@ -119,7 +119,7 @@ export default class XuperSDK implements XuperSDKInterface {
         if (addr) {
             return this.accountInstance.getBalance(addr, node, chain);
         } else {
-            throw XuperError.or([XuperErrors.ACCOUNT_NOT_EXIST, XuperErrors.PARAMETER_ERROR]);
+            throw XuperError.or([Errors.ACCOUNT_NOT_EXIST, Errors.PARAMETER_ERROR]);
         }
     }
 
@@ -130,7 +130,7 @@ export default class XuperSDK implements XuperSDKInterface {
         if (addr) {
             return this.accountInstance.getBalanceDetail(addr, node, chain);
         } else {
-            throw XuperError.or([XuperErrors.ACCOUNT_NOT_EXIST, XuperErrors.PARAMETER_ERROR]);
+            throw XuperError.or([Errors.ACCOUNT_NOT_EXIST, Errors.PARAMETER_ERROR]);
         }
     }
 
@@ -138,7 +138,7 @@ export default class XuperSDK implements XuperSDKInterface {
         const {node, chain} = this.options;
         let authRequires: { [propName: string]: AuthModel} = {};
 
-        if (this.plugins.length > 0 && this.plugins.every(item => item.hookFuncs.indexOf('transfer') > -1)) {
+        if (this.plugins.length > 0 && this.plugins.every(plugin => plugin.hookFuncs.indexOf('transfer') > -1)) {
             for (const plugin of this.plugins) {
                 authRequires = {...await plugin.func['transfer'](plugin.args['transfer'], chain)};
             }
@@ -147,7 +147,7 @@ export default class XuperSDK implements XuperSDKInterface {
         const acc = account || this.account;
 
         if (!acc) {
-            throw XuperError.or([XuperErrors.ACCOUNT_NOT_EXIST, XuperErrors.PARAMETER_ERROR]);
+            throw XuperError.or([Errors.ACCOUNT_NOT_EXIST, Errors.PARAMETER_ERROR]);
         }
 
         const {amount, fee} = ti;
@@ -187,17 +187,14 @@ export default class XuperSDK implements XuperSDKInterface {
     }
 
     async createContractAccount(contractAccountName: number, address? : string): Promise<any> {
-
         const addr = address || this.account?.address;
 
-        console.warn(addr);
         if (addr) {
-            const contractRequest = this.ContractInstance.createContractAccount(contractAccountName, addr);
-
+            const contractRequest = this.contractInstance.createContractAccount(contractAccountName, addr);
             return this.invoke(contractRequest);
         }
         else {
-            throw XuperError.or([XuperErrors.ACCOUNT_NOT_EXIST, XuperErrors.PARAMETER_ERROR]);
+            throw XuperError.or([Errors.ACCOUNT_NOT_EXIST, Errors.PARAMETER_ERROR]);
         }
 
         // auth requires
@@ -209,6 +206,8 @@ export default class XuperSDK implements XuperSDKInterface {
 
     }
 
+
+    // Todo: fix
     async invoke(
         invokeRequests: ContractRequesttModel[],
         account?: AccountModel,
@@ -219,10 +218,8 @@ export default class XuperSDK implements XuperSDKInterface {
         const acc = account || this.account;
 
         if (!acc) {
-            throw XuperError.or([XuperErrors.ACCOUNT_NOT_EXIST, XuperErrors.PARAMETER_ERROR]);
+            throw XuperError.or([Errors.ACCOUNT_NOT_EXIST, Errors.PARAMETER_ERROR]);
         }
-
-        console.log(invokeRequests);
 
         let authRequires: { [propName: string]: AuthModel} = {};
 
@@ -233,8 +230,6 @@ export default class XuperSDK implements XuperSDKInterface {
         }
 
         let totalNeed = new BN(0);
-
-        // totalNeed = totalNeed.add(new BN('0'));
 
         Object.keys(authRequires).forEach((key: string) => {
             const auth = authRequires[key];
@@ -261,36 +256,74 @@ export default class XuperSDK implements XuperSDKInterface {
         };
     }
 
-    txidToHex(txid: Required<string>): string {
-        return txidToHex(txid);
+    getContracts(target: string): Promise<any> {
+        const {node, chain} = this.options;
+        return this.contractInstance.getContracts(node, chain,
+            !this.accountInstance.checkAddress(target), target);
     }
 
-    // async generateTransaction(ti: TransactionInfomationModel): Promise<any> {
-    //
-    //     const authRequires: {[propName: string]: AuthModel} = {};
-    //
-    //     const {amount, fee} = ti;
-    //
-    //     let totalNeed = new BN(0);
-    //
-    //     totalNeed = totalNeed.add(new BN(amount));
-    //     totalNeed = totalNeed.add(new BN(fee));
-    //
-    //     Object.keys(authRequires).forEach((key: string) => {
-    //         const auth = authRequires[key];
-    //         totalNeed = totalNeed.add(new BN(auth.fee || 0));
-    //     });
+    getContractAccounts(address?: string): Promise<any> {
+        const {node, chain} = this.options;
+        const addr = address || this.account?.address;
+        if (addr) {
+            return this.contractInstance.contarctAccounts(node, chain, addr);
+        }
+        else {
+            throw Errors.PARAMETER_EMPTY_FUNC('address');
+        }
+    }
 
-    // const tx = await this.transactionInstance.generateTransaction(totalNeed, Object.keys(authRequires));
+    async deployWasmContract(
+        contractAccount: string,
+        contractName: string,
+        code: string,
+        lang: string,
+        initArgs: any,
+        address: string
+    ): Promise<any> {
+        const {node, chain} = this.options;
+        const invokeRequests = this.contractInstance.deployWasmContractRequests(
+            contractAccount,
+            contractName,
+            code,
+            lang,
+            initArgs
+        );
+        const authRequires: { [propName: string]: AuthModel } = {
+            [`${contractAccount}/${address}`]: {
+                fee: 0,
+                sign: async (_checkTx: TransactionModel, tx: TransactionModel): Promise<TransactionModel> => {
+                    if (!tx.authRequireSigns) {
+                        tx.authRequireSigns = [];
+                    }
+                    tx.authRequireSigns = tx.authRequireSigns.concat(tx.initiatorSigns);
+                    return tx;
+                }
+            }
+        };
+        let totalNeed = new BN(0);
+        totalNeed = totalNeed.add(new BN('0'));
+        Object.keys(authRequires).forEach((key: string) => {
+            const auth = authRequires[key];
+            totalNeed = totalNeed.add(new BN(auth.fee || 0));
+        });
 
-    // const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(totalNeed, Object.keys(authRequires));
-    /*
-    const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
+        const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(node, chain, address, totalNeed, Object.keys(authRequires), invokeRequests, )
+        const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
 
-    return this.makeTransaction(ti, authRequires, preExecWithUtxosObj);
+        return new Promise<any>(resolve => resolve(preExecWithUtxosObj));
+    }
 
-     */
+    transactionIdToHex(t: Required<string>): string {
+        if (!t) {
+            throw Errors.PARAMETER_EMPTY_FUNC();
+        }
 
-
-    // }
+        try {
+            return toHex(t.toString());
+        }
+        catch (err) {
+            throw err;
+        }
+    }
 }

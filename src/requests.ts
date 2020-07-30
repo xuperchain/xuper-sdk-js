@@ -3,24 +3,24 @@
  * Created by SmilingXinyi <smilingxinyi@gmail.com> on 2020/6/2
  */
 
-import {grpcClient, isBrowser, postRequest} from './utils';
+import {grpcClient, grpcEndorserClient, postRequest} from './utils';
 
-console.log('isBrowser', isBrowser);
+const client = grpcClient();
+const endorsorClient = grpcEndorserClient();
 
-const client = !isBrowser && grpcClient();
+const gRPCPromise = (service: string, body: any) => {
+    return new Promise((resolve, reject) => client[service](body, (err: Error, response: any) => {
+        if (!err) {
+            resolve(response);
+        } else {
+            reject(err);
+        }
+    }));
+};
 
 export const getStatus = (node: string, body: any): Promise<any> => {
     if (client) {
-        return new Promise<any>((resolve, reject) =>
-            client.GetBlockChainStatus(body, (err: Error, response: any) => {
-                if (!err) {
-                    resolve(response);
-                } else {
-                    console.warn(err);
-                    reject(err);
-                }
-            })
-        );
+        return gRPCPromise('GetBlockChainStatus', body);
     } else {
         const target = `${node}/v1/get_bcstatus`;
         return postRequest(target, body);
@@ -79,9 +79,9 @@ export const preExec = (node: string, body: any): Promise<any> => {
 };
 
 export const endorser = (node: string, body: any): Promise<any> => {
-    if (client) {
+    if (endorsorClient) {
         return new Promise<any>((resolve, reject) =>
-            client.EndorserCall(body, (err: Error, response: any) => {
+            endorsorClient.EndorserCall(body, (err: Error, response: any) => {
                 if (!err) {
                     resolve(response);
                 } else {
@@ -109,7 +109,6 @@ export const postTransaction = (node: string, body: any): Promise<any> => {
         );
     } else {
         const target = `${node}/v1/post_tx`;
-        console.warn(JSON.stringify(body, null, 4));
         return postRequest(target, body);
     }
 };
@@ -130,4 +129,52 @@ export const queryTransaction = (node: string, body: any): Promise<any> => {
         const target = `${node}/v1/query_tx`;
         return postRequest(target, body);
     }
-}
+};
+
+export const accountContractList = (node: string, body: any): Promise<any> => {
+    if (client) {
+        return new Promise<any>((resolve, reject) =>
+            client.GetAccountContracts(body, (err: Error, response: any) => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(response);
+                }
+            })
+        );
+    }
+    else {
+        const target = `${node}/v1/get_account_contracts`;
+        return postRequest(target, body);
+    }
+};
+
+export const addressContractList = (node: string, body: any): Promise<any> => {
+    if (client) {
+        return new Promise<any>((resolve, reject) =>
+            client.GetAccountContracts(body, (err: Error, response: any) => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(response);
+                }
+            })
+        );
+    }
+    else {
+        const target = `${node}/v1/get_address_contracts`;
+        return postRequest(target, body);
+    }
+};
+
+export const accountList = (node: string, body: any): Promise<any> => {
+    if (client) {
+        return gRPCPromise('GetAccountByAK', body);
+    }
+    else {
+        const target = `${node}/v1/get_account_by_ak`;
+        return postRequest(target, body);
+    }
+};

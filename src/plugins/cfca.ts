@@ -57,15 +57,11 @@ const plugin = (args?: any) => ({
             // @ts-ignore
             const message = sha256.x2(messageBytes, {asBytes: true});
 
-            console.error(message);
-
             const ec = new EC('p256');
             const bnD = new BN(account.privateKey.D);
             const privKey = ec.keyFromPrivate(bnD.toArray());
             const sign = privKey.sign(message);
             const derbuf = sign.toDER().map((v: number) => String.fromCharCode(v));
-
-            console.error(sign.toDER());
 
             realBody.header = {
                 userSign: {

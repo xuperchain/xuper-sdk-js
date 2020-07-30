@@ -42,8 +42,6 @@ describe('Xuper SDK <Plugin> ——', () => {
 
         xsdk.recover(mnemonic, Language.SimplifiedChinese, Cryptography.EccFIPS, true);
 
-        console.log(await xsdk.getBalance())
-
         try {
             const tx = await xsdk.transfer({
                 to: process.env.TEST_TARGET_ADDRESS || 'QzKX5pAkmJKVtSwGFDjFg2nRm6iH1inAk',

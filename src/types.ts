@@ -7,6 +7,12 @@
 
 import BN from 'bn.js';
 
+export type ErrorOptions = {
+    name?: string;
+    isFront?: boolean;
+    stackIgnore?: [number, number];
+}
+
 export type Plugin = {
     name: string;
     func: PluginFunc;

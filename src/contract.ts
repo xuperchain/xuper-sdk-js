@@ -1,9 +1,10 @@
-import {ContractRequesttModel} from './types';
-
 /**
  * @file (contract)
  * Created by baidu on 2020/7/20
  */
+
+import {ContractRequesttModel} from './types';
+import * as Requests from './requests';
 
 export default class Contract {
     createContractAccount(contractAccountName: number, address: string): ContractRequesttModel[] {
@@ -34,99 +35,80 @@ export default class Contract {
         }];
 
         return invokeRequests;
-
-        /*
-        const newAuthRequires: { [propName: string]: AuthModel } = {...authRequires};
-
-        let totalNeed = new BN(0);
-
-        Object.keys(authRequires).forEach((key: string) => {
-            const auth = newAuthRequires[key];
-            totalNeed = totalNeed.add(new BN(auth.fee || 0));
-        });
-
-         */
-
-        /*
-
-        const preExecWithUtxos = await this.preExecTransactionWithUTXO(
-            totalNeed, Object.keys(authRequires), invokeRequests
-        );
-        const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
-        const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
-        const tx = await this.makeTransaction({
-            amount: '0',
-            fee: gasUsed.toString(),
-            to: ''
-        }, authRequires, preExecWithUtxosObj);
-        return this.postTransaction(tx);
-
-         */
     }
 
-    /*
-    async simpleInvokeContract(
+    contarctAccounts(node: string, chain: string, address: string) {
+        const body = {
+            bcname: chain,
+            address
+        };
+        return Requests.accountList(node, body);
+    }
+
+    getContracts(node: string, chain: string, isAccount: boolean, target?: string) {
+        if (isAccount) {
+            const body = {
+                bcname: chain,
+                account: target
+            };
+            return Requests.accountContractList(node, body);
+        }
+        else {
+            const body = {
+                bcname: chain,
+                address: target
+            };
+            return Requests.addressContractList(node, body);
+        }
+    }
+
+    deployWasmContractRequests(
+        contractAccount: string,
         contractName: string,
-        methodName: string,
-        moduleName: string,
-        args: any
-    ): Promise<any> {
-        const newArgs = {
-            ...args
+        code: string,
+        lang: string,
+        initArgs: any
+    ) {
+
+        const newInitArgs = {
+            ...initArgs
         };
 
         const te = new TextEncoder();
 
-        Object.keys(args).forEach(key => {
-            const bytes = te.encode(args[key]);
+        Object.keys(initArgs).forEach(key => {
+            const bytes = te.encode(initArgs[key]);
             const valueBuf: Array<any> = [];
             bytes.forEach(b => valueBuf.push(String.fromCharCode(b)));
-            newArgs[key] = btoa(valueBuf.join(''));
+            newInitArgs[key] = btoa(valueBuf.join(''));
         });
 
-        const invokeRequests: ContracRequesttModel[] = [{
-            module_name: moduleName,
-            method_name: methodName,
+        const desc = new Uint8Array([10, 1].concat(lang.split('').map(w => w.charCodeAt(0))));
+        const descBuf = Object.values(desc).map(n => String.fromCharCode(n));
+
+        const args = {
+            account_name: contractAccount,
             contract_name: contractName,
-            args: newArgs
+            contract_desc: descBuf.join(''),
+            contract_code: code,
+            init_args: JSON.stringify(newInitArgs)
+        };
+
+        const contractArgs = {
+            ...args
+        };
+
+        Object.keys(contractArgs).forEach(key => {
+            // @ts-ignore
+            contractArgs[key] = btoa(contractArgs[key]);
+        });
+
+        const invokeRequests: ContractRequesttModel[] = [{
+            module_name: 'xkernel',
+            method_name: 'Deploy',
+            args: contractArgs
         }];
 
-        console.log(invokeRequests);
-
-        const authRequires: { [propName: string]: AuthInterface } = {...this.defaultRequire};
-
-        let totalNeed = new BN(0);
-
-        // totalNeed = totalNeed.add(new BN('0'));
-
-        Object.keys(authRequires).forEach((key: string) => {
-            const auth = authRequires[key];
-            totalNeed = totalNeed.add(new BN(auth.fee || 0));
-        });
-
-        const preExecWithUtxos = await this.preExecTransactionWithUTXO(
-            totalNeed, Object.keys(authRequires), invokeRequests
-        );
-        // return {
-        //     preExec: JSON.parse(atob(preExecWithUtxos.ResponseData)),
-        //     authRequires
-        // };
-
-        const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
-        const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
-        const tx = await this.makeTransaction({
-            amount: '0',
-            fee: gasUsed.toString(),
-            to: ''
-        }, authRequires, preExecWithUtxosObj);
-
-        console.log(preExecWithUtxosObj);
-
-        return {
-            preExecutionTransaction: preExecWithUtxosObj,
-            transaction: tx
-        };
+        return invokeRequests;
     }
-
-     */
 }

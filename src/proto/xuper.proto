@@ -11,8 +11,12 @@ service Xchain {
     rpc PostTx(TxStatus) returns (CommonReply) {}
     rpc QueryTx(TxStatus) returns (TxStatus) {}
 
-    rpc GetSigns(AccessTokenRequest) returns (AccessTokenResponse)
-    rpc CheckSigns(CheckRequest) returns (CheckResult)
+    rpc GetSigns(AccessTokenRequest) returns (AccessTokenResponse) {}
+    rpc CheckSigns(CheckRequest) returns (CheckResult) {}
+
+    rpc GetAccountContracts(GetAccountContractsRequest) returns (GetAccountContractsResponse) {}
+    rpc GetAddressContracts(AddressContractsRequest) returns (AddressContractsResponse) {}
+    rpc GetAccountByAK(AK2AccountRequest) returns (AK2AccountResponse) {}
 }
 
 message AccessTokenRequest
