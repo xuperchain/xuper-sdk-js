@@ -54,7 +54,7 @@ export interface ContractInterface {
 
     getContracts(target: string): Promise<any>;
 
-    deployWasmContract(contractAccount: string, contractName: string, code: string, lang: string, initArgs: any, address?: string): Promise<any>;
+    deployWasmContract(contractAccount: string, contractName: string, code: string, lang: string, initArgs: any, account?: AccountModel): Promise<any>;
 
     // upgradeContract(): Promise<any>;
     // imvokeContract(): Promise<any>;

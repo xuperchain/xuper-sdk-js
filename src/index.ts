@@ -279,7 +279,7 @@ export default class XuperSDK implements XuperSDKInterface {
         code: string,
         lang: string,
         initArgs: any,
-        address: string
+        account?: AccountModel
     ): Promise<any> {
         const {node, chain} = this.options;
         const invokeRequests = this.contractInstance.deployWasmContractRequests(
@@ -289,6 +289,17 @@ export default class XuperSDK implements XuperSDKInterface {
             lang,
             initArgs
         );
+
+        if (!account) {
+            account = this.account;
+        }
+
+        if (!account) {
+            throw Errors.ACCOUNT_NOT_EXIST;
+        }
+
+        const address = account.address;
+
         const authRequires: { [propName: string]: AuthModel } = {
             [`${contractAccount}/${address}`]: {
                 fee: 0,
@@ -302,7 +313,47 @@ export default class XuperSDK implements XuperSDKInterface {
             }
         };
         let totalNeed = new BN(0);
-        totalNeed = totalNeed.add(new BN('0'));
+        Object.keys(authRequires).forEach((key: string) => {
+            const auth = authRequires[key];
+            totalNeed = totalNeed.add(new BN(auth.fee || 0));
+        });
+
+        const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(node, chain, address, totalNeed, Object.keys(authRequires), invokeRequests, )
+        const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
+
+        // return new Promise<any>(resolve => resolve(preExecWithUtxosObj));
+        const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
+
+        const tx = await this.transactionInstance.makeTransaction(account, {
+            amount: '0',
+            fee: gasUsed.toString(),
+            to: ''
+        }, authRequires, preExecWithUtxosObj);
+
+        return {
+            preExecutionTransaction: preExecWithUtxosObj,
+            transaction: tx
+        };
+    }
+
+    async invokeContarct(
+        contractName: string,
+        methodName: string,
+        moduleName: string,
+        args: any,
+        address: string
+    ): Promise<any> {
+        const {node, chain} = this.options;
+        const invokeRequests = this.contractInstance.invokeContract(
+            contractName,
+            methodName,
+            moduleName,
+            args
+        )
+
+        const authRequires: { [propName: string]: AuthModel } = {};
+        let totalNeed = new BN(0);
+
         Object.keys(authRequires).forEach((key: string) => {
             const auth = authRequires[key];
             totalNeed = totalNeed.add(new BN(auth.fee || 0));

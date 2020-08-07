@@ -2,7 +2,7 @@
  * @file (contract)
  * Created by baidu on 2020/7/20
  */
-
+jest.setTimeout(1000000000);
 
 import XuperSDK from '../src';
 import {isBrowser} from '../src/utils';
@@ -46,13 +46,14 @@ describe('Xuper SDK Contract：', () => {
         });
 
         xsdk.recover(
-            mnemonic,
+            address,
             Language.SimplifiedChinese,
             Cryptography.EccFIPS,
             true
         );
 
         const result = await xsdk.getContracts(address);
+        console.log(result);
         expect(result.header).toHaveProperty('logid');
     });
 
@@ -103,16 +104,17 @@ describe('Xuper SDK Contract：', () => {
         const contractName = `counter${~~(Math.random() * 10 ** 3 - 10 ** 3) + 10 ** 3}`;
 
         const result = await xsdk.deployWasmContract(
-            'XC1234567890574646@xuper',
+            'XC1234567890238136@xuper',
             contractName,
             codeBuf.join(''),
-            'c++',
+            'c',
             {
                 creator: address
-            },
-            address
+            }
         );
 
         console.warn(result);
+
+        xsdk.postTransaction(result.transaction);
     });
 });

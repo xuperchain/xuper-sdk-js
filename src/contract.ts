@@ -62,6 +62,10 @@ export default class Contract {
         }
     }
 
+    // update wasm contract requests
+
+    // invoke contract
+
     deployWasmContractRequests(
         contractAccount: string,
         contractName: string,
@@ -107,6 +111,36 @@ export default class Contract {
             module_name: 'xkernel',
             method_name: 'Deploy',
             args: contractArgs
+        }];
+
+        return invokeRequests;
+    }
+
+    invokeContract(
+        contractName: string,
+        methodName: string,
+        moduleName: string,
+        args: any
+    ) {
+
+        const newArgs = {
+            ...args
+        };
+
+        const te = new TextEncoder();
+
+        Object.keys(args).forEach(key => {
+            const bytes = te.encode(args[key]);
+            const valueBuf: Array<any> = [];
+            bytes.forEach(b => valueBuf.push(String.fromCharCode(b)));
+            newArgs[key] = btoa(valueBuf.join(''));
+        });
+
+        const invokeRequests: ContractRequesttModel[] = [{
+            module_name: moduleName,
+            method_name: methodName,
+            contract_name: contractName,
+            args: newArgs
         }];
 
         return invokeRequests;
