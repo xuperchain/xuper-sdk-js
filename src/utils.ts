@@ -110,8 +110,6 @@ export function arrayPadStart(arr: any[], len: number): any[] {
 }
 
 export async function postRequest(t: string, b: any): Promise<any> {
-
-    console.warn(t, b);
     return fetch(t, {
         method: 'POST',
         body: JSON.stringify(b)

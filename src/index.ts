@@ -258,6 +258,7 @@ export default class XuperSDK implements XuperSDKInterface {
 
     getContracts(target: string): Promise<any> {
         const {node, chain} = this.options;
+
         return this.contractInstance.getContracts(node, chain,
             !this.accountInstance.checkAddress(target), target);
     }
@@ -318,7 +319,7 @@ export default class XuperSDK implements XuperSDKInterface {
             totalNeed = totalNeed.add(new BN(auth.fee || 0));
         });
 
-        const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(node, chain, address, totalNeed, Object.keys(authRequires), invokeRequests, )
+        const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(node, chain, address, totalNeed, Object.keys(authRequires), invokeRequests, account)
         const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
 
         // return new Promise<any>(resolve => resolve(preExecWithUtxosObj));
@@ -359,7 +360,9 @@ export default class XuperSDK implements XuperSDKInterface {
             totalNeed = totalNeed.add(new BN(auth.fee || 0));
         });
 
-        const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(node, chain, address, totalNeed, Object.keys(authRequires), invokeRequests, )
+        const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(node, chain, address, totalNeed, Object.keys(authRequires), invokeRequests)
+
+        console.log(preExecWithUtxos)
         const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
 
         return new Promise<any>(resolve => resolve(preExecWithUtxosObj));

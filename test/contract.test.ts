@@ -46,14 +46,14 @@ describe('Xuper SDK Contract：', () => {
         });
 
         xsdk.recover(
-            address,
+            mnemonic,
             Language.SimplifiedChinese,
             Cryptography.EccFIPS,
             true
         );
 
         const result = await xsdk.getContracts(address);
-        console.log(result);
+        console.log(JSON.stringify(result.contracts, null, 4));
         expect(result.header).toHaveProperty('logid');
     });
 
@@ -103,18 +103,47 @@ describe('Xuper SDK Contract：', () => {
 
         const contractName = `counter${~~(Math.random() * 10 ** 3 - 10 ** 3) + 10 ** 3}`;
 
+        console.error(contractName);
+
         const result = await xsdk.deployWasmContract(
-            'XC1234567890238136@xuper',
+            'XC1234567890497536@xuper',
             contractName,
             codeBuf.join(''),
-            'c',
-            {
+            'c', {
                 creator: address
             }
         );
 
-        console.warn(result);
+        console.warn(JSON.stringify(result, null, 4));
 
-        xsdk.postTransaction(result.transaction);
+        const r = await xsdk.postTransaction(result.transaction);
+
+        console.warn(r);
+    });
+
+    test('invoke contract', async () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain
+        });
+
+        xsdk.recover(
+            mnemonic,
+            Language.SimplifiedChinese,
+            Cryptography.EccFIPS,
+            true
+        );
+
+
+        // const result = await xsdk.invokeContract('counter715', 'get', 'wasm', {
+        const result = await xsdk.invokeContarct('counter347', 'get', 'wasm', {
+            Bucket: 'XCAccount',
+            Key: 'XC1234567890145964@xuper'
+        }, address);
+
+        console.warn(JSON.stringify(result, null, 4));
+
+        expect(result.header).toHaveProperty('logid');
+        expect(result.header).not.toHaveProperty('error');
     });
 });

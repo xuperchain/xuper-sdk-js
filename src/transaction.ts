@@ -353,7 +353,7 @@ export default class Transaction {
             );
 
             // @ts-ignore
-            Object.keys(authRequires).reduce(async (prov: any, cur: any): Promise<any> => {
+            await Object.keys(authRequires).reduce(async (prov: any, cur: any): Promise<any> => {
                 const auth = authRequires[cur];
                 tx = await auth.sign(null, await tx);
                 return tx;
