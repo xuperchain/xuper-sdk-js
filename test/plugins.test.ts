@@ -40,7 +40,8 @@ describe('Xuper SDK <Plugin> ——', () => {
             })]
         });
 
-        xsdk.recover(mnemonic, Language.SimplifiedChinese, Cryptography.EccFIPS, true);
+        xsdk.retrieve(mnemonic, Language.SimplifiedChinese, Cryptography.EccFIPS, true);
+
 
         try {
             const tx = await xsdk.transfer({
@@ -81,7 +82,7 @@ describe('Xuper SDK <Plugin> ——', () => {
             })]
         });
 
-        xsdk.recover(mnemonic, Language.SimplifiedChinese, Cryptography.EccFIPS, true);
+        xsdk.retrieve(mnemonic, Language.SimplifiedChinese, Cryptography.EccFIPS, true);
 
         try {
             const tx = await xsdk.transfer({
@@ -111,7 +112,7 @@ describe('Xuper SDK <Plugin> ——', () => {
             plugins: [CFCAPlugin()]
         });
 
-        xsdk.recover(mnemonic, Language.SimplifiedChinese, Cryptography.EccFIPS, true);
+        xsdk.retrieve(mnemonic, Language.SimplifiedChinese, Cryptography.EccFIPS, true);
 
         try {
             const tx = await xsdk.transfer({

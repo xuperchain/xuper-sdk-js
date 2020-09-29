@@ -21,6 +21,8 @@ import {
 } from './types';
 import BN from 'bn.js';
 
+export {Cryptography, Language, Strength};
+
 export default class XuperSDK implements XuperSDKInterface {
     static instance: XuperSDK;
     private options: Options;
@@ -61,14 +63,14 @@ export default class XuperSDK implements XuperSDKInterface {
         return this.accountInstance.create(language, strength, cryptography);
     }
 
-    recover(
+    retrieve(
         mnemonic: string,
         language: Language = Language.SimplifiedChinese,
         cryptography: Cryptography = Cryptography.EccFIPS,
         cache = false
     ): AccountModel {
         if (mnemonic) {
-            const account = this.accountInstance.recover(mnemonic, language, cryptography);
+            const account = this.accountInstance.retrieve(mnemonic, language, cryptography);
             if (cache) {
                 this.account = account;
                 return account;
@@ -90,6 +92,22 @@ export default class XuperSDK implements XuperSDKInterface {
             return account;
         } else {
             return account;
+        }
+    }
+
+    export(password: string): string {
+
+        const acc = this.account;
+
+        if (!password) {
+            throw Errors.PARAMETER_ERROR;
+        }
+
+        if (acc) {
+            return this.accountInstance.export(password, acc.privateKey);
+        }
+        else {
+            throw Errors.ACCOUNT_NOT_EXIST;
         }
     }
 
@@ -163,11 +181,15 @@ export default class XuperSDK implements XuperSDKInterface {
             totalNeed = totalNeed.add(new BN(auth.fee || 0));
         });
 
-        // @ts-ignore
-        const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(node, chain, acc.address, totalNeed, Object.keys(authRequires), null, acc)
-        const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
-
-        return this.transactionInstance.makeTransaction(acc, ti, authRequires, preExecWithUtxosObj);
+        try {
+            // @ts-ignore
+            const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(node, chain, acc.address, totalNeed, Object.keys(authRequires), null, acc)
+            const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
+            return this.transactionInstance.makeTransaction(acc, ti, authRequires, preExecWithUtxosObj);
+        }
+        catch (e) {
+            throw e;
+        }
     }
 
     async postTransaction(tx: TransactionModel, account?: AccountModel) {
@@ -280,16 +302,31 @@ export default class XuperSDK implements XuperSDKInterface {
         code: string,
         lang: string,
         initArgs: any,
+        upgrade: boolean = false,
         account?: AccountModel
     ): Promise<any> {
         const {node, chain} = this.options;
-        const invokeRequests = this.contractInstance.deployWasmContractRequests(
-            contractAccount,
-            contractName,
-            code,
-            lang,
-            initArgs
-        );
+
+        let invokeRequests: ContractRequesttModel[];
+
+        if (upgrade) {
+            invokeRequests = this.contractInstance.upgradContractRequests(
+                contractAccount,
+                contractName,
+                code,
+                lang,
+                initArgs
+            )
+        }
+        else {
+            invokeRequests = this.contractInstance.deployContractRequests(
+                contractAccount,
+                contractName,
+                code,
+                lang,
+                initArgs
+            );
+        }
 
         if (!account) {
             account = this.account;
@@ -342,7 +379,7 @@ export default class XuperSDK implements XuperSDKInterface {
         methodName: string,
         moduleName: string,
         args: any,
-        address: string
+        account?: AccountModel
     ): Promise<any> {
         const {node, chain} = this.options;
         const invokeRequests = this.contractInstance.invokeContract(
@@ -350,7 +387,17 @@ export default class XuperSDK implements XuperSDKInterface {
             methodName,
             moduleName,
             args
-        )
+        );
+
+        if (!account) {
+            account = this.account;
+        }
+
+        if (!account) {
+            throw Errors.ACCOUNT_NOT_EXIST;
+        }
+
+        const address = account.address;
 
         const authRequires: { [propName: string]: AuthModel } = {};
         let totalNeed = new BN(0);
@@ -362,10 +409,22 @@ export default class XuperSDK implements XuperSDKInterface {
 
         const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(node, chain, address, totalNeed, Object.keys(authRequires), invokeRequests)
 
-        console.log(preExecWithUtxos)
         const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
 
-        return new Promise<any>(resolve => resolve(preExecWithUtxosObj));
+        // return new Promise<any>(resolve => resolve(preExecWithUtxosObj));
+
+        const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
+
+        const tx = await this.transactionInstance.makeTransaction(account, {
+            amount: '0',
+            fee: gasUsed.toString(),
+            to: ''
+        }, authRequires, preExecWithUtxosObj);
+
+        return {
+            preExecutionTransaction: preExecWithUtxosObj,
+            transaction: tx
+        };
     }
 
     transactionIdToHex(t: Required<string>): string {

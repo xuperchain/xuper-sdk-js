@@ -66,14 +66,14 @@ export default class Contract {
 
     // invoke contract
 
-    deployWasmContractRequests(
+    deployContractRequests(
         contractAccount: string,
         contractName: string,
         code: string,
         lang: string,
         initArgs: any
     ) {
-
+        /*
         const newInitArgs = {
             ...initArgs
         };
@@ -110,6 +110,70 @@ export default class Contract {
         const invokeRequests: ContractRequesttModel[] = [{
             module_name: 'xkernel',
             method_name: 'Deploy',
+            args: contractArgs
+        }];
+
+        return invokeRequests;
+
+         */
+
+        return this.generateContractRequests('Deploy', contractAccount, contractName, code, lang, initArgs);
+    }
+
+    upgradContractRequests(
+        contractAccount: string,
+        contractName: string,
+        code: string,
+        lang: string,
+        initArgs: any
+    ) {
+        return this.generateContractRequests('Upgrade', contractAccount, contractName, code, lang, initArgs);
+    }
+
+    generateContractRequests(
+        methodName: string,
+        contractAccount: string,
+        contractName: string,
+        code: string,
+        lang: string,
+        initArgs: any
+    ) {
+        const newInitArgs = {
+            ...initArgs
+        };
+
+        const te = new TextEncoder();
+
+        Object.keys(initArgs).forEach(key => {
+            const bytes = te.encode(initArgs[key]);
+            const valueBuf: Array<any> = [];
+            bytes.forEach(b => valueBuf.push(String.fromCharCode(b)));
+            newInitArgs[key] = btoa(valueBuf.join(''));
+        });
+
+        const desc = new Uint8Array([10, 1].concat(lang.split('').map(w => w.charCodeAt(0))));
+        const descBuf = Object.values(desc).map(n => String.fromCharCode(n));
+
+        const args = {
+            account_name: contractAccount,
+            contract_name: contractName,
+            contract_desc: descBuf.join(''),
+            contract_code: code,
+            init_args: JSON.stringify(newInitArgs)
+        };
+
+        const contractArgs = {
+            ...args
+        };
+
+        Object.keys(contractArgs).forEach(key => {
+            // @ts-ignore
+            contractArgs[key] = btoa(contractArgs[key]);
+        });
+
+        const invokeRequests: ContractRequesttModel[] = [{
+            module_name: 'xkernel',
+            method_name: methodName,
             args: contractArgs
         }];
 

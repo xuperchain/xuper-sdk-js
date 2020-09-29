@@ -14,7 +14,7 @@ import {PrivateKey, PublicKey, AccountModel} from './types';
 import {Cryptography, Language, Strength} from './constants';
 import {
     arrayPadStart, base58Decode, base58Encode, deepEqual,
-    isBrowser, stringToPublicOrPrivateKey
+    isBrowser, stringToPublicOrPrivateKey, publicOrPrivateKeyToString
 } from './utils';
 
 import * as Requests from './requests';
@@ -71,7 +71,7 @@ export default class Account {
         };
     }
 
-    public recover(
+    public retrieve(
         mnemonic: string,
         language: Language = Language.SimplifiedChinese,
         cryptography: Cryptography = Cryptography.EccFIPS
@@ -166,6 +166,12 @@ export default class Account {
         };
     }
 
+    export(password: string, privateKey: PrivateKey): string {
+        return btoa(
+            this.encryptPrivateKey(password, privateKey)
+        );
+    }
+
     private decryptPrivateKey(password: string, keyStr: string): string {
         const bytes = atob(keyStr).split('').map(s => s.charCodeAt(0));
         const blockSize = 16;
@@ -183,8 +189,8 @@ export default class Account {
         return td.decode(decryptedBytes);
     }
 
-    /*
-    private encryptPrivateKey(password: string, privateKey: PrivateKeyModel): string {
+
+    private encryptPrivateKey(password: string, privateKey: PrivateKey): string {
         const keyStr = publicOrPrivateKeyToString(privateKey);
         const te = new TextEncoder();
         const keyBytes: Uint8Array = te.encode(keyStr);
@@ -198,7 +204,6 @@ export default class Account {
         const ts = Array.from(result).map((s: number) => String.fromCharCode(s));
         return ts.join('');
     }
-     */
 
     private generateEntropy(strength: Strength): Uint8Array {
         if ((strength + 8) % 32 !== 0 || strength + 8 < 128 || strength + 8 > 256) {

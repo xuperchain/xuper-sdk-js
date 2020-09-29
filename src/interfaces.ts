@@ -20,9 +20,11 @@ export default interface XuperSDKInterface extends AccountInterface, Transaction
 export interface AccountInterface {
     create(language: Language, strength: Strength, cryptography: Cryptography): AccountModel;
 
-    recover(mnemonic: string, language: Language, cryptography: Cryptography, cache?: boolean): AccountModel;
+    retrieve(mnemonic: string, language: Language, cryptography: Cryptography, cache?: boolean): AccountModel;
 
     import(password: string, privateKeyStr: string, cache?: boolean): AccountModel;
+
+    export(password: string): string;
 
     checkAddress(address?: string): boolean;
 
@@ -54,7 +56,7 @@ export interface ContractInterface {
 
     getContracts(target: string): Promise<any>;
 
-    deployWasmContract(contractAccount: string, contractName: string, code: string, lang: string, initArgs: any, account?: AccountModel): Promise<any>;
+    deployWasmContract(contractAccount: string, contractName: string, code: string, lang: string, initArgs: any, upgrade: boolean, account?: AccountModel): Promise<any>;
 
     // upgradeContract(): Promise<any>;
     // imvokeContract(): Promise<any>;

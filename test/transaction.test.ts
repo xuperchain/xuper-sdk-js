@@ -9,30 +9,29 @@ import {Cryptography, Language} from '../src/constants';
 
 isBrowser && require('whatwg-fetch');
 
-const
-    node = process.env.HOST || 'http://localhost:8098',
-    chain = process.env.CHAIN || 'xuper',
-    mnemonic = '玉 脸 驱 协 介 跨 尔 籍 杆 伏 愈 即';
+const node = process.env.SERVER!, chain = process.env.CHAIN!,
+    mnemonic = process.env.TEST_MNEMONIC!, address = process.env.TEST_ADDRESS;
 
-describe('Xuper SDK transaction ——', () => {
-    describe('check status of chain', () => {
-        test('should return the blockchain status data structure', async () => {
-            const xsdk = new XuperSDK({node, chain});
+describe('Generate transaction', () => {
+    test('shoudle return transaction structure', async () => {
+        const xsdk = new XuperSDK({node, chain});
 
-            xsdk.recover(mnemonic, Language.SimplifiedChinese, Cryptography.EccFIPS, true);
+        xsdk.retrieve(mnemonic, Language.SimplifiedChinese, Cryptography.EccFIPS, true);
 
-            try {
-                const tx = await xsdk.transfer({
-                    to: process.env.TEST_TARGET_ADDRESS || '',
-                    amount: '100',
-                    fee: '100'
-                });
-
-                console.log(tx);
-            }
-            catch (e) {
-                throw e;
-            }
+        const tx = await xsdk.transfer({
+            to: process.env.TEST_TARGET_ADDRESS || '',
+            amount: '100',
+            fee: '100'
         });
+
+        expect(tx).toHaveProperty('txid');
+        expect(tx).toHaveProperty('initiator_signs');
+        expect(tx).toHaveProperty('initiator', address);
+        expect(tx).toHaveProperty('coinbase', false);
+        expect(tx).toHaveProperty('autogen', false);
+        expect(tx).toHaveProperty('version', 1);
+        expect(tx).toHaveProperty('tx_inputs');
+        expect(tx).toHaveProperty('tx_outputs');
+        expect(tx).toHaveProperty('auth_require', []);
     });
 });
