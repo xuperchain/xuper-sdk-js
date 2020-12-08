@@ -302,7 +302,7 @@ export default class XuperSDK implements XuperSDKInterface {
         code: string,
         lang: string,
         initArgs: any,
-        upgrade: boolean = false,
+        upgrade = false,
         account?: AccountModel
     ): Promise<any> {
         const {node, chain} = this.options;
