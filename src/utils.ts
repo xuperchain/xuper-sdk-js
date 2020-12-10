@@ -11,9 +11,9 @@ export const isBrowser =
 
 if (!isBrowser) {
     // @ts-ignore
-    global.btoa = (s: string) => Buffer.from(s, 'binary').toString('base64');
+    global.btoa = (s: string): string => Buffer.from(s, 'binary').toString('base64');
     // @ts-ignore
-    global.atob = (e: string) => Buffer.from(e, 'base64').toString('binary');
+    global.atob = (e: string): string => Buffer.from(e, 'base64').toString('binary');
 
     // @ts-ignore
     global.fetch = require('node-fetch').default;
@@ -137,7 +137,7 @@ export function toHex(txid: string): string {
     return atob(txid).split('').map(s => s.charCodeAt(0).toString(16).padStart(2, '0')).join('');
 }
 
-export const grpcClient = (PROTO_PATH = `${__dirname}/proto/xuper.proto`) => {
+export const grpcClient = (PROTO_PATH = `${__dirname}/proto/xuper.proto`): any => {
     if (isBrowser)
         return null;
 
@@ -159,7 +159,7 @@ export const grpcClient = (PROTO_PATH = `${__dirname}/proto/xuper.proto`) => {
     return new xchainProto.Xchain('localhost:37101', grpc.credentials.createInsecure())
 };
 
-export const grpcEndorserClient = (PROTO_PATH = `${__dirname}/proto/xendorser.proto`) => {
+export const grpcEndorserClient = (PROTO_PATH = `${__dirname}/proto/xendorser.proto`): any => {
     if (isBrowser)
         return null;
 
@@ -225,8 +225,8 @@ export function publicOrPrivateKeyToString(key: PrivateKey | PublicKey): string 
  * Converting a public key or private key to a string
  * @param key
  */
-export function stringToPublicOrPrivateKey(keyStr: string) {
-    const replacer = ((_match: string, p1: string, p2: string, p3: string) => {
+export function stringToPublicOrPrivateKey(keyStr: string): object {
+    const replacer = ((_match: string, p1: string, p2: string, p3: string): string => {
         const data = {
             X: p1,
             Y: p2,
