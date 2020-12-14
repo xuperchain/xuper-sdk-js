@@ -225,7 +225,7 @@ export function publicOrPrivateKeyToString(key: PrivateKey | PublicKey): string 
  * Converting a public key or private key to a string
  * @param key
  */
-export function stringToPublicOrPrivateKey(keyStr: string): object {
+export function stringToPublicOrPrivateKey(keyStr: string): any {
     const replacer = ((_match: string, p1: string, p2: string, p3: string): string => {
         const data = {
             X: p1,

@@ -17,9 +17,12 @@ import {
     TransactionInfomationModel,
     TransactionModel,
     AuthModel,
-    Plugin, ContractRequesttModel
+    Plugin,
+    ContractRequesttModel
 } from './types';
 import BN from 'bn.js';
+
+export * from './plugins';
 
 export {Cryptography, Language, Strength};
 
