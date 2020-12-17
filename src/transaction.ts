@@ -70,7 +70,7 @@ export default class Transaction {
             for (const plugin of this.plugins) {
                 if (plugin.func['postTx']) {
                     body = await plugin.func['postTx'].call(this, plugin.args['postTx'],
-                        'http://10.64.27.48:8094', chain, body, account);
+                        node, chain, body, account);
                 }
             }
         }
@@ -321,7 +321,7 @@ export default class Transaction {
             for (const plugin of this.plugins) {
                 if (plugin.func['postTx']) {
                     body = await plugin.func['postTx'].call(this, plugin.args['postTx'],
-                        'http://10.64.27.48:8094', chain, body, account);
+                        node, chain, body, account);
                 }
             }
         }

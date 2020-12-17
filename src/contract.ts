@@ -185,7 +185,7 @@ export default class Contract {
         methodName: string,
         moduleName: string,
         args: any
-    ) {
+    ): ContractRequesttModel[] {
 
         const newArgs = {
             ...args

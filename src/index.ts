@@ -1,8 +1,8 @@
 /**
- * @file Xuper SDK
- * Created by SmilingXinyi <smilingxinyi@gmail.com> on 2020/6/2
+ * @file Xuper SDK (JS/TS)
  */
 
+import BN from 'bn.js';
 import XuperSDKInterface from './interfaces';
 import * as Requests from './requests';
 import Errors, {XuperError} from './error';
@@ -20,11 +20,6 @@ import {
     Plugin,
     ContractRequesttModel
 } from './types';
-import BN from 'bn.js';
-
-export * from './plugins';
-
-export {Cryptography, Language, Strength};
 
 export default class XuperSDK implements XuperSDKInterface {
     static instance: XuperSDK;
@@ -92,10 +87,8 @@ export default class XuperSDK implements XuperSDKInterface {
         const account = this.accountInstance.import(password, privateKeyStr);
         if (cache) {
             this.account = account;
-            return account;
-        } else {
-            return account;
         }
+        return account;
     }
 
     export(password: string): string {
@@ -231,8 +224,6 @@ export default class XuperSDK implements XuperSDKInterface {
 
     }
 
-
-    // Todo: fix
     async invoke(
         invokeRequests: ContractRequesttModel[],
         account?: AccountModel,
@@ -384,7 +375,6 @@ export default class XuperSDK implements XuperSDKInterface {
         args: any,
         account?: AccountModel
     ): Promise<any> {
-        const {node, chain} = this.options;
         const invokeRequests = this.contractInstance.invokeContract(
             contractName,
             methodName,
@@ -400,34 +390,7 @@ export default class XuperSDK implements XuperSDKInterface {
             throw Errors.ACCOUNT_NOT_EXIST;
         }
 
-        const address = account.address;
-
-        const authRequires: { [propName: string]: AuthModel } = {};
-        let totalNeed = new BN(0);
-
-        Object.keys(authRequires).forEach((key: string) => {
-            const auth = authRequires[key];
-            totalNeed = totalNeed.add(new BN(auth.fee || 0));
-        });
-
-        const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(node, chain, address, totalNeed, Object.keys(authRequires), invokeRequests)
-
-        const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
-
-        // return new Promise<any>(resolve => resolve(preExecWithUtxosObj));
-
-        const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
-
-        const tx = await this.transactionInstance.makeTransaction(account, {
-            amount: '0',
-            fee: gasUsed.toString(),
-            to: ''
-        }, authRequires, preExecWithUtxosObj);
-
-        return {
-            preExecutionTransaction: preExecWithUtxosObj,
-            transaction: tx
-        };
+        return this.invoke(invokeRequests, account)
     }
 
     transactionIdToHex(t: Required<string>): string {
@@ -443,3 +406,7 @@ export default class XuperSDK implements XuperSDKInterface {
         }
     }
 }
+
+export * from './plugins';
+
+export {Cryptography, Language, Strength};
