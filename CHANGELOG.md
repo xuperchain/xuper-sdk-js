@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0-beta.4](https://github.com/xuperchain/xuper-sdk-js/compare/v2.0.0-beta.3...v2.0.0-beta.4) (2020-12-17)
+
+
+### Bug Fixes
+
+* 🐛 invoke contract without plugin service ([6440c0d](https://github.com/xuperchain/xuper-sdk-js/commit/6440c0dde94d02f2999eb778a3355552b3697bf3))
+
 ## [2.0.0-beta.3](https://github.com/xuperchain/xuper-sdk-js/compare/v2.0.0-beta.2...v2.0.0-beta.3) (2020-12-14)
 
 
