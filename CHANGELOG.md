@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0-beta.5](https://github.com/xuperchain/xuper-sdk-js/compare/v2.0.0-beta.4...v2.0.0-beta.5) (2021-02-03)
+
+
+### Bug Fixes
+
+* 🐛 gRPC - postTX service ([37c480e](https://github.com/xuperchain/xuper-sdk-js/commit/37c480e5a15139bd332d2949d5cbdbcd2be455c4))
+
 ## [2.0.0-beta.4](https://github.com/xuperchain/xuper-sdk-js/compare/v2.0.0-beta.3...v2.0.0-beta.4) (2020-12-17)
 
 
