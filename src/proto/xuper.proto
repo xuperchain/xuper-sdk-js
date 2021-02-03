@@ -8,6 +8,7 @@ service Xchain {
     rpc GetBalanceDetail (AddressBalanceStatus) returns (AddressBalanceStatus) {}
     rpc GetBlockChainStatus (BCStatus) returns (BCStatus) {}
     rpc PreExec (InvokeRPCRequest) returns (InvokeRPCResponse) {}
+    rpc PreExecWithSelectUTXO(PreExecWithSelectUTXORequest) returns (PreExecWithSelectUTXOResponse) {}
     rpc PostTx(TxStatus) returns (CommonReply) {}
     rpc QueryTx(TxStatus) returns (TxStatus) {}
 

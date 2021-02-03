@@ -137,7 +137,7 @@ export function toHex(txid: string): string {
     return atob(txid).split('').map(s => s.charCodeAt(0).toString(16).padStart(2, '0')).join('');
 }
 
-export const grpcClient = (PROTO_PATH = `${__dirname}/proto/xuper.proto`): any => {
+export const grpcClient = (node: string, PROTO_PATH = `${__dirname}/proto/xuper.proto`): any => {
     if (isBrowser)
         return null;
 
@@ -156,10 +156,10 @@ export const grpcClient = (PROTO_PATH = `${__dirname}/proto/xuper.proto`): any =
     );
     const xchainProto = grpc.loadPackageDefinition(packageDefinition).pb;
     // @ts-ignore
-    return new xchainProto.Xchain('localhost:37101', grpc.credentials.createInsecure())
+    return new xchainProto.Xchain(node, grpc.credentials.createInsecure());
 };
 
-export const grpcEndorserClient = (PROTO_PATH = `${__dirname}/proto/xendorser.proto`): any => {
+export const grpcEndorserClient = (node: string, PROTO_PATH = `${__dirname}/proto/xendorser.proto`): any => {
     if (isBrowser)
         return null;
 
@@ -178,7 +178,7 @@ export const grpcEndorserClient = (PROTO_PATH = `${__dirname}/proto/xendorser.pr
     );
     const xendorserProto = grpc.loadPackageDefinition(packageDefinition).pb;
     // @ts-ignore
-    return new xendorserProto.xendorser('localhost:37101', grpc.credentials.createInsecure())
+    return new xendorserProto.xendorser(node, grpc.credentials.createInsecure());
 };
 
 export function deepEqual(x: any, y: any): boolean {

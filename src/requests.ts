@@ -5,8 +5,16 @@
 
 import {grpcClient, grpcEndorserClient, postRequest} from './utils';
 
-const client = grpcClient();
-const endorsorClient = grpcEndorserClient();
+let client: any = null;
+let endorsorClient: any = null;
+
+export const initializationClient = (node: string) => {
+    client = grpcClient(node);
+};
+
+export const initializationEndorseClient = (node: string) => {
+    endorsorClient = grpcEndorserClient(node);
+};
 
 const gRPCPromise = (service: string, body: any) => {
     return new Promise((resolve, reject) => client[service](body, (err: Error, response: any) => {
@@ -78,6 +86,23 @@ export const preExec = (node: string, body: any): Promise<any> => {
     }
 };
 
+export const preExecWithFee = (node: string, body: any): Promise<any> => {
+    if (client) {
+        return new Promise<any>((resolve, reject) =>
+            client.PreExecWithSelectUTXO(body, (err: Error, response: any) => {
+                if (!err) {
+                    resolve(response);
+                } else {
+                    reject(err);
+                }
+            })
+        );
+    } else {
+        const target = `${node}/v1/preexec_select_utxo`;
+        return postRequest(target, body);
+    }
+};
+
 export const endorser = (node: string, body: any): Promise<any> => {
     if (endorsorClient) {
         return new Promise<any>((resolve, reject) =>
@@ -98,7 +123,7 @@ export const endorser = (node: string, body: any): Promise<any> => {
 export const postTransaction = (node: string, body: any): Promise<any> => {
     if (client) {
         return new Promise<any>((resolve, reject) =>
-            client.EndorserCall(body, (err: Error, response: any) => {
+            client.PostTx(body, (err: Error, response: any) => {
                 if (!err) {
                     resolve(response);
                 } else {

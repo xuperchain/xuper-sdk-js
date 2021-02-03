@@ -53,9 +53,9 @@ export type AccountModel = {
 /* ---------- Transaction ---------- */
 
 export type TransactionInfomationModel = {
-    amount: string | number | BN;
-    fee: string | number | BN;
     to: string;
+    amount: string | number | BN;
+    fee?: string | number | BN;
     desc?: string;
 }
 

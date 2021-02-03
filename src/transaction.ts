@@ -75,7 +75,8 @@ export default class Transaction {
             }
         }
 
-        return Requests.endorser(node, body);
+        // return Requests.endorser(node, body);
+        return Requests.preExecWithFee(node, data);
     }
 
     makeTxOutput(
@@ -241,7 +242,10 @@ export default class Transaction {
 
         let totalNeed = new BN(0);
         totalNeed = totalNeed.add(new BN(amount));
-        totalNeed = totalNeed.add(new BN(fee));
+
+        if (fee)
+            totalNeed = totalNeed.add(new BN(fee));
+
 
         txOutputs.push(this.makeTxOutput(totalSelected, totalNeed, account.address));
 
