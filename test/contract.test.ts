@@ -3,7 +3,7 @@
  * Created by baidu on 2020/7/20
  */
 
-jest.setTimeout(100000000);
+jest.setTimeout(30000);
 
 import XuperSDK, {Cryptography, Language} from '../src';
 import {isBrowser} from '../src/utils';
@@ -11,7 +11,7 @@ import {isBrowser} from '../src/utils';
 isBrowser && require('whatwg-fetch');
 
 const
-    node = process.env.HOST || 'http://localhost:8098',
+    node = process.env.SERVER || 'http://localhost:8098',
     chain = process.env.CHAIN || 'xuper',
     mnemonic = '玉 脸 驱 协 介 跨 尔 籍 杆 伏 愈 即',
     address = 'nuSMPvo6UUoTaT8mMQmHbfiRbJNbAymGh';
@@ -34,7 +34,13 @@ describe('Xuper SDK Contract：', () => {
         const execStruct = await xsdk.createContractAccount(
             parseInt('1234567890' + (~~(Math.random() * (999999 - 100000) + 100000).toString()))
         );
+
+        console.warn(JSON.stringify(execStruct.transaction, null, 4));
+
         const result = await xsdk.postTransaction(execStruct.transaction);
+
+        console.warn(result);
+
         expect(result.header).toHaveProperty('logid');
         expect(result.header).not.toHaveProperty('error');
     });
@@ -73,8 +79,10 @@ describe('Xuper SDK Contract：', () => {
         );
 
         const result = await xsdk.getContracts(address);
-        console.log(JSON.stringify(result, null, 4));
+        console.log(JSON.stringify(result));
         expect(result.header).toHaveProperty('logid');
+        expect(result.header).not.toHaveProperty('error');
+        expect(result).toHaveProperty('contracts');
     });
 
     test('deploy new wasm contract should return transaction info and result of post', async () => {
@@ -103,21 +111,15 @@ describe('Xuper SDK Contract：', () => {
 
         const contractName = `counter${~~(Math.random() * 10 ** 3 - 10 ** 3) + 10 ** 3}`;
 
-        console.error(contractName);
-
         const result = await xsdk.deployWasmContract(
-            'XC1234567890598143@xuper',
+            'XC1234567890177374@xuper',
             contractName,
             codeBuf.join(''),
             'c', {
                 creator: address
             }
         );
-
-        console.warn(JSON.stringify(result, null, 4));
-
         const r = await xsdk.postTransaction(result.transaction);
-
         console.warn(r);
     });
 
@@ -150,8 +152,8 @@ describe('Xuper SDK Contract：', () => {
         console.error(contractName);
 
         const result = await xsdk.deployWasmContract(
-            'XC1234567890598143@xuper',
-            'counter500',
+            'XC1234567890177374@xuper',
+            'counter214',
             codeBuf.join(''),
             'c', {
                 creator: address
@@ -180,7 +182,7 @@ describe('Xuper SDK Contract：', () => {
         );
 
         const {transaction} =
-            await xsdk.invokeContarct('counter500', 'increase', 'wasm', {}, account);
+            await xsdk.invokeContarct('counter214', 'increase', 'wasm', {}, account);
 
         console.warn(JSON.stringify(transaction, null, 4));
 
@@ -188,6 +190,8 @@ describe('Xuper SDK Contract：', () => {
 
         expect(result.header).toHaveProperty('logid');
         expect(result.header).not.toHaveProperty('error');
+
+        console.warn(JSON.stringify(result, null, 4));
     });
 
     // Todo: Upgrade

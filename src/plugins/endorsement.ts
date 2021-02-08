@@ -10,6 +10,7 @@ import {convert} from '../utils';
 const plugin =  (args: any) => ({
     name: 'Compliance',
     init: function(defaultArgs: any) {
+        console.log(defaultArgs);
         Requests.initializationEndorseClient(defaultArgs.server);
     },
     func: {
@@ -91,15 +92,28 @@ const plugin =  (args: any) => ({
                         RequestData: btoa(JSON.stringify(obj))
                     };
 
-                    const result = await Requests.endorser(server, body);
+                    console.log('------');
 
-                    if (!tx.authRequireSigns) {
-                        tx.authRequireSigns = [];
+                    console.error(JSON.stringify(body, null, 4));
+                    console.error(JSON.stringify(obj, null, 4));
+
+                    try {
+                        const result = await Requests.endorser(server, body);
+
+                        console.warn(result);
+
+                        if (!tx.authRequireSigns) {
+                            tx.authRequireSigns = [];
+                        }
+
+                        tx.authRequireSigns.push(result.EndorserSign);
+
+                        return tx;
                     }
-
-                    tx.authRequireSigns.push(result.EndorserSign);
-
-                    return tx;
+                    catch (e) {
+                        console.error('噗');
+                        throw e;
+                    }
                 }
             }}
         }

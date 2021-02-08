@@ -5,18 +5,18 @@ const conf = {
 
 module.exports = {
     projects: [
-        {
-            displayName: 'browser',
-            testEnvironment: './test/jest/custom-test-env.js',
-            ...conf
-        },
         // {
-        //     displayName: 'Nodejs',
-        //     testEnvironment: 'node',
-        //     setupFiles: [
-        //         'dotenv/config'
-        //     ],
+        //     displayName: 'browser',
+        //     testEnvironment: './test/jest/custom-test-env.js',
         //     ...conf
-        // }
+        // },
+        {
+            displayName: 'Nodejs',
+            testEnvironment: 'node',
+            setupFiles: [
+                'dotenv/config'
+            ],
+            ...conf
+        }
     ]
 };

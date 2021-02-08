@@ -49,7 +49,7 @@ export default class XuperSDK implements XuperSDKInterface {
         }
 
         if (this.plugins.length > 0) {
-            this.plugins.every(plugin => plugin.init && plugin.init)
+            this.plugins.every(plugin => plugin.init && plugin.init.call(null, plugin.args['transfer']))
         }
     }
 

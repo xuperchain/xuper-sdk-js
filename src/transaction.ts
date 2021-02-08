@@ -200,7 +200,44 @@ export default class Transaction {
             });
         }
 
-        str += jsonEncode(tx.contractRequests);
+        // const contractRequests = Object.assign([], tx.contractRequests.map((request: any) => {
+        //     const newRequest = Object.assign({}, request);
+        //     if (newRequest.args) {
+        //         return Object.keys(newRequest).reduce((prev: any, curr) => {
+        //             if (newRequest.args[curr] === '') {
+        //                 prev[curr] = null;
+        //             }
+        //             else {
+        //                 prev[curr] = newRequest.args[curr];
+        //             }
+        //             return prev;
+        //         }, {});
+        //     });
+
+        if (tx.contractRequests && tx.contractRequests instanceof Array) {
+            const newContractRequests = Object.assign([], tx.contractRequests);
+
+            const contractRequests = newContractRequests.map((request: any) => {
+                const newRequest = Object.assign({}, request);
+                if (newRequest.args) {
+                    newRequest.args = Object.keys(newRequest.args).reduce((prev: any, curr) => {
+                        if (newRequest.args[curr] === '') {
+                            prev[curr] = null;
+                        }
+                        else {
+                            prev[curr] = newRequest.args[curr];
+                        }
+                        return prev;
+                    }, {});
+                };
+                return newRequest;
+            });
+
+            str += jsonEncode(contractRequests);
+        }
+        else {
+            str += jsonEncode(tx.contractRequests);
+        }
 
         str += jsonEncode(tx.initiator);
 

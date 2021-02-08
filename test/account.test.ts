@@ -6,12 +6,11 @@
 import XuperSDK, {Cryptography, Language} from '../src';
 import {AccountModel} from '../src/types';
 import {isBrowser} from '../src/utils';
-// import XuperErrors, {XuperError} from '../src/error';
 
 isBrowser && require('whatwg-fetch');
 
 const
-    node = process.env.HOST!,
+    node = process.env.SERVER!,
     chain = process.env.CHAIN!,
     mnemonic = process.env.TEST_MNEMONIC!,
     address = process.env.TEST_ADDRESS!;
@@ -47,8 +46,6 @@ describe('Xuper SDK account ——', () => {
                 Language.SimplifiedChinese,
                 Cryptography.EccFIPS
             );
-
-            console.log(account);
 
             expect(account).toHaveProperty('mnemonic');
             expect(account).toHaveProperty('privateKey');
