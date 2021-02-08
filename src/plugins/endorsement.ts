@@ -4,10 +4,14 @@
  */
 
 import {UTXO, TXOutput, TransactionModel, AuthModel, AccountModel} from '../types';
-import {convert, postRequest} from '../utils';
+import * as Requests from '../requests';
+import {convert} from '../utils';
 
 const plugin =  (args: any) => ({
     name: 'Compliance',
+    init: function(defaultArgs: any) {
+        Requests.initializationEndorseClient(defaultArgs.server);
+    },
     func: {
         makeTransaction: async function(defaultArgs: any, account: AccountModel, ti: TransactionModel, authRequires: AuthModel[], preExecWithUtxosObj: any) {
             let tx: TransactionModel;
@@ -58,6 +62,7 @@ const plugin =  (args: any) => ({
                 ti
             );
 
+
             // @ts-ignore
             await Object.keys(authRequires).reduce(async (prov: any, cur: any): Promise<any> => {
                 if (prov) {
@@ -86,16 +91,15 @@ const plugin =  (args: any) => ({
                         RequestData: btoa(JSON.stringify(obj))
                     };
 
-                    const tar = `${server}/v1/endorsercall`;
+                    const result = await Requests.endorser(server, body);
 
-                    return postRequest(tar, body)
-                        .then((result: any) => {
-                            if (!tx.authRequireSigns) {
-                                tx.authRequireSigns = [];
-                            }
-                            tx.authRequireSigns.push(result.EndorserSign);
-                            return tx;
-                        });
+                    if (!tx.authRequireSigns) {
+                        tx.authRequireSigns = [];
+                    }
+
+                    tx.authRequireSigns.push(result.EndorserSign);
+
+                    return tx;
                 }
             }}
         }

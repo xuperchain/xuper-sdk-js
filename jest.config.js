@@ -10,13 +10,13 @@ module.exports = {
             testEnvironment: './test/jest/custom-test-env.js',
             ...conf
         },
-        {
-            displayName: 'Nodejs',
-            testEnvironment: 'node',
-            setupFiles: [
-                'dotenv/config'
-            ],
-            ...conf
-        }
+        // {
+        //     displayName: 'Nodejs',
+        //     testEnvironment: 'node',
+        //     setupFiles: [
+        //         'dotenv/config'
+        //     ],
+        //     ...conf
+        // }
     ]
 };

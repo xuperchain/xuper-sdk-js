@@ -8,6 +8,13 @@ import {grpcClient, grpcEndorserClient, postRequest} from './utils';
 let client: any = null;
 let endorsorClient: any = null;
 
+enum RESOURCE_TYPE {
+    CPU,
+    MEMORY,
+    DISK,
+    XFEE
+}
+
 export const initializationClient = (node: string) => {
     client = grpcClient(node);
 };
@@ -86,11 +93,32 @@ export const preExec = (node: string, body: any): Promise<any> => {
     }
 };
 
-export const preExecWithFee = (node: string, body: any): Promise<any> => {
+export const preExecWithFee = async (node: string, body: any): Promise<any> => {
     if (client) {
         return new Promise<any>((resolve, reject) =>
             client.PreExecWithSelectUTXO(body, (err: Error, response: any) => {
                 if (!err) {
+                    if (response.response.requests) {
+                        response.response.requests = response.response.requests.map((request: any) => {
+                            if (request['resource_limits'] && request['resource_limits'].length > 0) {
+                                request['resource_limits'] = request['resource_limits'].map((info: any) => {
+                                    const tempInfo = {};
+
+
+                                    // @ts-ignore
+                                    tempInfo.type = info.type;
+                                    if (info.limit && info.limit !== "0") {
+                                        // @ts-ignore
+                                        tempInfo.limit = parseInt(info.limit, 10);
+                                    }
+                                    return tempInfo;
+                                });
+                            }
+
+                            return request;
+                        });
+                    }
+
                     resolve(response);
                 } else {
                     reject(err);
@@ -99,7 +127,29 @@ export const preExecWithFee = (node: string, body: any): Promise<any> => {
         );
     } else {
         const target = `${node}/v1/preexec_select_utxo`;
-        return postRequest(target, body);
+        const response = await postRequest(target, body);
+        if (response.response.requests) {
+            response.response.requests = response.response.requests.map((request: any) => {
+                if (request['resource_limits'] && request['resource_limits'].length > 0) {
+                    request['resource_limits'] = request['resource_limits'].map((info: any) => {
+                        const tempInfo = {};
+
+                        // @ts-ignore
+                        tempInfo.type = RESOURCE_TYPE[info.type];
+
+                        if (info.limit && info.limit !== "0") {
+                            // @ts-ignore
+                            tempInfo.limit = parseInt(info.limit, 10);
+                        }
+                        return tempInfo;
+                    });
+                }
+
+                return request;
+            });
+        }
+        return response;
+
     }
 };
 
@@ -177,7 +227,7 @@ export const accountContractList = (node: string, body: any): Promise<any> => {
 export const addressContractList = (node: string, body: any): Promise<any> => {
     if (client) {
         return new Promise<any>((resolve, reject) =>
-            client.GetAccountContracts(body, (err: Error, response: any) => {
+            client.GetAddressContracts(body, (err: Error, response: any) => {
                 if (err) {
                     reject(err);
                 }

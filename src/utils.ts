@@ -12,6 +12,8 @@ export const isBrowser =
 if (!isBrowser) {
     // @ts-ignore
     global.btoa = (s: string): string => Buffer.from(s, 'binary').toString('base64');
+
+    // global.btoa = (s: string): Uint16Array => Buffer.from(s, 'utf8');
     // @ts-ignore
     global.atob = (e: string): string => Buffer.from(e, 'base64').toString('binary');
 
@@ -112,8 +114,9 @@ export function arrayPadStart(arr: any[], len: number): any[] {
 export async function postRequest(t: string, b: any): Promise<any> {
     let target = t;
 
-    if (!/^http(s?):\/\//gm.test(target)) {
-        target = `${location.protocol}//${t}`;
+    if (!(/^http(s?):\/\//gm.test(target))) {
+        const protocol = typeof location !== 'undefined' ? location.protocol : 'http:';
+        target = `${protocol}//${t}`;
     }
 
     return fetch(target, {
@@ -149,13 +152,10 @@ export const grpcClient = (node: string, PROTO_PATH = `${__dirname}/proto/xuper.
         {
             keepCase: true,
             longs: String,
-            enums: String,
-            defaults: true,
-            oneofs: true
+            bytes: String
         }
     );
     const xchainProto = grpc.loadPackageDefinition(packageDefinition).pb;
-    // @ts-ignore
     return new xchainProto.Xchain(node, grpc.credentials.createInsecure());
 };
 
@@ -171,13 +171,10 @@ export const grpcEndorserClient = (node: string, PROTO_PATH = `${__dirname}/prot
         {
             keepCase: true,
             longs: String,
-            enums: String,
-            defaults: true,
-            oneofs: true
+            bytes: String
         }
     );
     const xendorserProto = grpc.loadPackageDefinition(packageDefinition).pb;
-    // @ts-ignore
     return new xendorserProto.xendorser(node, grpc.credentials.createInsecure());
 };
 

@@ -18,6 +18,7 @@ export type Plugin = {
     func: PluginFunc;
     hookFuncs: string[];
     args: any;
+    init: Function;
 }
 
 type PluginFunc = {
@@ -28,7 +29,11 @@ export type Options = {
     node: string;
     chain: string;
     plugins?: Plugin[];
-    enableGRPC?: boolean;
+    env?: {
+        node?: {
+            disableGRPC?: boolean;
+        };
+    };
 }
 
 /* ---------- Account ---------- */

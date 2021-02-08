@@ -1,3 +1,8 @@
+/**
+ * @file Transaction
+ * Created by SmilingXinyi <smilingxinyi@gmail.com> on 2020/6/2
+ */
+
 import {ContractRequesttModel, TransactionInfomationModel, AuthModel, AccountModel, TXInput, TXOutput, UTXO, TransactionModel, Plugin} from './types';
 import * as Requests from './requests';
 import BN from 'bn.js';
@@ -6,11 +11,6 @@ import {convert, getNonce, jsonEncode, publicOrPrivateKeyToString} from './utils
 import sha256 from 'sha256';
 import {VERSION} from './constants';
 import {ec as EC} from 'elliptic';
-
-/**
- * @file Transaction
- * Created by SmilingXinyi <smilingxinyi@gmail.com> on 2020/6/2
- */
 
 export default class Transaction {
 
@@ -260,7 +260,7 @@ export default class Transaction {
             version: VERSION,
             coinbase: false,
             autogen: false,
-            timestamp: parseInt(Date.now().toString().padEnd(19, '0'), 10),
+            timestamp: Date.now(),
             txInputs,
             txOutputs,
             initiator: account.address,
@@ -274,17 +274,17 @@ export default class Transaction {
 
         if (response) {
             // inputs ext
-            if (response.inputs) {
+            if (response.inputs && response.inputs.length) {
                 tx.txInputsExt = response.inputs;
             }
 
             // outputs ext
-            if (response.outputs) {
+            if (response.outputs && response.outputs.length) {
                 tx.txOutputsExt = response.outputs;
             }
 
             // contract request
-            if (response.requests) {
+            if (response.requests && response.requests.length) {
                 tx.contractRequests = response.requests;
             }
         }

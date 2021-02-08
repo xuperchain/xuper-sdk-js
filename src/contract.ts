@@ -156,9 +156,9 @@ export default class Contract {
 
         const args = {
             account_name: contractAccount,
-            contract_name: contractName,
-            contract_desc: descBuf.join(''),
             contract_code: code,
+            contract_desc: descBuf.join(''),
+            contract_name: contractName,
             init_args: JSON.stringify(newInitArgs)
         };
 

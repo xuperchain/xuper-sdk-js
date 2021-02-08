@@ -7,7 +7,7 @@ import XuperSDKInterface from './interfaces';
 import * as Requests from './requests';
 import Errors, {XuperError} from './error';
 import {Cryptography, Language, Strength} from './constants';
-import {toHex} from './utils';
+import {toHex, isBrowser} from './utils';
 import Account from './account';
 import Transaction from './transaction';
 import Contract from './Contract';
@@ -20,18 +20,6 @@ import {
     Plugin,
     ContractRequesttModel
 } from './types';
-
-declare global {
-    // eslint-disable-next-line @typescript-eslint/no-namespace
-    namespace NodeJS {
-        interface Global {
-            __conf: {
-                server?: string;
-                endorseServer?: string;
-            };
-        }
-    }
-}
 
 export default class XuperSDK implements XuperSDKInterface {
     static instance: XuperSDK;
@@ -56,8 +44,13 @@ export default class XuperSDK implements XuperSDKInterface {
         this.transactionInstance = new Transaction(opts.plugins);
         this.contractInstance = new Contract();
 
-        if (this.options.enableGRPC)
+        if (!isBrowser && !this.options.env?.node?.disableGRPC) {
             Requests.initializationClient(this.options.node);
+        }
+
+        if (this.plugins.length > 0) {
+            this.plugins.every(plugin => plugin.init && plugin.init)
+        }
     }
 
     checkStatus(): Promise<any> {
@@ -197,7 +190,6 @@ export default class XuperSDK implements XuperSDKInterface {
         try {
             // @ts-ignore
             const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(node, chain, acc.address, totalNeed, Object.keys(authRequires), null, acc)
-            // const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
             return this.transactionInstance.makeTransaction(acc, ti, authRequires, preExecWithUtxos);
         }
         catch (e) {
@@ -274,17 +266,18 @@ export default class XuperSDK implements XuperSDKInterface {
             totalNeed, Object.keys(authRequires), invokeRequests
         );
 
-        const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
-        const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
+        console.error(JSON.stringify(preExecWithUtxos, null, 4));
+
+        const gasUsed = preExecWithUtxos.response.gas_used || 0;
 
         const tx = await this.transactionInstance.makeTransaction(acc, {
             amount: '0',
             fee: gasUsed.toString(),
             to: ''
-        }, authRequires, preExecWithUtxosObj);
+        }, authRequires, preExecWithUtxos);
 
         return {
-            preExecutionTransaction: preExecWithUtxosObj,
+            preExecutionTransaction: preExecWithUtxos,
             transaction: tx
         };
     }
@@ -368,9 +361,9 @@ export default class XuperSDK implements XuperSDKInterface {
         });
 
         const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(node, chain, address, totalNeed, Object.keys(authRequires), invokeRequests, account)
-        const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
 
-        // return new Promise<any>(resolve => resolve(preExecWithUtxosObj));
+        const preExecWithUtxosObj = preExecWithUtxos;
+
         const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
 
         const tx = await this.transactionInstance.makeTransaction(account, {
