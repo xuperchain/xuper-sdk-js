@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0-beta.6](https://github.com/xuperchain/xuper-sdk-js/compare/v2.0.0-beta.5...v2.0.0-beta.6) (2021-02-08)
+
+
+### Bug Fixes
+
+* 🐛 preExecWithFee service ([28f9aa0](https://github.com/xuperchain/xuper-sdk-js/commit/28f9aa0eceb251fe68357650043610be6ef9077a))
+
 ## [2.0.0-beta.5](https://github.com/xuperchain/xuper-sdk-js/compare/v2.0.0-beta.4...v2.0.0-beta.5) (2021-02-03)
 
 
