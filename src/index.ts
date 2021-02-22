@@ -49,7 +49,7 @@ export default class XuperSDK implements XuperSDKInterface {
         }
 
         if (this.plugins.length > 0) {
-            this.plugins.every(plugin => plugin.init && plugin.init(plugin.args))
+            this.plugins.every(plugin => plugin.init && plugin.init(plugin.args, this.options));
         }
     }
 
@@ -361,8 +361,6 @@ export default class XuperSDK implements XuperSDKInterface {
                 };
             }
         }
-
-        console.warn(authRequires)
 
         let totalNeed = new BN(0);
         Object.keys(authRequires).forEach((key: string) => {

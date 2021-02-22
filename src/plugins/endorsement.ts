@@ -3,14 +3,16 @@
  * Created by baidu on 2020/7/14
  */
 
-import {UTXO, TXOutput, TransactionModel, AuthModel, AccountModel} from '../types';
+import {UTXO, TXOutput, TransactionModel, AuthModel, AccountModel, Options} from '../types';
 import * as Requests from '../requests';
 import {convert} from '../utils';
 
 const plugin =  (args: any) => ({
     name: 'Compliance',
-    init: function(defaultArgs: any) {
-        Requests.initializationEndorseClient(defaultArgs.transfer.server);
+    init: function(defaultArgs: any, sdkOptions: Options) {
+        if (!sdkOptions.env?.node?.disableGRPC) {
+            Requests.initializationEndorseClient(defaultArgs.transfer.server);
+        }
     },
     func: {
         makeTransaction: async function(defaultArgs: any, account: AccountModel, ti: TransactionModel, authRequires: AuthModel[], preExecWithUtxosObj: any) {
