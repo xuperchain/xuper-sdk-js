@@ -10,7 +10,7 @@ import {convert} from '../utils';
 const plugin =  (args: any) => ({
     name: 'Compliance',
     init: function(defaultArgs: any) {
-        Requests.initializationEndorseClient(defaultArgs.server);
+        Requests.initializationEndorseClient(defaultArgs.transfer.server);
     },
     func: {
         makeTransaction: async function(defaultArgs: any, account: AccountModel, ti: TransactionModel, authRequires: AuthModel[], preExecWithUtxosObj: any) {

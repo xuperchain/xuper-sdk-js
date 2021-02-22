@@ -269,10 +269,6 @@ export function convert(tar: any, exceptions: [] = []): any {
         const newTar = {...tar};
         Object.keys(newTar).forEach(key => {
             const value = newTar[key];
-            // if (exceptions) {
-            //     console.log(key, exceptions.every(item => key === item));
-            // }
-            // @ts-ignore
             format[/^[a-z]/.test(key) && !(exceptions.length > 0 && exceptions.every(item => key === item))  ? key.replace(/([A-Z]{1})/g, '_$1').toLowerCase() : key] = convert(value, exceptions);
         });
     } else {

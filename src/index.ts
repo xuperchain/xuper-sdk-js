@@ -49,7 +49,7 @@ export default class XuperSDK implements XuperSDKInterface {
         }
 
         if (this.plugins.length > 0) {
-            this.plugins.every(plugin => plugin.init && plugin.init)
+            this.plugins.every(plugin => plugin.init && plugin.init(plugin.args))
         }
     }
 
@@ -340,7 +340,7 @@ export default class XuperSDK implements XuperSDKInterface {
 
         const address = account.address;
 
-        const authRequires: { [propName: string]: AuthModel } = {
+        let authRequires: { [propName: string]: AuthModel } = {
             [`${contractAccount}/${address}`]: {
                 fee: 0,
                 sign: async (_checkTx: TransactionModel, tx: TransactionModel): Promise<TransactionModel> => {
@@ -352,6 +352,18 @@ export default class XuperSDK implements XuperSDKInterface {
                 }
             }
         };
+
+        if (this.plugins.length > 0 && this.plugins.every(item => item.hookFuncs.indexOf('transfer') > -1)) {
+            for (const plugin of this.plugins) {
+                authRequires = {
+                    ...authRequires,
+                    ...await plugin.func['transfer'](plugin.args['transfer'], chain)
+                };
+            }
+        }
+
+        console.warn(authRequires)
+
         let totalNeed = new BN(0);
         Object.keys(authRequires).forEach((key: string) => {
             const auth = authRequires[key];
@@ -420,7 +432,7 @@ export default class XuperSDK implements XuperSDKInterface {
 
         const address = account.address;
 
-        const authRequires: { [propName: string]: AuthModel } = {
+        let authRequires: { [propName: string]: AuthModel } = {
             [`${contractAccount}/${address}`]: {
                 fee: 0,
                 sign: async (_checkTx: TransactionModel, tx: TransactionModel): Promise<TransactionModel> => {
@@ -432,6 +444,16 @@ export default class XuperSDK implements XuperSDKInterface {
                 }
             }
         };
+
+        if (this.plugins.length > 0 && this.plugins.every(item => item.hookFuncs.indexOf('transfer') > -1)) {
+            for (const plugin of this.plugins) {
+                authRequires = {
+                    ...authRequires,
+                    ...await plugin.func['transfer'](plugin.args['transfer'], chain)
+                };
+            }
+        }
+
         let totalNeed = new BN(0);
         Object.keys(authRequires).forEach((key: string) => {
             const auth = authRequires[key];
