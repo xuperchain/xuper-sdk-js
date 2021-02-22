@@ -266,8 +266,6 @@ export default class XuperSDK implements XuperSDKInterface {
             totalNeed, Object.keys(authRequires), invokeRequests
         );
 
-        console.error(JSON.stringify(preExecWithUtxos, null, 4));
-
         const gasUsed = preExecWithUtxos.response.gas_used || 0;
 
         const tx = await this.transactionInstance.makeTransaction(acc, {
@@ -314,7 +312,7 @@ export default class XuperSDK implements XuperSDKInterface {
         let invokeRequests: ContractRequesttModel[];
 
         if (upgrade) {
-            invokeRequests = this.contractInstance.upgradContractRequests(
+            invokeRequests = this.contractInstance.upgradeContractRequests(
                 contractAccount,
                 contractName,
                 code,
@@ -378,6 +376,86 @@ export default class XuperSDK implements XuperSDKInterface {
         };
     }
 
+    async deploySolidityContract(
+        contractAccount: string,
+        contractName: string,
+        bin: string,
+        abi: string,
+        lang: string,
+        initArgs: any,
+        upgrade = false,
+        account?: AccountModel
+    ): Promise<any> {
+        const {node, chain} = this.options;
+
+        let invokeRequests: ContractRequesttModel[];
+
+        if (upgrade) {
+            invokeRequests = this.contractInstance.upgradeContractRequests(
+                contractAccount,
+                contractName,
+                bin,
+                lang,
+                initArgs
+            )
+        }
+        else {
+            invokeRequests = this.contractInstance.deploySolidityContractRequests(
+                contractAccount,
+                contractName,
+                bin,
+                abi,
+                lang,
+                initArgs
+            );
+        }
+
+        if (!account) {
+            account = this.account;
+        }
+
+        if (!account) {
+            throw Errors.ACCOUNT_NOT_EXIST;
+        }
+
+        const address = account.address;
+
+        const authRequires: { [propName: string]: AuthModel } = {
+            [`${contractAccount}/${address}`]: {
+                fee: 0,
+                sign: async (_checkTx: TransactionModel, tx: TransactionModel): Promise<TransactionModel> => {
+                    if (!tx.authRequireSigns) {
+                        tx.authRequireSigns = [];
+                    }
+                    tx.authRequireSigns = tx.authRequireSigns.concat(tx.initiatorSigns);
+                    return tx;
+                }
+            }
+        };
+        let totalNeed = new BN(0);
+        Object.keys(authRequires).forEach((key: string) => {
+            const auth = authRequires[key];
+            totalNeed = totalNeed.add(new BN(auth.fee || 0));
+        });
+
+        const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(node, chain, address, totalNeed, Object.keys(authRequires), invokeRequests, account)
+
+        const preExecWithUtxosObj = preExecWithUtxos;
+
+        const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
+
+        const tx = await this.transactionInstance.makeTransaction(account, {
+            amount: '0',
+            fee: gasUsed.toString(),
+            to: ''
+        }, authRequires, preExecWithUtxosObj);
+
+        return {
+            preExecutionTransaction: preExecWithUtxosObj,
+            transaction: tx
+        };
+    }
+
     async invokeContarct(
         contractName: string,
         methodName: string,
@@ -386,6 +464,31 @@ export default class XuperSDK implements XuperSDKInterface {
         account?: AccountModel
     ): Promise<any> {
         const invokeRequests = this.contractInstance.invokeContract(
+            contractName,
+            methodName,
+            moduleName,
+            args
+        );
+
+        if (!account) {
+            account = this.account;
+        }
+
+        if (!account) {
+            throw Errors.ACCOUNT_NOT_EXIST;
+        }
+
+        return this.invoke(invokeRequests, account)
+    }
+
+    async invokeSolidityContarct(
+        contractName: string,
+        methodName: string,
+        moduleName: string,
+        args: any,
+        account?: AccountModel
+    ): Promise<any> {
+        const invokeRequests = this.contractInstance.invokeSolidityContract(
             contractName,
             methodName,
             moduleName,

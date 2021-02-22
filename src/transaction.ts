@@ -11,6 +11,7 @@ import {convert, getNonce, jsonEncode, publicOrPrivateKeyToString} from './utils
 import sha256 from 'sha256';
 import {VERSION} from './constants';
 import {ec as EC} from 'elliptic';
+import stringify from 'json-stable-stringify';
 
 export default class Transaction {
 
@@ -200,7 +201,18 @@ export default class Transaction {
             });
         }
 
-        str += jsonEncode(tx.contractRequests);
+        if (tx.contractRequests && tx.contractRequests.length > 0) {
+            // @ts-ignore
+            tx.contractRequests = tx.contractRequests.map((req: any) => {
+                if (req.args) {
+                    req.args = JSON.parse(stringify(req.args));
+                }
+                return req;
+            });
+        }
+
+        // @ts-ignore
+        str += jsonEncode(convert(tx.contractRequests, ['jsonEncoded']));
 
         str += jsonEncode(tx.initiator);
 
@@ -365,7 +377,7 @@ export default class Transaction {
         }
 
         // @ts-ignore
-        const res = convert(this.signTx(tx));
+        const res = convert(this.signTx(tx), ['jsonEncoded']);
 
         return res;
     }

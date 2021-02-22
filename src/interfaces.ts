@@ -58,6 +58,8 @@ export interface ContractInterface {
 
     deployWasmContract(contractAccount: string, contractName: string, code: string, lang: string, initArgs: any, upgrade: boolean, account?: AccountModel): Promise<any>;
 
+    deploySolidityContract(contractAccount: string, contractName: string, bin: string, abi: string, lang: string, initArgs: any, upgrade: boolean, account?: AccountModel): Promise<any>;
+
     // upgradeContract(): Promise<any>;
     // imvokeContract(): Promise<any>;
 }

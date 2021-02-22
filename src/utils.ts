@@ -1,9 +1,9 @@
-import {PrivateKey, PublicKey} from './types';
-
 /**
  * @file Utils
  * Created by SmilingXinyi <smilingxinyi@gmail.com> on 2020/6/2
  */
+
+import {PrivateKey, PublicKey} from './types';
 
 export const isBrowser =
     typeof window !== 'undefined' &&
@@ -257,18 +257,23 @@ export function getNonce(): string {
 /**
  * Camel to underline
  * @param tar
+ * @param exceptions
  */
-export function convert(tar: any): any {
+export function convert(tar: any, exceptions: [] = []): any {
     let format: any = {};
 
     if (tar instanceof Array) {
         const newTar = [...tar];
-        format = Object.assign([], newTar.map(v => convert(v)));
+        format = Object.assign([], newTar.map(v => convert(v, exceptions)));
     } else if (tar instanceof Object) {
         const newTar = {...tar};
         Object.keys(newTar).forEach(key => {
             const value = newTar[key];
-            format[/^[a-z]/.test(key) ? key.replace(/([A-Z]{1})/g, '_$1').toLowerCase() : key] = convert(value);
+            // if (exceptions) {
+            //     console.log(key, exceptions.every(item => key === item));
+            // }
+            // @ts-ignore
+            format[/^[a-z]/.test(key) && !(exceptions.length > 0 && exceptions.every(item => key === item))  ? key.replace(/([A-Z]{1})/g, '_$1').toLowerCase() : key] = convert(value, exceptions);
         });
     } else {
         format = tar;

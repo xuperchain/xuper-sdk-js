@@ -120,7 +120,18 @@ export default class Contract {
         return this.generateContractRequests('Deploy', contractAccount, contractName, code, lang, initArgs);
     }
 
-    upgradContractRequests(
+    deploySolidityContractRequests(
+        contractAccount: string,
+        contractName: string,
+        bin: string,
+        abi: string,
+        lang: string,
+        initArgs: any
+    ) {
+        return this.generateSolidityContractRequests('Deploy', contractAccount, contractName, bin, abi, lang, initArgs);
+    }
+
+    upgradeContractRequests(
         contractAccount: string,
         contractName: string,
         code: string,
@@ -128,6 +139,17 @@ export default class Contract {
         initArgs: any
     ) {
         return this.generateContractRequests('Upgrade', contractAccount, contractName, code, lang, initArgs);
+    }
+
+    upgradeSolidityContractRequests(
+        contractAccount: string,
+        contractName: string,
+        bin: string,
+        abi: string,
+        lang: string,
+        initArgs: any
+    ) {
+        return this.generateSolidityContractRequests('Upgrade', contractAccount, contractName, bin, abi, lang, initArgs);
     }
 
     generateContractRequests(
@@ -180,6 +202,65 @@ export default class Contract {
         return invokeRequests;
     }
 
+    generateSolidityContractRequests(
+        methodName: string,
+        contractAccount: string,
+        contractName: string,
+        bin: string,
+        abi: string,
+        // @ts-ignore
+        lang: string,
+        initArgs: any
+    ) {
+        const newInitArgs = {
+            // ...initArgs,
+            input: JSON.stringify(initArgs),
+            jsonEncoded: 'true'
+        };
+
+        const te = new TextEncoder();
+
+        Object.keys(newInitArgs).forEach(key => {
+            // @ts-ignore
+            const bytes = te.encode(newInitArgs[key]);
+            const valueBuf: Array<any> = [];
+            bytes.forEach(b => valueBuf.push(String.fromCharCode(b)));
+            // @ts-ignore
+            newInitArgs[key] = btoa(valueBuf.join(''));
+        });
+
+        const desc = new Uint8Array([42, 3].concat(lang.split('').map(w => w.charCodeAt(0))));
+
+        // const desc = lang.split('').map(w => w.charCodeAt(0));
+        const descBuf = Object.values(desc).map(n => String.fromCharCode(n));
+
+        const args = {
+            account_name: contractAccount,
+            contract_abi: abi,
+            contract_code: bin,
+            contract_desc: descBuf.join(''),
+            contract_name: contractName,
+            init_args: JSON.stringify(newInitArgs)
+        };
+
+        const contractArgs = {
+            ...args
+        };
+
+        Object.keys(contractArgs).forEach(key => {
+            // @ts-ignore
+            contractArgs[key] = btoa(contractArgs[key]);
+        });
+
+        const invokeRequests: ContractRequesttModel[] = [{
+            module_name: 'xkernel',
+            method_name: methodName,
+            args: contractArgs
+        }];
+
+        return invokeRequests;
+    }
+
     invokeContract(
         contractName: string,
         methodName: string,
@@ -197,6 +278,39 @@ export default class Contract {
             const bytes = te.encode(args[key]);
             const valueBuf: Array<any> = [];
             bytes.forEach(b => valueBuf.push(String.fromCharCode(b)));
+            newArgs[key] = btoa(valueBuf.join(''));
+        });
+
+        const invokeRequests: ContractRequesttModel[] = [{
+            module_name: moduleName,
+            method_name: methodName,
+            contract_name: contractName,
+            args: newArgs
+        }];
+
+        return invokeRequests;
+    }
+
+    invokeSolidityContract(
+        contractName: string,
+        methodName: string,
+        moduleName: string,
+        args: any
+    ): ContractRequesttModel[] {
+
+        const newArgs = {
+            input: JSON.stringify(args),
+            jsonEncoded: 'true'
+        };
+
+        const te = new TextEncoder();
+
+        Object.keys(newArgs).forEach(key => {
+            // @ts-ignore
+            const bytes = te.encode(newArgs[key]);
+            const valueBuf: Array<any> = [];
+            bytes.forEach(b => valueBuf.push(String.fromCharCode(b)));
+            // @ts-ignore
             newArgs[key] = btoa(valueBuf.join(''));
         });
 
