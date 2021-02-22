@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0-beta.7](https://github.com/xuperchain/xuper-sdk-js/compare/v2.0.0-beta.6...v2.0.0-beta.7) (2021-02-22)
+
+
+### Features
+
+* 🎸 support the solidity contract ([079bbe2](https://github.com/xuperchain/xuper-sdk-js/commit/079bbe23e53a5b4e925dd6319128bdbc787d681d))
+
+
+### Bug Fixes
+
+* 🐛 deployment contract support plugin ([f783d0e](https://github.com/xuperchain/xuper-sdk-js/commit/f783d0e7c1ae2ee60b6d5588529cffc033170712))
+
 ## [2.0.0-beta.6](https://github.com/xuperchain/xuper-sdk-js/compare/v2.0.0-beta.5...v2.0.0-beta.6) (2021-02-08)
 
 
