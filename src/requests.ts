@@ -3,7 +3,7 @@
  * Created by SmilingXinyi <smilingxinyi@gmail.com> on 2020/6/2
  */
 
-import {grpcClient, grpcEndorserClient, postRequest} from './utils';
+import {grpcClient, grpcEndorserClient, postRequest, isBrowser} from './utils';
 
 let client: any = null;
 let endorsorClient: any = null;
@@ -16,11 +16,15 @@ enum RESOURCE_TYPE {
 }
 
 export const initializationClient = (node: string) => {
-    client = grpcClient(node);
+    if (!isBrowser) {
+        client = grpcClient(node);
+    }
 };
 
 export const initializationEndorseClient = (node: string) => {
-    endorsorClient = grpcEndorserClient(node);
+    if (!isBrowser) {
+        endorsorClient = grpcEndorserClient(node);
+    }
 };
 
 const gRPCPromise = (service: string, body: any) => {
