@@ -235,6 +235,7 @@ export default class XuperSDK implements XuperSDKInterface {
 
     async invoke(
         invokeRequests: ContractRequesttModel[],
+        amount = '0',
         account?: AccountModel,
     ): Promise<any> {
 
@@ -269,9 +270,9 @@ export default class XuperSDK implements XuperSDKInterface {
         const gasUsed = preExecWithUtxos.response.gas_used || 0;
 
         const tx = await this.transactionInstance.makeTransaction(acc, {
-            amount: '0',
+            amount,
             fee: gasUsed.toString(),
-            to: ''
+            to: amount !== '0' ? invokeRequests[invokeRequests.length - 1].contract_name! : ''
         }, authRequires, preExecWithUtxos);
 
         return {
@@ -481,13 +482,15 @@ export default class XuperSDK implements XuperSDKInterface {
         methodName: string,
         moduleName: string,
         args: any,
+        amount = '0',
         account?: AccountModel
     ): Promise<any> {
         const invokeRequests = this.contractInstance.invokeContract(
             contractName,
             methodName,
             moduleName,
-            args
+            args,
+            amount
         );
 
         if (!account) {
@@ -498,7 +501,7 @@ export default class XuperSDK implements XuperSDKInterface {
             throw Errors.ACCOUNT_NOT_EXIST;
         }
 
-        return this.invoke(invokeRequests, account)
+        return this.invoke(invokeRequests, amount, account);
     }
 
     async invokeSolidityContarct(
@@ -506,13 +509,15 @@ export default class XuperSDK implements XuperSDKInterface {
         methodName: string,
         moduleName: string,
         args: any,
+        amount = '0',
         account?: AccountModel
     ): Promise<any> {
         const invokeRequests = this.contractInstance.invokeSolidityContract(
             contractName,
             methodName,
             moduleName,
-            args
+            args,
+            amount
         );
 
         if (!account) {
@@ -523,7 +528,7 @@ export default class XuperSDK implements XuperSDKInterface {
             throw Errors.ACCOUNT_NOT_EXIST;
         }
 
-        return this.invoke(invokeRequests, account)
+        return this.invoke(invokeRequests, amount, account)
     }
 
     transactionIdToHex(t: Required<string>): string {

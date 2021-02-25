@@ -208,7 +208,6 @@ export default class Contract {
         contractName: string,
         bin: string,
         abi: string,
-        // @ts-ignore
         lang: string,
         initArgs: any
     ) {
@@ -265,7 +264,8 @@ export default class Contract {
         contractName: string,
         methodName: string,
         moduleName: string,
-        args: any
+        args: any,
+        amount: string
     ): ContractRequesttModel[] {
 
         const newArgs = {
@@ -285,7 +285,8 @@ export default class Contract {
             module_name: moduleName,
             method_name: methodName,
             contract_name: contractName,
-            args: newArgs
+            args: newArgs,
+            amount
         }];
 
         return invokeRequests;
@@ -295,7 +296,8 @@ export default class Contract {
         contractName: string,
         methodName: string,
         moduleName: string,
-        args: any
+        args: any,
+        amount: string
     ): ContractRequesttModel[] {
 
         const newArgs = {
@@ -318,7 +320,8 @@ export default class Contract {
             module_name: moduleName,
             method_name: methodName,
             contract_name: contractName,
-            args: newArgs
+            args: newArgs,
+            amount
         }];
 
         return invokeRequests;

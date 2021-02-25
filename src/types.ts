@@ -69,6 +69,7 @@ export type ContractRequesttModel = {
     contract_name?: string;
     method_name: string;
     args: any;
+    amount?: string;
 }
 
 export type AuthModel = {

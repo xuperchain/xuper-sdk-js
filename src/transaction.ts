@@ -144,9 +144,11 @@ export default class Transaction {
     }
 
     encodeDataForDigestHash(tx: TransactionModel, include_signs: boolean) {
+        const newtx: TransactionModel = JSON.parse(JSON.stringify(tx));
+
         let str = '';
 
-        tx.txInputs.forEach(
+        newtx.txInputs.forEach(
             (txInput: TXInput) => {
                 if (txInput.refTxid) {
                     str += jsonEncode(txInput.refTxid);
@@ -162,18 +164,18 @@ export default class Transaction {
             }
         );
 
-        str += jsonEncode(convert(tx.txOutputs));
+        str += jsonEncode(convert(newtx.txOutputs));
 
-        if (tx.desc && tx.desc.length > 0) {
-            str += jsonEncode(tx.desc);
+        if (newtx.desc && newtx.desc.length > 0) {
+            str += jsonEncode(newtx.desc);
         }
 
-        str += jsonEncode(tx.nonce);
-        str += jsonEncode(tx.timestamp);
-        str += jsonEncode(tx.version);
+        str += jsonEncode(newtx.nonce);
+        str += jsonEncode(newtx.timestamp);
+        str += jsonEncode(newtx.version);
 
-        if (tx.txInputsExt && tx.txInputsExt.length) {
-            tx.txInputsExt.forEach(inputExt => {
+        if (newtx.txInputsExt && newtx.txInputsExt.length) {
+            newtx.txInputsExt.forEach(inputExt => {
                 str += jsonEncode(inputExt.bucket);
                 if (inputExt.key) {
                     str += jsonEncode(inputExt.key);
@@ -189,8 +191,8 @@ export default class Transaction {
             });
         }
 
-        if (tx.txOutputsExt && tx.txOutputsExt.length) {
-            tx.txOutputsExt.forEach(outputExt => {
+        if (newtx.txOutputsExt && newtx.txOutputsExt.length) {
+            newtx.txOutputsExt.forEach(outputExt => {
                 str += jsonEncode(outputExt.bucket);
                 if (outputExt.key) {
                     str += jsonEncode(outputExt.key);
@@ -201,31 +203,36 @@ export default class Transaction {
             });
         }
 
-        if (tx.contractRequests && tx.contractRequests.length > 0) {
+        if (newtx.contractRequests && newtx.contractRequests.length > 0) {
             // @ts-ignore
-            tx.contractRequests = tx.contractRequests.map((req: any) => {
+            newtx.contractRequests = newtx.contractRequests.map((req: any) => {
                 if (req.args) {
                     req.args = JSON.parse(stringify(req.args));
+                    Object.keys(req.args).map((key: string) => {
+                        if (req.args[key] === "") {
+                            req.args[key] = null
+                        }
+                    });
                 }
                 return req;
             });
         }
 
         // @ts-ignore
-        str += jsonEncode(convert(tx.contractRequests, ['jsonEncoded']));
+        str += jsonEncode(convert(newtx.contractRequests, ['jsonEncoded']));
 
-        str += jsonEncode(tx.initiator);
+        str += jsonEncode(newtx.initiator);
 
-        str += jsonEncode(tx.authRequire && tx.authRequire.length > 0 ? tx.authRequire : null);
+        str += jsonEncode(newtx.authRequire && newtx.authRequire.length > 0 ? newtx.authRequire : null);
 
         if (include_signs) {
-            str += jsonEncode(tx.initiatorSigns);
-            str += jsonEncode(tx.authRequireSigns);
+            str += jsonEncode(newtx.initiatorSigns);
+            str += jsonEncode(newtx.authRequireSigns);
         }
 
-        str += jsonEncode(tx.coinbase);
+        str += jsonEncode(newtx.coinbase);
 
-        str += jsonEncode(tx.autogen);
+        str += jsonEncode(newtx.autogen);
 
         const te = new TextEncoder();
         const bytes = te.encode(str);

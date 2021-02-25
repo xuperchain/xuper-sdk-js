@@ -83,7 +83,8 @@ const plugin =  (args: any) => ({
                 sign: async (checkTx: TransactionModel, tx: TransactionModel): Promise<TransactionModel> => {
                     const obj = {
                         bcname: chain,
-                        tx: convert(tx)
+                        // @ts-ignore
+                        tx: convert(tx, ['jsonEncoded'])
                     };
 
                     const body = {
