@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0-beta.10](https://github.com/xuperchain/xuper-sdk-js/compare/v2.0.0-beta.9...v2.0.0-beta.10) (2021-02-25)
+
+
+### Features
+
+* 🎸 contract payment ([4a0f121](https://github.com/xuperchain/xuper-sdk-js/commit/4a0f121450f8704ac9bea520d7ee4d20df76541e))
+
 ## [2.0.0-beta.9](https://github.com/xuperchain/xuper-sdk-js/compare/v2.0.0-beta.8...v2.0.0-beta.9) (2021-02-22)
 
 
