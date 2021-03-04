@@ -403,4 +403,23 @@ export default class Transaction {
         tx.txid = btoa(digest.map(v => String.fromCharCode(v)).join(''));
         return tx;
     }
+
+    async getBlock(node: string, chain: string, blockid: string): Promise<any> {
+        const body = {
+            bcname: chain,
+            blockid,
+            need_content: true
+        }
+
+        return Requests.getBlock(node, body);
+    }
+
+    async getBlockByHeight(node: string, chain: string, height: string): Promise<any> {
+        const body = {
+            bcname: chain,
+            height
+        }
+
+        return Requests.getBlockByHeight(node, body);
+    }
 }

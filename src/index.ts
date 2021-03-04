@@ -7,7 +7,7 @@ import XuperSDKInterface from './interfaces';
 import * as Requests from './requests';
 import Errors, {XuperError} from './error';
 import {Cryptography, Language, Strength} from './constants';
-import {toHex, isBrowser} from './utils';
+import {toHex, hexToBase64, isBrowser} from './utils';
 import Account from './account';
 import Transaction from './transaction';
 import Contract from './Contract';
@@ -65,6 +65,16 @@ export default class XuperSDK implements XuperSDKInterface {
     getBlockChains(): Promise<any> {
         const node = this.options.node;
         return Requests.getBlockChains(node, {});
+    }
+
+    getBlockById(blockid: string) {
+        const {node, chain} = this.options;
+        return this.transactionInstance.getBlock(node, chain, hexToBase64(blockid));
+    }
+
+    getBlockByHeight(height: string): Promise<any> {
+        const {node, chain} = this.options;
+        return this.transactionInstance.getBlockByHeight(node, chain, height);
     }
 
     create(

@@ -271,3 +271,9 @@ export const getBlockChains = (node: string, body: any): Promise<any> =>
 
 export const queryACL = (node: string, body: any): Promise<any> =>
     wrapperRequest({gRPCService: 'QueryACL', httpService: `${node}/v1/query_acl`}, body);
+
+export const getBlock = (node: string, body: any): Promise<any> =>
+    wrapperRequest({gRPCService: 'GetBlock', httpService: `${node}/v1/get_block`}, body);
+
+export const getBlockByHeight = (node: string, body: any): Promise<any> =>
+    wrapperRequest({gRPCService: 'GetBlockByHeight', httpService: `${node}/v1/get_block_by_height`}, body);

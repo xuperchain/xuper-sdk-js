@@ -153,6 +153,24 @@ export function toHex(txid: string): string {
     return atob(txid).split('').map(s => s.charCodeAt(0).toString(16).padStart(2, '0')).join('');
 }
 
+export function hexToBase64(txid: string): string {
+    let tempId = txid;
+    if (txid.length % 2 > 0)
+        tempId = '0' + txid;
+
+    const tempIdArr = tempId.split('');
+    // @ts-ignore
+    const hexList = tempIdArr.reduce((prev, curr, i) => {
+        if (!(i % 2)) {
+            // @ts-ignore
+            prev.push(parseInt(curr.toString() + tempIdArr[i + 1].toString(), 16));
+        }
+        return prev;
+    }, []);
+
+    return btoa(hexList.map(num => String.fromCharCode(num)).join(''));
+}
+
 export const grpcClient = (node: string, PROTO_PATH = `${__dirname}/proto/xuper.proto`): any => {
     if (isBrowser)
         return null;
