@@ -62,3 +62,13 @@ describe('Get the balance', () => {
         expect(result).toHaveProperty('tfds');
     });
 });
+
+test('Get blockchains', async () => {
+    const xsdk = new XuperSDK({node, chain});
+    const result = await xsdk.getBlockChains();
+
+    console.warn(result);
+    expect(result).toHaveProperty('header');
+    expect(result.header).not.toHaveProperty('error');
+    expect(result).toHaveProperty('blockchains');
+});
