@@ -62,6 +62,11 @@ export default class XuperSDK implements XuperSDKInterface {
         return Requests.getStatus(node, body);
     }
 
+    getBlockChains(): Promise<any> {
+        const node = this.options.node;
+        return Requests.getBlockChains(node, {});
+    }
+
     create(
         language: Language = Language.SimplifiedChinese,
         strength: Strength = Strength.Easy,
