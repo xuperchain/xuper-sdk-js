@@ -189,3 +189,10 @@ export type TransactionModel = {
      */
     contractRequests?: any[];
 }
+
+/* ---------- Contract ---------- */
+
+export type ContractInfo = {
+    contarctName: string;
+    contractMethod: string;
+}

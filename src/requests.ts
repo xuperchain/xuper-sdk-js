@@ -37,6 +37,15 @@ const gRPCPromise = (service: string, body: any) => {
     }));
 };
 
+const wrapperRequest = (request: {gRPCService: string; httpService: string}, body: any) => {
+    if (client) {
+        return gRPCPromise(request.gRPCService, body);
+    }
+    else {
+        return postRequest(request.httpService, body);
+    }
+}
+
 export const getStatus = (node: string, body: any): Promise<any> => {
     if (client) {
         return gRPCPromise('GetBlockChainStatus', body);
@@ -256,3 +265,6 @@ export const accountList = (node: string, body: any): Promise<any> => {
         return postRequest(target, body);
     }
 };
+
+export const queryACL = (node: string, body: any): Promise<any> =>
+    wrapperRequest({gRPCService: 'QueryACL', httpService: `${node}/v1/query_acl`}, body);

@@ -3,7 +3,7 @@
  * Created by baidu on 2020/7/20
  */
 
-import {ContractRequesttModel} from './types';
+import {ContractRequesttModel, ContractInfo} from './types';
 import * as Requests from './requests';
 
 export default class Contract {
@@ -35,6 +35,24 @@ export default class Contract {
         }];
 
         return invokeRequests;
+    }
+
+    async queryACL(node: string, chain: string, accountName: string, contarctInfo?: ContractInfo) {
+        let body = {
+            bcname: chain,
+            accountName
+        }
+
+        if (contarctInfo) {
+            body = {
+                ...body,
+                // @ts-ignore
+                contractName: contarctInfo.contarctName,
+                methodName: contarctInfo.contractMethod
+            }
+        }
+
+        return Requests.queryACL(node, body);
     }
 
     contarctAccounts(node: string, chain: string, address: string) {

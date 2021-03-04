@@ -18,7 +18,8 @@ import {
     TransactionModel,
     AuthModel,
     Plugin,
-    ContractRequesttModel
+    ContractRequesttModel,
+    ContractInfo
 } from './types';
 
 export default class XuperSDK implements XuperSDKInterface {
@@ -529,6 +530,17 @@ export default class XuperSDK implements XuperSDKInterface {
         }
 
         return this.invoke(invokeRequests, amount, account)
+    }
+
+    async queryACL(
+        contractAccount: string,
+        contractInfo?: ContractInfo
+    ): Promise<any> {
+
+        const node = this.options.node;
+        const bcname = this.options.chain;
+
+        return this.contractInstance.queryACL(node, bcname, contractAccount, contractInfo);
     }
 
     transactionIdToHex(t: Required<string>): string {
