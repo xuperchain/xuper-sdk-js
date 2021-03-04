@@ -111,22 +111,35 @@ export function arrayPadStart(arr: any[], len: number): any[] {
     return arr;
 }
 
-export async function postRequest(t: string, b: any): Promise<any> {
+export async function postRequest(t: string, b: any, simpleGet = false): Promise<any> {
     let target = t;
+    let options = {};
 
     if (!(/^http(s?):\/\//gm.test(target))) {
         const protocol = typeof location !== 'undefined' ? location.protocol : 'http:';
         target = `${protocol}//${t}`;
     }
 
-    return fetch(target, {
-        method: 'POST',
-        body: JSON.stringify(b)
-    }).then(
+    if (simpleGet) {
+        method: 'GET'
+    }
+    else {
+        options = {
+            method: 'POST',
+            body: JSON.stringify(b)
+        }
+    }
+
+    return fetch(target, options).then(
         response => {
             if (!response.ok) {
                 return response.json().then(res => {
                     throw res;
+                }).catch(err => {
+                    throw {
+                        error: err,
+                        response
+                    }
                 });
             }
             return response.json();
