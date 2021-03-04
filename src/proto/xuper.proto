@@ -4,13 +4,19 @@ package pb;
 
 // Xchain is the main interfaces
 service Xchain {
+    rpc GetBlockChains(CommonIn) returns (BlockChains) {}
+
     rpc GetBalance (AddressStatus) returns (AddressStatus) {}
     rpc GetBalanceDetail (AddressBalanceStatus) returns (AddressBalanceStatus) {}
+    rpc GetFrozenBalance(AddressStatus) returns (AddressStatus) {}
     rpc GetBlockChainStatus (BCStatus) returns (BCStatus) {}
     rpc PreExec (InvokeRPCRequest) returns (InvokeRPCResponse) {}
     rpc PreExecWithSelectUTXO(PreExecWithSelectUTXORequest) returns (PreExecWithSelectUTXOResponse) {}
     rpc PostTx(TxStatus) returns (CommonReply) {}
     rpc QueryTx(TxStatus) returns (TxStatus) {}
+
+    rpc GetBlock(BlockID) returns (Block) {}
+    rpc GetBlockByHeight(BlockHeight) returns (Block) {}
 
     rpc GetSigns(AccessTokenRequest) returns (AccessTokenResponse) {}
     rpc CheckSigns(CheckRequest) returns (CheckResult) {}
@@ -18,6 +24,9 @@ service Xchain {
     rpc GetAccountContracts(GetAccountContractsRequest) returns (GetAccountContractsResponse) {}
     rpc GetAddressContracts(AddressContractsRequest) returns (AddressContractsResponse) {}
     rpc GetAccountByAK(AK2AccountRequest) returns (AK2AccountResponse) {}
+    rpc QueryContractStatData(ContractStatDataRequest) returns (ContractStatDataResponse) {}
+
+    rpc QueryACL(AclStatus) returns (AclStatus) {}
 }
 
 message AccessTokenRequest
