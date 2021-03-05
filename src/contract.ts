@@ -55,6 +55,14 @@ export default class Contract {
         return Requests.queryACL(node, body);
     }
 
+    async queryContractStatData(node: string, chain: string) {
+        const body = {
+            bcname: chain
+        }
+
+        return Requests.queryContractStatData(node, body);
+    }
+
     contarctAccounts(node: string, chain: string, address: string) {
         const body = {
             bcname: chain,

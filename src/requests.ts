@@ -277,3 +277,6 @@ export const getBlock = (node: string, body: any): Promise<any> =>
 
 export const getBlockByHeight = (node: string, body: any): Promise<any> =>
     wrapperRequest({gRPCService: 'GetBlockByHeight', httpService: `${node}/v1/get_block_by_height`}, body);
+
+export const queryContractStatData = (node: string, body: any): Promise<any> =>
+    wrapperRequest({gRPCService: 'QueryContractStatData', httpService: `${node}/v1/query_contract_stat_data`}, body);

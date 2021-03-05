@@ -558,6 +558,11 @@ export default class XuperSDK implements XuperSDKInterface {
         return this.contractInstance.queryACL(node, bcname, contractAccount, contractInfo);
     }
 
+    async queryContractStatData(): Promise<any> {
+        const {node, chain} = this.options;
+        return this.contractInstance.queryContractStatData(node, chain);
+    }
+
     transactionIdToHex(t: Required<string>): string {
         if (!t) {
             throw Errors.PARAMETER_EMPTY_FUNC();
