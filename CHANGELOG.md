@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0-beta.11](https://github.com/xuperchain/xuper-sdk-js/compare/v2.0.0-beta.10...v2.0.0-beta.11) (2021-03-08)
+
+
+### Features
+
+* 🎸 GetBlochchains - query blockchains ([661bac8](https://github.com/xuperchain/xuper-sdk-js/commit/661bac844189548feee1ba6f990bcf7ac0b8d437))
+* 🎸 GetBlock & GetBlockByHeight - block info ([e146c35](https://github.com/xuperchain/xuper-sdk-js/commit/e146c3577bc943f3d5e89e74741f365de536f67f))
+* 🎸 new gRPC services ([3a3b1fb](https://github.com/xuperchain/xuper-sdk-js/commit/3a3b1fb23d1afa592657ac81261f9e1be6295812))
+* 🎸 QueryACL - query some account info ([a00c0a4](https://github.com/xuperchain/xuper-sdk-js/commit/a00c0a4637a477619afd13eb6074ac99b9b23447))
+* 🎸 QueryContractStat - contarct stat data ([964642d](https://github.com/xuperchain/xuper-sdk-js/commit/964642d5c0b069a3a8871d01c581099ff209ebad))
+* 🎸 support GET method & throw Error Response ([1f1bf54](https://github.com/xuperchain/xuper-sdk-js/commit/1f1bf5499b200a52b3705db27364f09232b3ce6a))
+
 ## [2.0.0-beta.10](https://github.com/xuperchain/xuper-sdk-js/compare/v2.0.0-beta.9...v2.0.0-beta.10) (2021-02-25)
 
 
