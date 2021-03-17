@@ -103,6 +103,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="xupersdkinterface.html#checkstatus" class="tsd-kind-icon">check<wbr>Status</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="xupersdkinterface.html#create" class="tsd-kind-icon">create</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="xupersdkinterface.html#createcontractaccount" class="tsd-kind-icon">create<wbr>Contract<wbr>Account</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="xupersdkinterface.html#deploysoliditycontract" class="tsd-kind-icon">deploy<wbr>Solidity<wbr>Contract</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="xupersdkinterface.html#deploywasmcontract" class="tsd-kind-icon">deploy<wbr>Wasm<wbr>Contract</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="xupersdkinterface.html#export" class="tsd-kind-icon">export</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="xupersdkinterface.html#getbalance" class="tsd-kind-icon">get<wbr>Balance</a></li>
@@ -131,7 +132,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="accountinterface.html">AccountInterface</a>.<a href="accountinterface.html#checkaddress">checkAddress</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/interfaces.ts#L29">src/interfaces.ts:29</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/interfaces.ts#L29">src/interfaces.ts:29</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -155,7 +156,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="accountinterface.html">AccountInterface</a>.<a href="accountinterface.html#checkmnemonic">checkMnemonic</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/interfaces.ts#L31">src/interfaces.ts:31</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/interfaces.ts#L31">src/interfaces.ts:31</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -181,7 +182,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/interfaces.ts#L13">src/interfaces.ts:13</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/interfaces.ts#L13">src/interfaces.ts:13</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -199,7 +200,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="accountinterface.html">AccountInterface</a>.<a href="accountinterface.html#create">create</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/interfaces.ts#L21">src/interfaces.ts:21</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/interfaces.ts#L21">src/interfaces.ts:21</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -229,7 +230,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="contractinterface.html">ContractInterface</a>.<a href="contractinterface.html#createcontractaccount">createContractAccount</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/interfaces.ts#L53">src/interfaces.ts:53</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/interfaces.ts#L53">src/interfaces.ts:53</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -239,6 +240,51 @@
 								</li>
 								<li>
 									<h5>address: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="deploysoliditycontract" class="tsd-anchor"></a>
+					<h3>deploy<wbr>Solidity<wbr>Contract</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">deploy<wbr>Solidity<wbr>Contract<span class="tsd-signature-symbol">(</span>contractAccount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, contractName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, bin<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, abi<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, lang<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, initArgs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, upgrade<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, account<span class="tsd-signature-symbol">?: </span><a href="../index.html#accountmodel" class="tsd-signature-type">AccountModel</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="contractinterface.html">ContractInterface</a>.<a href="contractinterface.html#deploysoliditycontract">deploySolidityContract</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/interfaces.ts#L61">src/interfaces.ts:61</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>contractAccount: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>contractName: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>bin: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>abi: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>lang: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>initArgs: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>upgrade: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> account: <a href="../index.html#accountmodel" class="tsd-signature-type">AccountModel</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -256,7 +302,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="contractinterface.html">ContractInterface</a>.<a href="contractinterface.html#deploywasmcontract">deployWasmContract</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/interfaces.ts#L59">src/interfaces.ts:59</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/interfaces.ts#L59">src/interfaces.ts:59</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -298,7 +344,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="accountinterface.html">AccountInterface</a>.<a href="accountinterface.html#export">export</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/interfaces.ts#L27">src/interfaces.ts:27</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/interfaces.ts#L27">src/interfaces.ts:27</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -322,7 +368,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="accountinterface.html">AccountInterface</a>.<a href="accountinterface.html#getbalance">getBalance</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/interfaces.ts#L33">src/interfaces.ts:33</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/interfaces.ts#L33">src/interfaces.ts:33</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -346,7 +392,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="accountinterface.html">AccountInterface</a>.<a href="accountinterface.html#getbalancedetail">getBalanceDetail</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/interfaces.ts#L35">src/interfaces.ts:35</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/interfaces.ts#L35">src/interfaces.ts:35</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -370,7 +416,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="contractinterface.html">ContractInterface</a>.<a href="contractinterface.html#getcontractaccounts">getContractAccounts</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/interfaces.ts#L55">src/interfaces.ts:55</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/interfaces.ts#L55">src/interfaces.ts:55</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -394,7 +440,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="contractinterface.html">ContractInterface</a>.<a href="contractinterface.html#getcontracts">getContracts</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/interfaces.ts#L57">src/interfaces.ts:57</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/interfaces.ts#L57">src/interfaces.ts:57</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -418,7 +464,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="accountinterface.html">AccountInterface</a>.<a href="accountinterface.html#import">import</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/interfaces.ts#L25">src/interfaces.ts:25</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/interfaces.ts#L25">src/interfaces.ts:25</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -448,7 +494,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="transactioninterface.html">TransactionInterface</a>.<a href="transactioninterface.html#posttransaction">postTransaction</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/interfaces.ts#L45">src/interfaces.ts:45</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/interfaces.ts#L45">src/interfaces.ts:45</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -472,7 +518,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="accountinterface.html">AccountInterface</a>.<a href="accountinterface.html#retrieve">retrieve</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/interfaces.ts#L23">src/interfaces.ts:23</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/interfaces.ts#L23">src/interfaces.ts:23</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -504,7 +550,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/interfaces.ts#L15">src/interfaces.ts:15</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/interfaces.ts#L15">src/interfaces.ts:15</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -548,6 +594,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
 								<a href="xupersdkinterface.html#createcontractaccount" class="tsd-kind-icon">create<wbr>Contract<wbr>Account</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="xupersdkinterface.html#deploysoliditycontract" class="tsd-kind-icon">deploy<wbr>Solidity<wbr>Contract</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
 								<a href="xupersdkinterface.html#deploywasmcontract" class="tsd-kind-icon">deploy<wbr>Wasm<wbr>Contract</a>

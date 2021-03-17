@@ -66,16 +66,6 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-comment">
-				<div class="tsd-comment tsd-typography">
-					<dl class="tsd-comment-tags">
-						<dt>file</dt>
-						<dd><p>Transaction
-							Created by SmilingXinyi <a href="mailto:&#x73;&#109;&#x69;&#x6c;&#105;&#110;&#x67;&#x78;&#105;&#x6e;&#x79;&#x69;&#x40;&#103;&#109;&#97;&#105;&#x6c;&#46;&#99;&#111;&#x6d;">&#x73;&#109;&#x69;&#x6c;&#105;&#110;&#x67;&#x78;&#105;&#x6e;&#x79;&#x69;&#x40;&#103;&#109;&#97;&#105;&#x6c;&#46;&#99;&#111;&#x6d;</a> on 2020/6/2</p>
-						</dd>
-					</dl>
-				</div>
-			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -105,6 +95,8 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="transaction.html#encodedatafordigesthash" class="tsd-kind-icon">encode<wbr>Data<wbr>For<wbr>Digest<wbr>Hash</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="transaction.html#generatetransaction" class="tsd-kind-icon">generate<wbr>Transaction</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="transaction.html#getblock" class="tsd-kind-icon">get<wbr>Block</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="transaction.html#getblockbyheight" class="tsd-kind-icon">get<wbr>Block<wbr>ByHeight</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="transaction.html#maketransaction" class="tsd-kind-icon">make<wbr>Transaction</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="transaction.html#maketxinputs" class="tsd-kind-icon">make<wbr>TxInputs</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="transaction.html#maketxoutput" class="tsd-kind-icon">make<wbr>TxOutput</a></li>
@@ -131,7 +123,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/transaction.ts#L17">src/transaction.ts:17</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/transaction.ts#L18">src/transaction.ts:18</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -153,7 +145,7 @@
 					<div class="tsd-signature tsd-kind-icon">plugins<span class="tsd-signature-symbol">:</span> <a href="../index.html#plugin" class="tsd-signature-type">Plugin</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/transaction.ts#L17">src/transaction.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/transaction.ts#L18">src/transaction.ts:18</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -170,7 +162,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/transaction.ts#L145">src/transaction.ts:145</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/transaction.ts#L146">src/transaction.ts:146</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -196,7 +188,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/transaction.ts#L224">src/transaction.ts:224</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/transaction.ts#L243">src/transaction.ts:243</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -219,6 +211,64 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getblock" class="tsd-anchor"></a>
+					<h3>get<wbr>Block</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Block<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, chain<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, blockid<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/transaction.ts#L407">src/transaction.ts:407</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>node: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>chain: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>blockid: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getblockbyheight" class="tsd-anchor"></a>
+					<h3>get<wbr>Block<wbr>ByHeight</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Block<wbr>ByHeight<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, chain<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, height<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/transaction.ts#L417">src/transaction.ts:417</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>node: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>chain: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>height: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="maketransaction" class="tsd-anchor"></a>
 					<h3>make<wbr>Transaction</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -228,7 +278,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/transaction.ts#L336">src/transaction.ts:336</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/transaction.ts#L355">src/transaction.ts:355</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -265,7 +315,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/transaction.ts#L132">src/transaction.ts:132</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/transaction.ts#L133">src/transaction.ts:133</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -288,7 +338,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/transaction.ts#L82">src/transaction.ts:82</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/transaction.ts#L83">src/transaction.ts:83</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -317,7 +367,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/transaction.ts#L107">src/transaction.ts:107</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/transaction.ts#L108">src/transaction.ts:108</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -346,7 +396,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/transaction.ts#L315">src/transaction.ts:315</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/transaction.ts#L334">src/transaction.ts:334</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -378,7 +428,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/transaction.ts#L23">src/transaction.ts:23</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/transaction.ts#L24">src/transaction.ts:24</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -413,7 +463,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/transaction.ts#L40">src/transaction.ts:40</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/transaction.ts#L41">src/transaction.ts:41</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -454,7 +504,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/transaction.ts#L373">src/transaction.ts:373</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/transaction.ts#L392">src/transaction.ts:392</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -483,7 +533,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/a172673/src/transaction.ts#L382">src/transaction.ts:382</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/transaction.ts#L401">src/transaction.ts:401</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -524,6 +574,12 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="transaction.html#generatetransaction" class="tsd-kind-icon">generate<wbr>Transaction</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="transaction.html#getblock" class="tsd-kind-icon">get<wbr>Block</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="transaction.html#getblockbyheight" class="tsd-kind-icon">get<wbr>Block<wbr>ByHeight</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="transaction.html#maketransaction" class="tsd-kind-icon">make<wbr>Transaction</a>
