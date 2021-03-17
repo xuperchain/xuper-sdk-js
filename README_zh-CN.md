@@ -38,7 +38,7 @@ const start = async () => {
 start();
 ```
 
-> [具体API查看详情](#API参考文档)
+*[具体API查看详情](#API参考文档)*
 
 ### 使用示例代码
 
@@ -104,7 +104,7 @@ XuperSDK.getInstance({
 
 接口|函数名|文档链接|状态
 ---|---|---|:---:
-转账|transfer|[LINK](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#transfer)|-
+转账|transfer|[LINK](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#transfer)|√
 发送交易|postTransaction|[LINK](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#postTransaction)|√
 查询交易|queryTransaction|[LINK](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#queryTransaction)|√
 

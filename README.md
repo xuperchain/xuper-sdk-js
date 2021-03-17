@@ -38,7 +38,7 @@ const start = async () => {
 start();
 ```
 
-> [Details - API reference](#API reference documentation)
+*[Details - API reference](#API reference documentation)*
 
 
 ### Code examples
