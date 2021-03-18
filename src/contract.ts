@@ -1,6 +1,5 @@
 /**
  * @file (contract)
- * Created by baidu on 2020/7/20
  */
 
 import {ContractRequesttModel, ContractInfo} from './types';

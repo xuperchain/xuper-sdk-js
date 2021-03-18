@@ -116,7 +116,7 @@ export type SignInfoModel = {
 
 export type TransactionModel = {
     /**
-     * SDK version
+     * SDK versTransactionModelion
      */
     version: number;
 

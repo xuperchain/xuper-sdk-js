@@ -1,6 +1,5 @@
 /**
  * @file (endorsement)
- * Created by baidu on 2020/7/14
  */
 
 import {UTXO, TXOutput, TransactionModel, AuthModel, AccountModel, Options} from '../types';
