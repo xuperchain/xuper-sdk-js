@@ -6,7 +6,6 @@
 import XuperSDK, {Cryptography, Language} from '../src';
 import {AccountModel} from '../src/types';
 import {isBrowser} from '../src/utils';
-// import XuperErrors, {XuperError} from '../src/error';
 
 isBrowser && require('whatwg-fetch');
 
@@ -16,138 +15,86 @@ const
     mnemonic = process.env.TEST_MNEMONIC!,
     address = process.env.TEST_ADDRESS!;
 
-describe('Xuper SDK account ——', () => {
-    describe('create an account with mnemonic', () => {
-        test('should return account model', () => {
-            const xsdk = new XuperSDK({
-                node,
-                chain
-            });
-
-            const account: AccountModel = xsdk.create();
-
-            expect(account).toHaveProperty('mnemonic');
-            expect(account).toHaveProperty('privateKey');
-            expect(account).toHaveProperty('publicKey');
-            expect(account).toHaveProperty('address');
+describe('Xuper SDK account', () => {
+    test('create an account with mnemonic should return account model', () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain
         });
 
-        // Todo: export encrypro key
+        const account: AccountModel = xsdk.create();
+
+        expect(account).toHaveProperty('mnemonic');
+        expect(account).toHaveProperty('privateKey');
+        expect(account).toHaveProperty('publicKey');
+        expect(account).toHaveProperty('address');
     });
 
-    describe('retrieve the account', () => {
-        test('from mnemonic should return account model', () => {
-            const xsdk = new XuperSDK({
-                node,
-                chain
-            });
-
-            const account: AccountModel = xsdk.retrieve(
-                mnemonic,
-                Language.SimplifiedChinese,
-                Cryptography.EccFIPS
-            );
-
-            console.log(account);
-
-            expect(account).toHaveProperty('mnemonic');
-            expect(account).toHaveProperty('privateKey');
-            expect(account).toHaveProperty('publicKey');
-            expect(account).toHaveProperty('address');
-            expect(account.address).toBe(address);
+    test('retrieve the account from mnemonic should return account model', () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain
         });
 
-        test('from private key return accout model', () => {
-            const xsdk = new XuperSDK({
-                node,
-                chain
-            });
+        const account: AccountModel = xsdk.retrieve(
+            mnemonic,
+            Language.SimplifiedChinese,
+            Cryptography.EccFIPS
+        );
 
-            expect(xsdk).toBeTruthy();
+        expect(account).toHaveProperty('mnemonic');
+        expect(account).toHaveProperty('privateKey');
+        expect(account).toHaveProperty('publicKey');
+        expect(account).toHaveProperty('address');
+        expect(account.address).toBe(address);
+    });
+
+    test('retrieve the account from private key return accout model', () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain
         });
 
-        // Todo: Import private key
-    });
-});
+        const account = xsdk.retrieve(
+            mnemonic,
+            Language.SimplifiedChinese,
+            Cryptography.EccFIPS,
+            true
+        );
 
-test('create an account with mnemonic should return account model', () => {
-    const xsdk = new XuperSDK({
-        node,
-        chain
-    });
+        const encryptPrivateKeyString = xsdk.export('123456');
+        const retrievedAccount = xsdk.import('123456', encryptPrivateKeyString);
 
-    const account: AccountModel = xsdk.create();
-
-    expect(account).toHaveProperty('mnemonic');
-    expect(account).toHaveProperty('privateKey');
-    expect(account).toHaveProperty('publicKey');
-    expect(account).toHaveProperty('address');
-});
-
-test('retrieve the account from mnemonic should return account model', () => {
-    const xsdk = new XuperSDK({
-        node,
-        chain
+        expect(retrievedAccount.address).toEqual(account.address);
+        expect(retrievedAccount.privateKey.Curvname).toEqual(account.privateKey.Curvname);
+        expect(retrievedAccount.privateKey.X).toEqual(account.privateKey.X);
+        expect(retrievedAccount.privateKey.Y).toEqual(account.privateKey.Y);
     });
 
-    const account: AccountModel = xsdk.retrieve(
-        mnemonic,
-        Language.SimplifiedChinese,
-        Cryptography.EccFIPS
-    );
+    test('check mnemonic', () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain
+        });
 
-    expect(account).toHaveProperty('mnemonic');
-    expect(account).toHaveProperty('privateKey');
-    expect(account).toHaveProperty('publicKey');
-    expect(account).toHaveProperty('address');
-    expect(account.address).toBe(address);
-});
+        const result = xsdk.checkMnemonic(
+            mnemonic,
+            Language.SimplifiedChinese
+        );
 
-test('retrieve the account from private key return accout model', () => {
-    const xsdk = new XuperSDK({
-        node,
-        chain
+        expect(result).toBeTruthy();
     });
 
-    const account = xsdk.retrieve(
-        mnemonic,
-        Language.SimplifiedChinese,
-        Cryptography.EccFIPS,
-        true
-    );
+    test('check address', () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain
+        });
 
-    const encryptPrivateKeyString = xsdk.export('123456');
-    const retrievedAccount = xsdk.import('123456', encryptPrivateKeyString);
+        const result = xsdk.checkAddress(
+            address
+        );
 
-    expect(retrievedAccount.address).toEqual(account.address);
-    expect(retrievedAccount.privateKey.Curvname).toEqual(account.privateKey.Curvname);
-    expect(retrievedAccount.privateKey.X).toEqual(account.privateKey.X);
-    expect(retrievedAccount.privateKey.Y).toEqual(account.privateKey.Y);
-});
-
-test('check the mnemonic is correct should return true', () => {
-    const xsdk = new XuperSDK({
-        node,
-        chain
+        expect(result).toBeTruthy();
     });
-
-    const result = xsdk.checkMnemonic(
-        mnemonic,
-        Language.SimplifiedChinese
-    );
-
-    expect(result).toBeTruthy();
-});
-
-test('check the address is correct should return true', () => {
-    const xsdk = new XuperSDK({
-        node,
-        chain
-    });
-
-    const result = xsdk.checkAddress(
-        address
-    );
-
-    expect(result).toBeTruthy();
 });
