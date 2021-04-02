@@ -1,11 +1,8 @@
 /**
- * @file constants
- * Created by xinyi on 2019/12/19
+ * @file (constants)
+ * Created by SmilingXinyi <smilingxinyi@gmail.com> on 2020/7/2
  */
 
-/**
- * Account SDK version
- */
 export const VERSION = 1;
 
 /**

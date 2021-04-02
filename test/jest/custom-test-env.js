@@ -3,8 +3,6 @@
  * Created by xinyi on 2019/11/27
  */
 
-/* eslint-disable global-require,@typescript-eslint/no-var-requires */
-
 require('dotenv').config();
 const fs = require('fs');
 const NodeEnvironment = require('jest-environment-jsdom-fourteen');
@@ -14,7 +12,7 @@ class CustomEnvironment extends NodeEnvironment {
         super(config, context);
         this.testPath = context.testPath;
         this.docblockPragmas = context.docblockPragmas;
-        this.global.process.title = 'jsdom';
+        this.global.process.title = 'Xuper SDK - Test ENV';
 
         // TextEncoder & TextDecoder
         const {TextEncoder, TextDecoder} = require('util');
@@ -29,7 +27,10 @@ class CustomEnvironment extends NodeEnvironment {
             }
         };
 
-        this.global.file = Uint8Array.from(fs.readFileSync(`${__dirname}/../contract_code/counter.wasm`));
+        this.global.cert = Uint8Array.from(fs.readFileSync(`${__dirname}/../cert/cfca.cert`));
+
+        // contract release
+        this.global.file = Uint8Array.from(fs.readFileSync(`${__dirname}/../wasm/counter.wasm`));
     }
 }
 

@@ -1,34 +1,34 @@
 /**
- * @file Xuper Account
- * Created by xinyi on 2019/12/19
+ * @file (account.test)
+ * Created by SmilingXinyi <smilingxinyi@gmail.com> on 2020/7/2
  */
 
 import BN from 'bn.js';
 import sha256 from 'sha256';
 import pbkdf2 from 'pbkdf2';
 import {ec as EC} from 'elliptic';
-import {RIPEMD160} from 'ripemd160-min/dist-umd';
+import {RIPEMD160} from 'ripemd160-min';
+import aesjs from 'aes-js';
+
+import {PrivateKey, PublicKey, AccountModel} from './types';
 import {Cryptography, Language, Strength} from './constants';
-
-import wordlist from './wordlist.json';
 import {
-    PublicKeyModel, PrivateKeyModel, AccountInerface, AccountModel
-} from './interfaces';
-import {base58Encode, base58Decode, deepEqual} from './utils';
+    arrayPadStart, base58Decode, base58Encode, deepEqual,
+    isBrowser, stringToPublicOrPrivateKey, publicOrPrivateKeyToString
+} from './utils';
 
-/**
- * Class Account
- */
-export default class Account implements AccountInerface {
+import * as Requests from './requests';
+import wordlist from './wordlist.json';
+
+export default class Account {
     private last4BitsMask: BN = new BN(15);
+    private password = 'jingbo is handsome!';
 
-    /**
-     * Create new account
-     * @param language - mnemonic language
-     * @param strength - mnemonic strength
-     * @param cryptography - cryptography
-     */
-    create(language: Language, strength: Strength, cryptography: Cryptography): AccountModel {
+    public create(
+        language: Language,
+        strength: Strength,
+        cryptography: Cryptography
+    ): AccountModel {
         const entropyByte = this.generateEntropy(strength);
 
         const cryptographyBit = new Uint8Array(1);
@@ -51,12 +51,11 @@ export default class Account implements AccountInerface {
         newEntropyByteSlice.set([Number(flagInt.toString(10))], entropyByte.length);
 
         const mnemonic = this.generateMnemonic(newEntropyByteSlice, language);
-        const password = 'jingbo is handsome!';
-        const seed = this.generateSeed(mnemonic, password, 40, language);
+        const seed = this.generateSeed(mnemonic, this.password, 40, language);
 
         const curve = new EC('p256');
-        const privateKey: PrivateKeyModel = this.generateKeyBySeed(curve, seed);
-        const publicKey: PublicKeyModel = {
+        const privateKey: PrivateKey = this.generateKeyBySeed(curve, seed);
+        const publicKey: PublicKey = {
             X: privateKey.X,
             Y: privateKey.Y,
             Curvname: privateKey.Curvname
@@ -72,20 +71,17 @@ export default class Account implements AccountInerface {
         };
     }
 
-    /**
-     * Revert account with mnemonic words
-     * @param mnemonic
-     * @param language
-     * @param cryptography
-     */
-    revert(mnemonic: string, language: Language, cryptography: Cryptography): AccountModel {
-        const password = 'jingbo is handsome!';
-        const seed = this.generateSeed(mnemonic, password, 40, language);
+    public retrieve(
+        mnemonic: string,
+        language: Language = Language.SimplifiedChinese,
+        cryptography: Cryptography = Cryptography.EccFIPS
+    ): AccountModel {
+        const seed = this.generateSeed(mnemonic, this.password, 40, language);
 
         const curve = new EC('p256');
 
-        const privateKey: PrivateKeyModel = this.generateKeyBySeed(curve, seed);
-        const publicKey: PublicKeyModel = {
+        const privateKey: PrivateKey = this.generateKeyBySeed(curve, seed);
+        const publicKey: PublicKey = {
             X: privateKey.X,
             Y: privateKey.Y,
             Curvname: privateKey.Curvname
@@ -101,10 +97,6 @@ export default class Account implements AccountInerface {
         };
     }
 
-    /**
-     * Check address is valid
-     * @param address
-     */
     checkAddress(address: string): boolean {
         try {
             const decode = base58Decode(address);
@@ -121,24 +113,113 @@ export default class Account implements AccountInerface {
         }
     }
 
-    /**
-     * Check mnemonic is valid
-     * @param mnemonic
-     * @param language
-     */
     checkMnemonic(mnemonic: string, language: Language): boolean {
         const words = wordlist[language];
         return mnemonic.split(' ').every(w => words.indexOf(w) > -1);
     }
 
-    private generateEntropy(strength: Strength) {
+    getBalance(address: string, node: string, chain: string): Promise<any> {
+        const body = {
+            address: address,
+            bcs: [{
+                bcname: chain
+            }]
+        };
+
+        return Requests.getBalance(node, body);
+    }
+
+    getBalanceDetail(address: string, node: string, chain: string): Promise<any> {
+        const body = {
+            address: address,
+            tfds: [{
+                bcname: chain
+            }]
+        };
+
+        return Requests.getBalanceDetail(node, body);
+    }
+
+    import(password: string, privateKeyStr: string): AccountModel {
+        const decryptStr = this.decryptPrivateKey(password, privateKeyStr);
+        const privateKeyObj = stringToPublicOrPrivateKey(decryptStr);
+
+        const privateKey: PrivateKey = {
+            D: privateKeyObj.D,
+            X: privateKeyObj.X,
+            Y: privateKeyObj.Y,
+            Curvname: privateKeyObj.Curvname
+        };
+
+        const publicKey: PublicKey = {
+            X: privateKey.X,
+            Y: privateKey.Y,
+            Curvname: privateKey.Curvname
+        };
+
+        const address = this.generateAddress(publicKey, Cryptography.EccFIPS);
+
+        return {
+            address,
+            privateKey,
+            publicKey
+        };
+    }
+
+    export(password: string, privateKey: PrivateKey): string {
+        return btoa(
+            this.encryptPrivateKey(password, privateKey)
+        );
+    }
+
+    private decryptPrivateKey(password: string, keyStr: string): string {
+        const bytes = atob(keyStr).split('').map(s => s.charCodeAt(0));
+        const blockSize = 16;
+        const key = sha256.x2(password, {asBytes: true});
+        const padding = blockSize - (bytes.length % blockSize);
+        bytes.concat(Array(padding).fill(padding));
+        const aesCbc = new aesjs.ModeOfOperation.cbc(key, key.slice(0, blockSize));
+        let decryptedBytes = aesCbc.decrypt(bytes);
+        const unpadding = decryptedBytes[decryptedBytes.length - 1];
+        if (decryptedBytes.length - unpadding <= 0) {
+            throw 'password error';
+        }
+        decryptedBytes = decryptedBytes.slice(0, decryptedBytes.length - unpadding);
+        const td = new TextDecoder();
+        return td.decode(decryptedBytes);
+    }
+
+
+    private encryptPrivateKey(password: string, privateKey: PrivateKey): string {
+        const keyStr = publicOrPrivateKeyToString(privateKey);
+        const te = new TextEncoder();
+        const keyBytes: Uint8Array = te.encode(keyStr);
+        const blockSize = 16;
+        const key = sha256.x2(password, {asBytes: true});
+        const padding = blockSize - (keyBytes.length % blockSize);
+        const theBytes = Array.from(keyBytes).concat(Array(padding).fill(padding));
+        // eslint-disable-next-line new-cap
+        const aesCbc = new aesjs.ModeOfOperation.cbc(key, key.slice(0, blockSize));
+        const result = aesCbc.encrypt(theBytes);
+        const ts = Array.from(result).map((s: number) => String.fromCharCode(s));
+        return ts.join('');
+    }
+
+    private generateEntropy(strength: Strength): Uint8Array {
         if ((strength + 8) % 32 !== 0 || strength + 8 < 128 || strength + 8 > 256) {
             throw 'Invalid entropy length';
         }
+
+        if (!isBrowser) {
+            // eslint-disable-next-line @typescript-eslint/no-var-requires,global-require
+            const crypto = require('crypto');
+            return crypto.randomFillSync(new Uint8Array(strength / 8));
+        }
+
         return crypto.getRandomValues(new Uint8Array(strength / 8));
     }
 
-    private generateMnemonic(entropy: ArrayBuffer, language: Language) {
+    private generateMnemonic(entropy: ArrayBuffer, language: Language): string {
         const entropyBitLength = entropy.byteLength * 8;
 
         const invalidEntropyLength = new Error('Entropy length must within [120, 248] and after +8 be multiples of 32');
@@ -172,13 +253,6 @@ export default class Account implements AccountInerface {
         return words.join(' ');
     }
 
-    private getWordListByLanguage(language: Language) {
-        if (!wordlist[language]) {
-            throw new Error('This language has not been supported yet');
-        }
-        return wordlist[language];
-    }
-
     private addChecksum(data: any) {
         const hashByte = sha256(data);
 
@@ -202,7 +276,7 @@ export default class Account implements AccountInerface {
         return dataBigInt;
     }
 
-    private generateSeed(mnemonic: string, password: string, keyLen: number, language: Language) {
+    private generateSeed(mnemonic: string, password: string, keyLen: number, language: Language): any {
         const wordList = this.getWordListByLanguage(language);
         const originMnemonic = mnemonic.split(' ').map(word => wordList.indexOf(word));
 
@@ -232,7 +306,6 @@ export default class Account implements AccountInerface {
         const bn = this.addChecksum(entropyBytes).toString(10);
         const newBN = new BN(bn);
 
-
         if (JSON.stringify(newBN.toArray().slice(0, fullByteSize))
             !== JSON.stringify(entropyWithChecksumBytes)) {
             throw 'bug';
@@ -242,9 +315,9 @@ export default class Account implements AccountInerface {
         return pbkdf2.pbkdf2Sync(mnemonic, salt, 2048, keyLen, 'sha512');
     }
 
-    private generateKeyBySeed(curve: EC, seed: any): PrivateKeyModel {
+    private generateKeyBySeed(curve: EC, seed: any): PrivateKey {
         const key = curve.genKeyPair();
-        const pub = key.getPublic();
+        // const pub = key.getPublic();
         let k = new BN(seed);
         const keyN = key.ec.n;
         const one = new BN(1);
@@ -270,12 +343,15 @@ export default class Account implements AccountInerface {
         };
     }
 
-    private generateAddress(publicKey: PublicKeyModel, cryptography: Cryptography) {
+    private generateAddress(publicKey: PublicKey, cryptography: Cryptography): string {
         const flagByte = [4];
         const xBytes = new BN(publicKey.X).toArray();
         const yBytes = new BN(publicKey.Y).toArray();
 
-        const data = flagByte.concat(xBytes).concat(yBytes);
+        // 256 + 7 >> 3
+        const data = flagByte
+            .concat(arrayPadStart(xBytes, 32))
+            .concat(arrayPadStart(yBytes, 32));
 
         const outputSha256 = sha256(data, {asBytes: true});
 
@@ -298,5 +374,12 @@ export default class Account implements AccountInerface {
         checkCodeBuf.set(simpleCheckCode, outputRipemd160Buf.length);
 
         return base58Encode(checkCodeBuf);
+    }
+
+    private getWordListByLanguage(language: Language): Array<string> {
+        if (!wordlist[language]) {
+            throw new Error('This language has not been supported yet');
+        }
+        return wordlist[language];
     }
 }

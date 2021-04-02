@@ -1,9 +1,22 @@
-module.exports = {
+const conf = {
     preset: 'ts-jest',
-    testPathIgnorePatterns: ['node_modules'],
-    testEnvironment: './test/jest/custom-test-env.js',
-    transform: {
-        '^.+\\.tsx?$': 'ts-jest'
-    },
-    moduleFileExtensions: ['ts', 'js'],
+    testPathIgnorePatterns: ['node_modules', 'sdk-1.*']
+};
+
+module.exports = {
+    projects: [
+        {
+            displayName: 'browser',
+            testEnvironment: './test/jest/custom-test-env.js',
+            ...conf
+        },
+        // {
+        //     displayName: 'Nodejs',
+        //     testEnvironment: 'node',
+        //     setupFiles: [
+        //         'dotenv/config'
+        //     ],
+        //     ...conf
+        // }
+    ]
 };

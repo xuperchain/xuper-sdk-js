@@ -1,548 +1,366 @@
 /**
- * @file Xuper SDK
- * Created by xinyi on 2019/12/19
+ * @file Xuper SDK (JS/TS)
  */
 
 import BN from 'bn.js';
-
-import {
-    Language, Strength, Cryptography
-} from './constants';
-
-import {
-    publicOrPrivateKeyToString, postRequest, convert
-} from './utils';
-
-import {
-    XuperSDKInterface, AccountModel, XuperOptions, PrivateKeyModel,
-    PublicKeyModel, ContracRequesttModel, Transaction, TransactionInfomation,
-    UTXO, TXOutput, AuthInterface
-} from './interfaces';
-
-import Errors from './error';
+import XuperSDKInterface from './interfaces';
+import * as Requests from './requests';
+import Errors, {XuperError} from './error';
+import {Cryptography, Language, Strength} from './constants';
+import {toHex, hexToBase64, isBrowser} from './utils';
 import Account from './account';
-import generateTransaction, {signTx} from './transaction';
+import Transaction from './transaction';
+import Contract from './Contract';
+import {
+    Options,
+    AccountModel,
+    TransactionInfomationModel,
+    TransactionModel,
+    AuthModel,
+    Plugin,
+    ContractRequesttModel,
+    ContractInfo
+} from './types';
 
 export default class XuperSDK implements XuperSDKInterface {
     static instance: XuperSDK;
+    private options: Options;
+    private plugins: Plugin[];
+    private accountInstance: Account;
+    private transactionInstance: Transaction;
+    private contractInstance: Contract;
+    private account?: AccountModel;
 
-    accountIns: Account;
-
-    accountModel?: AccountModel;
-
-    options: XuperOptions;
-
-    defaultRequire: {[propName: string]: AuthInterface} = {};
-
-    public static getInstance(opts: XuperOptions): XuperSDK {
+    public static getInstance(opts: Options): XuperSDK {
         if (!this.instance) {
             this.instance = new this(opts);
         }
         return this.instance;
     }
 
-    constructor(opts: XuperOptions) {
+    constructor(opts: Options) {
         this.options = {...opts};
-        this.accountIns = new Account();
-        if (opts.endorseConf) {
-            const {fee: endorseFee, feeServiceAddress} = opts.endorseConf;
-            this.defaultRequire[feeServiceAddress] = {
-                fee: endorseFee,
-                sign: async (checkTx: Transaction, tx: Transaction): Promise<Transaction> => {
-                    const obj = {
-                        bcname: this.options.chain,
-                        tx: convert(tx)
-                    };
+        this.plugins = opts.plugins || [];
+        this.accountInstance = new Account();
+        this.transactionInstance = new Transaction(opts.plugins);
+        this.contractInstance = new Contract();
 
-                    const body = {
-                        RequestName: 'ComplianceCheck',
-                        BcName: 'xuper',
-                        Fee: convert(checkTx),
-                        RequestData: btoa(JSON.stringify(obj))
-                    };
+        if (!isBrowser && !this.options.env?.node?.disableGRPC) {
+            Requests.initializationClient(this.options.node);
+        }
 
-                    const tar = `${this.options.endorseConf!.server}/v1/endorsercall`;
-
-                    return postRequest(tar, body)
-                        .then((result: any) => {
-                            if (!tx.authRequireSigns) {
-                                tx.authRequireSigns = [];
-                            }
-                            tx.authRequireSigns.push(result.EndorserSign);
-                            return tx;
-                        });
-                }
-            };
+        if (this.plugins.length > 0) {
+            this.plugins.every(plugin => plugin.init && plugin.init(plugin.args, this.options));
         }
     }
 
-    /**
-     * Create new account
-     * @param language
-     * @param strength - easy: 12, middle: 16，hard: 24
-     * @param cryptography - EccFIPS
-     */
-    createAccount(language: Language, strength: Strength, cryptography: Cryptography): AccountModel {
-        const model = this.accountIns.create(language, strength, cryptography);
-        this.accountModel = model;
-        return model;
-    }
-
-    /**
-     * Revert account with mnemonic
-     * @param mnemonic
-     * @param language
-     * @param cryptography
-     */
-    revertAccount(mnemonic: string, language: Language, cryptography: Cryptography): AccountModel {
-        const model = this.accountIns.revert(mnemonic, language, cryptography);
-        this.accountModel = model;
-        return model;
-    }
-
-    /**
-     * Check address valid
-     * @param address
-     */
-    checkAddress(address: string): boolean {
-        return this.accountIns.checkAddress(address);
-    }
-
-    /**
-     * Check mnemonic valid
-     * @param mnemonic
-     * @param language
-     */
-    checkMnemonic(mnemonic: string, language: Language): boolean {
-        return this.accountIns.checkMnemonic(mnemonic, language);
-    }
-
-    /**
-     * Local account balance or target address
-     * @param address
-     */
-    getBalance(address?: string): Promise<any> {
-        if (!address && !this.accountModel) {
-            throw 'No account information or target address';
-        }
-
-        return fetch(`${this.options.node}/v1/get_balance`, {
-            method: 'POST',
-            body: JSON.stringify({
-                address: address || this.accountModel!.address,
-                bcs: [{
-                    bcname: this.options.chain
-                }]
-            })
-        }).then(
-            response => {
-                if (!response.ok) {
-                    return response.json().then(res => {
-                        throw res;
-                    });
-                }
-                return response.json();
-            }
-        );
-    }
-
-    /**
-     * Local account balance detail or target address detail
-     * @param address
-     */
-    getBalanceDetail(address?: string): Promise<any> {
-        if (!address && !this.accountModel) {
-            throw 'No account information or target address';
-        }
-
-        return fetch(`${this.options.node}/v1/get_balance_detail`, {
-            method: 'POST',
-            body: JSON.stringify({
-                address: address || this.accountModel!.address,
-                tfds: [{
-                    bcname: this.options.chain
-                }]
-            })
-        }).then(
-            response => {
-                if (!response.ok) {
-                    return response.json().then(res => {
-                        throw res;
-                    });
-                }
-                return response.json();
-            }
-        );
-    }
-
-    /**
-     * Key to string
-     * @param key
-     */
-    publicOrPrivateKeyToString(key: PrivateKeyModel | PublicKeyModel): string {
-        return publicOrPrivateKeyToString(key);
-    }
-
-    async preExecTransactionWithUTXO(
-        sum: string | number | BN,
-        authRequire: string[] = [],
-        invokeRequests: ContracRequesttModel[] = []
-    ): Promise<any> {
-        if (!this.accountModel) {
-            throw Errors.ACCOUNT_NOT_EXIST;
-        }
-        if (!this.options.endorseConf) {
-            throw Errors.INVALID_CONFIGURATION;
-        }
-
-        const bnSum = new BN(sum);
-
-        const data: any = {
-            bcname: this.options.chain,
-            address: this.accountModel.address,
-            totalAmount: bnSum.toNumber(),
-            request: {
-                initiator: this.accountModel.address,
-                bcname: this.options.chain,
-                auth_require: authRequire,
-                requests: invokeRequests
-            }
-        };
-
+    checkStatus(): Promise<any> {
+        const node = this.options.node;
         const body = {
-            RequestName: 'PreExecWithFee',
-            BcName: this.options.chain,
-            RequestData: btoa(JSON.stringify(data))
+            bcname: this.options.chain
         };
-
-        return postRequest(`${this.options.endorseConf.server}/v1/endorsercall`, body);
+        return Requests.getStatus(node, body);
     }
 
-    /**
-     * Generate simple transaction
-     * @param ti
-     */
-    async generateTransaction(ti: TransactionInfomation): Promise<Transaction> {
-        if (!this.options.endorseConf) {
-            throw Errors.INVALID_CONFIGURATION;
+    getBlockChains(): Promise<any> {
+        const node = this.options.node;
+        return Requests.getBlockChains(node, {});
+    }
+
+    getBlockById(blockid: string) {
+        const {node, chain} = this.options;
+        return this.transactionInstance.getBlock(node, chain, hexToBase64(blockid));
+    }
+
+    getBlockByHeight(height: string): Promise<any> {
+        const {node, chain} = this.options;
+        return this.transactionInstance.getBlockByHeight(node, chain, height);
+    }
+
+    create(
+        language: Language = Language.SimplifiedChinese,
+        strength: Strength = Strength.Easy,
+        cryptography: Cryptography = Cryptography.EccFIPS
+    ): AccountModel {
+        return this.accountInstance.create(language, strength, cryptography);
+    }
+
+    retrieve(
+        mnemonic: string,
+        language: Language = Language.SimplifiedChinese,
+        cryptography: Cryptography = Cryptography.EccFIPS,
+        cache = false
+    ): AccountModel {
+        if (mnemonic) {
+            const account = this.accountInstance.retrieve(mnemonic, language, cryptography);
+            if (cache) {
+                this.account = account;
+                return account;
+            } else {
+                return account;
+            }
+        } else {
+            throw Errors.PARAMETER_ERROR;
+        }
+    }
+
+    import(password: string, privateKeyStr: string, cache = false): AccountModel {
+        if (!password || !privateKeyStr) {
+            throw Errors.PARAMETER_ERROR;
+        }
+        const account = this.accountInstance.import(password, privateKeyStr);
+        if (cache) {
+            this.account = account;
+        }
+        return account;
+    }
+
+    export(password: string): string {
+
+        const acc = this.account;
+
+        if (!password) {
+            throw Errors.PARAMETER_ERROR;
         }
 
-        if (!this.accountModel) {
+        if (acc) {
+            return this.accountInstance.export(password, acc.privateKey);
+        }
+        else {
             throw Errors.ACCOUNT_NOT_EXIST;
         }
+    }
 
-        const authRequires: {[propName: string]: AuthInterface} = {...this.defaultRequire};
+    checkAddress(address?: string): boolean {
+        const addr = address || this.account?.address;
+
+        if (addr) {
+            return this.accountInstance.checkAddress(addr);
+        } else {
+            throw XuperError.or([Errors.ACCOUNT_NOT_EXIST, Errors.PARAMETER_ERROR]);
+        }
+    }
+
+    checkMnemonic(mnemonic: string, language: Language): boolean {
+        if (mnemonic || language) {
+            return this.accountInstance.checkMnemonic(mnemonic, language);
+        }
+        else {
+            throw Errors.PARAMETER_ERROR;
+        }
+    }
+
+    getBalance(address?: string): Promise<any> {
+        const {node, chain} = this.options;
+        const addr = address || this.account?.address;
+
+        if (addr) {
+            return this.accountInstance.getBalance(addr, node, chain);
+        } else {
+            throw XuperError.or([Errors.ACCOUNT_NOT_EXIST, Errors.PARAMETER_ERROR]);
+        }
+    }
+
+    getBalanceDetail(address?: string): Promise<any> {
+        const {node, chain} = this.options;
+        const addr = address || this.account?.address;
+
+        if (addr) {
+            return this.accountInstance.getBalanceDetail(addr, node, chain);
+        } else {
+            throw XuperError.or([Errors.ACCOUNT_NOT_EXIST, Errors.PARAMETER_ERROR]);
+        }
+    }
+
+    async transfer(ti: TransactionInfomationModel, account?: AccountModel): Promise<TransactionModel> {
+        const {node, chain} = this.options;
+        let authRequires: { [propName: string]: AuthModel} = {};
+
+        if (this.plugins.length > 0 && this.plugins.every(plugin => plugin.hookFuncs.indexOf('transfer') > -1)) {
+            for (const plugin of this.plugins) {
+                authRequires = {...await plugin.func['transfer'](plugin.args['transfer'], chain)};
+            }
+        }
+
+        const acc = account || this.account;
+
+        if (!acc) {
+            throw XuperError.or([Errors.ACCOUNT_NOT_EXIST, Errors.PARAMETER_ERROR]);
+        }
 
         const {amount, fee} = ti;
 
         let totalNeed = new BN(0);
 
         totalNeed = totalNeed.add(new BN(amount));
-        totalNeed = totalNeed.add(new BN(fee));
 
-        Object.keys(authRequires).forEach((key: string) => {
-            const auth = authRequires[key];
-            totalNeed = totalNeed.add(new BN(auth.fee || 0));
-        });
-
-        const preExecWithUtxos = await this.preExecTransactionWithUTXO(totalNeed, Object.keys(authRequires));
-        const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
-
-        return this.makeTransaction(ti, authRequires, preExecWithUtxosObj);
-    }
-
-    /**
-     * Make new transaction
-     * @param ti
-     * @param authRequires
-     * @param preExecWithUtxosObj
-     */
-    private async makeTransaction(
-        ti: TransactionInfomation,
-        authRequires: {[propName: string]: AuthInterface},
-        preExecWithUtxosObj: any
-    ): Promise<Transaction> {
-        if (!this.options.endorseConf) {
-            throw Errors.INVALID_CONFIGURATION;
-        }
-
-        if (!this.accountModel) {
-            throw Errors.ACCOUNT_NOT_EXIST;
-        }
-
-        const {fee: endorseFee, complianceCheckfeeAddress} = this.options.endorseConf;
-
-        const {utxoOutput} = preExecWithUtxosObj;
-
-        const checkTx = await generateTransaction(
-            this.accountModel, {utxoOutput}, [], {amount: endorseFee, fee: 0, to: complianceCheckfeeAddress}
-        );
-
-        let totalSelected: number[] = [];
-        const utxoList: UTXO[] = [];
-
-        checkTx.txOutputs.forEach((
-            txOutput: TXOutput, index: number
-        ) => {
-            // @ts-ignore
-            if (txOutput.toAddr === btoa(this.accountModel.address)) {
-                const utxo: UTXO = {
-                    amount: txOutput.amount,
-                    toAddr: txOutput.toAddr,
-                    refTxid: checkTx.txid!,
-                    refOffset: index
-                };
-                utxoList.push(utxo);
-                totalSelected = atob(utxo.amount).split('').map(w => w.charCodeAt(0));
-            }
-        });
-
-        const newUtxoOutput = {
-            utxoList,
-            totalSelected
-        };
-
-        let tx = generateTransaction(
-            this.accountModel,
-            {...preExecWithUtxosObj, utxoOutput: newUtxoOutput},
-            Object.keys(authRequires),
-            ti
-        );
+        if (fee)
+            totalNeed = totalNeed.add(new BN(fee));
 
         // @ts-ignore
-        tx = await Object.keys(authRequires).reduce(async (prov: any, cur: any): Promise<any> => {
-            if (prov) {
-                tx = prov;
-            }
-            const auth = authRequires[cur];
-            return auth.sign(checkTx, await tx);
-        }, 0);
-
-        return convert(signTx(tx));
-    }
-
-    /**
-     * Post transaction
-     * @param tx
-     */
-    async postTransaction(tx: any): Promise<any> {
-        const tmp = {
-            bcname: 'xuper',
-            status: 4,
-            tx,
-            txid: tx.txid
-        };
-
-        return fetch(`${this.options.node}/v1/post_tx`, {
-            method: 'POST',
-            body: JSON.stringify(tmp)
-        }).then(response => {
-            if (!response.ok) {
-                return response.json().then(res => {
-                    throw res;
-                });
-            }
-            return response.json();
+        Object.keys(authRequires).forEach((key: string) => {
+            const auth = authRequires[key];
+            totalNeed = totalNeed.add(new BN(auth.fee || 0));
         });
+
+        try {
+            // @ts-ignore
+            const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(node, chain, acc.address, totalNeed, Object.keys(authRequires), null, acc)
+            return this.transactionInstance.makeTransaction(acc, ti, authRequires, preExecWithUtxos);
+        }
+        catch (e) {
+            throw e;
+        }
     }
 
-    /**
-     * Query transaction id
-     * @param txid
-     */
+    async postTransaction(tx: TransactionModel, account?: AccountModel) {
+        const acc = account || this.account;
+        const {node, chain} = this.options;
+        if (acc) {
+            return this.transactionInstance.post(node, chain, tx, acc);
+        }
+        else {
+            throw 'err'
+        }
+    }
+
     async queryTransaction(txid: string): Promise<any> {
-        const tmp = {
-            bcname: 'xuper',
-            txid
-        };
-
-        return fetch(`${this.options.node}/v1/query_tx`, {
-            method: 'POST',
-            body: JSON.stringify(tmp)
-        }).then(response => {
-            if (!response.ok) {
-                return response.json().then(res => {
-                    throw res;
-                });
-            }
-            return response.json();
-        });
+        const {node, chain} = this.options;
+        return this.transactionInstance.queryTransaction(node, chain, txid);
     }
 
-    /**
-     * Invoke contract
-     * @param contractName
-     * @param methodName
-     * @param moduleName
-     * @param args
-     */
-    async invokeContract(
-        contractName: string,
-        methodName: string,
-        moduleName: string,
-        args: any
+    async createContractAccount(contractAccountName: number, address? : string): Promise<any> {
+        const addr = address || this.account?.address;
+
+        if (addr) {
+            const contractRequest = this.contractInstance.createContractAccount(contractAccountName, addr);
+            return this.invoke(contractRequest);
+        }
+        else {
+            throw XuperError.or([Errors.ACCOUNT_NOT_EXIST, Errors.PARAMETER_ERROR]);
+        }
+
+        // auth requires
+        // amount
+
+        // const preExecWithUtxos = this.transactionInstance.preExecWithUTXO(
+        //     totalNeed, Object.keys(authRequires), invokeRequests
+        // );
+
+    }
+
+    async invoke(
+        invokeRequests: ContractRequesttModel[],
+        amount = '0',
+        account?: AccountModel,
     ): Promise<any> {
-        if (!this.accountModel) {
-            throw 'No account information';
+
+        const {node, chain} = this.options;
+
+        const acc = account || this.account;
+
+        if (!acc) {
+            throw XuperError.or([Errors.ACCOUNT_NOT_EXIST, Errors.PARAMETER_ERROR]);
         }
 
-        if (!this.options.endorseConf) {
-            throw Errors.INVALID_CONFIGURATION;
-        }
+        let authRequires: { [propName: string]: AuthModel} = {};
 
-        const invokeRequests: ContracRequesttModel[] = [{
-            module_name: moduleName,
-            method_name: methodName,
-            contract_name: contractName,
-            args
-        }];
-
-        const authRequires: {[propName: string]: AuthInterface} = {...this.defaultRequire};
-
-        let totalNeed = new BN(0);
-
-        totalNeed = totalNeed.add(new BN('0'));
-        totalNeed = totalNeed.add(new BN('0'));
-
-        Object.keys(authRequires).forEach((key: string) => {
-            const auth = authRequires[key];
-            totalNeed = totalNeed.add(new BN(auth.fee || 0));
-        });
-
-        const preExecWithUtxos = await this.preExecTransactionWithUTXO(
-            totalNeed, Object.keys(authRequires), invokeRequests
-        );
-        const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
-        const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
-        const tx = await this.makeTransaction({
-            amount: '0',
-            fee: gasUsed.toString(),
-            to: ''
-        }, authRequires, preExecWithUtxosObj);
-        return this.postTransaction(tx);
-    }
-
-    /**
-     * Create contract account
-     * @param contractAccountName
-     */
-    async createContractAccount(contractAccountName: number) {
-        if (!this.accountModel) {
-            throw 'No account information';
-        }
-
-        if (contractAccountName < 10 ** 15
-            || contractAccountName >= 10 ** 16) {
-            throw 'Conrtact account must be numbers of length 16';
-        }
-
-        // const prefixes = 'XC';
-        // const contractAccount = `${prefixes}${contractAccountName}@${this.options.chain}`;
-
-        const defaultACL = {
-            pm: {
-                rule: 1,
-                acceptValue: 1.0
-            },
-            aksWeight: {
-                [this.accountModel.address]: 1.0
+        if (this.plugins.length > 0 && this.plugins.every(item => item.hookFuncs.indexOf('transfer') > -1)) {
+            for (const plugin of this.plugins) {
+                authRequires = {...await plugin.func['transfer'](plugin.args['transfer'], chain)};
             }
-        };
-
-        const args = {
-            account_name: btoa(contractAccountName.toString()),
-            acl: btoa(JSON.stringify(defaultACL))
-        };
-
-        const invokeRequests: ContracRequesttModel[] = [{
-            module_name: 'xkernel',
-            method_name: 'NewAccount',
-            args
-        }];
-
-        const authRequires: {[propName: string]: AuthInterface} = {...this.defaultRequire};
+        }
 
         let totalNeed = new BN(0);
-
-        totalNeed = totalNeed.add(new BN('0'));
-        totalNeed = totalNeed.add(new BN('0'));
 
         Object.keys(authRequires).forEach((key: string) => {
             const auth = authRequires[key];
             totalNeed = totalNeed.add(new BN(auth.fee || 0));
         });
 
-        const preExecWithUtxos = await this.preExecTransactionWithUTXO(
+        const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(
+            node, chain, acc.address,
             totalNeed, Object.keys(authRequires), invokeRequests
         );
-        const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
-        const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
-        const tx = await this.makeTransaction({
-            amount: '0',
+
+        const gasUsed = preExecWithUtxos.response.gas_used || 0;
+
+        const tx = await this.transactionInstance.makeTransaction(acc, {
+            amount,
             fee: gasUsed.toString(),
-            to: ''
-        }, authRequires, preExecWithUtxosObj);
-        return this.postTransaction(tx);
+            to: amount !== '0' ? invokeRequests[invokeRequests.length - 1].contract_name! : ''
+        }, authRequires, preExecWithUtxos);
+
+        return {
+            preExecutionTransaction: preExecWithUtxos,
+            transaction: tx
+        };
     }
 
-    /**
-     * Deploy wasm contract
-     * @param contractAccount
-     * @param contractName
-     * @param code
-     * @param runtime
-     * @param initArgs
-     */
+    getContracts(target: string): Promise<any> {
+        const {node, chain} = this.options;
+
+        return this.contractInstance.getContracts(node, chain,
+            !this.accountInstance.checkAddress(target), target);
+    }
+
+    getContractAccounts(address?: string): Promise<any> {
+        const {node, chain} = this.options;
+        const addr = address || this.account?.address;
+        if (addr) {
+            return this.contractInstance.contarctAccounts(node, chain, addr);
+        }
+        else {
+            throw Errors.PARAMETER_EMPTY_FUNC('address');
+        }
+    }
+
     async deployWasmContract(
         contractAccount: string,
         contractName: string,
         code: string,
-        runtime: string,
-        initArgs: any
+        lang: string,
+        initArgs: any,
+        upgrade = false,
+        account?: AccountModel
     ): Promise<any> {
-        if (!this.accountModel) {
-            throw 'No account information';
+        const {node, chain} = this.options;
+
+        let invokeRequests: ContractRequesttModel[];
+
+        if (upgrade) {
+            invokeRequests = this.contractInstance.upgradeContractRequests(
+                contractAccount,
+                contractName,
+                code,
+                lang,
+                initArgs
+            )
+        }
+        else {
+            invokeRequests = this.contractInstance.deployContractRequests(
+                contractAccount,
+                contractName,
+                code,
+                lang,
+                initArgs
+            );
         }
 
-        const newInitArgs = {
-            ...initArgs
-        };
+        if (!account) {
+            account = this.account;
+        }
 
-        Object.keys(initArgs).forEach(key => {
-            newInitArgs[key] = btoa(initArgs[key]);
-        });
+        if (!account) {
+            throw Errors.ACCOUNT_NOT_EXIST;
+        }
 
-        const desc = new Uint8Array([10, 1].concat(runtime.split('').map(w => w.charCodeAt(0))));
-        const descBuf = Object.values(desc).map(n => String.fromCharCode(n));
+        const address = account.address;
 
-        const args = {
-            account_name: contractAccount,
-            contract_name: contractName,
-            contract_desc: descBuf.join(''),
-            contract_code: code,
-            init_args: JSON.stringify(newInitArgs)
-        };
-
-        const contractArgs = {
-            ...args
-        };
-
-        Object.keys(contractArgs).forEach(key => {
-            // @ts-ignore
-            contractArgs[key] = btoa(contractArgs[key]);
-        });
-
-        const invokeRequests: ContracRequesttModel[] = [{
-            module_name: 'xkernel',
-            method_name: 'Deploy',
-            args: contractArgs
-        }];
-
-        const authRequires: { [propName: string]: AuthInterface } = {
-            ...this.defaultRequire,
-            [`${contractAccount}/${this.accountModel.address}`]: {
+        let authRequires: { [propName: string]: AuthModel } = {
+            [`${contractAccount}/${address}`]: {
                 fee: 0,
-                sign: (checkTx: Transaction, tx: Transaction) => {
+                sign: async (_checkTx: TransactionModel, tx: TransactionModel): Promise<TransactionModel> => {
                     if (!tx.authRequireSigns) {
                         tx.authRequireSigns = [];
                     }
@@ -552,28 +370,213 @@ export default class XuperSDK implements XuperSDKInterface {
             }
         };
 
+        if (this.plugins.length > 0 && this.plugins.every(item => item.hookFuncs.indexOf('transfer') > -1)) {
+            for (const plugin of this.plugins) {
+                authRequires = {
+                    ...authRequires,
+                    ...await plugin.func['transfer'](plugin.args['transfer'], chain)
+                };
+            }
+        }
+
         let totalNeed = new BN(0);
-
-        totalNeed = totalNeed.add(new BN('0'));
-        totalNeed = totalNeed.add(new BN('0'));
-
         Object.keys(authRequires).forEach((key: string) => {
             const auth = authRequires[key];
             totalNeed = totalNeed.add(new BN(auth.fee || 0));
         });
 
-        const preExecWithUtxos = await this.preExecTransactionWithUTXO(
-            totalNeed, Object.keys(authRequires), invokeRequests
-        );
-        const preExecWithUtxosObj = JSON.parse(atob(preExecWithUtxos.ResponseData));
+        const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(node, chain, address, totalNeed, Object.keys(authRequires), invokeRequests, account)
+
+        const preExecWithUtxosObj = preExecWithUtxos;
+
         const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
-        const tx = await this.makeTransaction({
+
+        const tx = await this.transactionInstance.makeTransaction(account, {
             amount: '0',
             fee: gasUsed.toString(),
             to: ''
         }, authRequires, preExecWithUtxosObj);
-        return this.postTransaction(tx);
+
+        return {
+            preExecutionTransaction: preExecWithUtxosObj,
+            transaction: tx
+        };
+    }
+
+    async deploySolidityContract(
+        contractAccount: string,
+        contractName: string,
+        bin: string,
+        abi: string,
+        lang: string,
+        initArgs: any,
+        upgrade = false,
+        account?: AccountModel
+    ): Promise<any> {
+        const {node, chain} = this.options;
+
+        let invokeRequests: ContractRequesttModel[];
+
+        if (upgrade) {
+            invokeRequests = this.contractInstance.upgradeContractRequests(
+                contractAccount,
+                contractName,
+                bin,
+                lang,
+                initArgs
+            )
+        }
+        else {
+            invokeRequests = this.contractInstance.deploySolidityContractRequests(
+                contractAccount,
+                contractName,
+                bin,
+                abi,
+                lang,
+                initArgs
+            );
+        }
+
+        if (!account) {
+            account = this.account;
+        }
+
+        if (!account) {
+            throw Errors.ACCOUNT_NOT_EXIST;
+        }
+
+        const address = account.address;
+
+        let authRequires: { [propName: string]: AuthModel } = {
+            [`${contractAccount}/${address}`]: {
+                fee: 0,
+                sign: async (_checkTx: TransactionModel, tx: TransactionModel): Promise<TransactionModel> => {
+                    if (!tx.authRequireSigns) {
+                        tx.authRequireSigns = [];
+                    }
+                    tx.authRequireSigns = tx.authRequireSigns.concat(tx.initiatorSigns);
+                    return tx;
+                }
+            }
+        };
+
+        if (this.plugins.length > 0 && this.plugins.every(item => item.hookFuncs.indexOf('transfer') > -1)) {
+            for (const plugin of this.plugins) {
+                authRequires = {
+                    ...authRequires,
+                    ...await plugin.func['transfer'](plugin.args['transfer'], chain)
+                };
+            }
+        }
+
+        let totalNeed = new BN(0);
+        Object.keys(authRequires).forEach((key: string) => {
+            const auth = authRequires[key];
+            totalNeed = totalNeed.add(new BN(auth.fee || 0));
+        });
+
+        const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(node, chain, address, totalNeed, Object.keys(authRequires), invokeRequests, account)
+
+        const preExecWithUtxosObj = preExecWithUtxos;
+
+        const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
+
+        const tx = await this.transactionInstance.makeTransaction(account, {
+            amount: '0',
+            fee: gasUsed.toString(),
+            to: ''
+        }, authRequires, preExecWithUtxosObj);
+
+        return {
+            preExecutionTransaction: preExecWithUtxosObj,
+            transaction: tx
+        };
+    }
+
+    async invokeContarct(
+        contractName: string,
+        methodName: string,
+        moduleName: string,
+        args: any,
+        amount = '0',
+        account?: AccountModel
+    ): Promise<any> {
+        const invokeRequests = this.contractInstance.invokeContract(
+            contractName,
+            methodName,
+            moduleName,
+            args,
+            amount
+        );
+
+        if (!account) {
+            account = this.account;
+        }
+
+        if (!account) {
+            throw Errors.ACCOUNT_NOT_EXIST;
+        }
+
+        return this.invoke(invokeRequests, amount, account);
+    }
+
+    async invokeSolidityContarct(
+        contractName: string,
+        methodName: string,
+        moduleName: string,
+        args: any,
+        amount = '0',
+        account?: AccountModel
+    ): Promise<any> {
+        const invokeRequests = this.contractInstance.invokeSolidityContract(
+            contractName,
+            methodName,
+            moduleName,
+            args,
+            amount
+        );
+
+        if (!account) {
+            account = this.account;
+        }
+
+        if (!account) {
+            throw Errors.ACCOUNT_NOT_EXIST;
+        }
+
+        return this.invoke(invokeRequests, amount, account)
+    }
+
+    async queryACL(
+        contractAccount: string,
+        contractInfo?: ContractInfo
+    ): Promise<any> {
+
+        const node = this.options.node;
+        const bcname = this.options.chain;
+
+        return this.contractInstance.queryACL(node, bcname, contractAccount, contractInfo);
+    }
+
+    async queryContractStatData(): Promise<any> {
+        const {node, chain} = this.options;
+        return this.contractInstance.queryContractStatData(node, chain);
+    }
+
+    transactionIdToHex(t: Required<string>): string {
+        if (!t) {
+            throw Errors.PARAMETER_EMPTY_FUNC();
+        }
+
+        try {
+            return toHex(t.toString());
+        }
+        catch (err) {
+            throw err;
+        }
     }
 }
 
-export {Language, Strength, Cryptography} from './constants';
+export * from './plugins';
+
+export {Cryptography, Language, Strength};
