@@ -177,6 +177,26 @@ export default class Contract {
         return this.generateSolidityContractRequests('Upgrade', contractAccount, contractName, bin, abi, lang, initArgs);
     }
 
+    deployNativeContractRequests(
+        contractAccount: string,
+        contractName: string,
+        code: string,
+        lang: string,
+        initArgs: any
+    ) {
+        return this.generateNativeRequests('Deploy', contractAccount, contractName, code, lang, initArgs);
+    }
+
+    upgradeNativeContractRequests(
+        contractAccount: string,
+        contractName: string,
+        code: string,
+        lang: string,
+        initArgs: any
+    ) {
+        return this.generateNativeRequests('Upgrade', contractAccount, contractName, code, lang, initArgs);
+    }
+
     generateContractRequests(
         methodName: string,
         contractAccount: string,
@@ -198,7 +218,8 @@ export default class Contract {
             newInitArgs[key] = btoa(valueBuf.join(''));
         });
 
-        const desc = new Uint8Array([10, 1].concat(lang.split('').map(w => w.charCodeAt(0))));
+        const langArray = lang.split('')
+        const desc = new Uint8Array([10, langArray.length].concat(lang.split('').map(w => w.charCodeAt(0))));
         const descBuf = Object.values(desc).map(n => String.fromCharCode(n));
 
         const args = {
@@ -253,7 +274,8 @@ export default class Contract {
             newInitArgs[key] = btoa(valueBuf.join(''));
         });
 
-        const desc = new Uint8Array([42, 3].concat(lang.split('').map(w => w.charCodeAt(0))));
+        const langArray = lang.split('')
+        const desc = new Uint8Array([42, langArray.length].concat(lang.split('').map(w => w.charCodeAt(0))));
 
         // const desc = lang.split('').map(w => w.charCodeAt(0));
         const descBuf = Object.values(desc).map(n => String.fromCharCode(n));
@@ -263,6 +285,60 @@ export default class Contract {
             contract_abi: abi,
             contract_code: bin,
             contract_desc: descBuf.join(''),
+            contract_name: contractName,
+            init_args: JSON.stringify(newInitArgs)
+        };
+
+        const contractArgs = {
+            ...args
+        };
+
+        Object.keys(contractArgs).forEach(key => {
+            // @ts-ignore
+            contractArgs[key] = btoa(contractArgs[key]);
+        });
+
+        const invokeRequests: ContractRequesttModel[] = [{
+            module_name: 'xkernel',
+            method_name: methodName,
+            args: contractArgs
+        }];
+
+        return invokeRequests;
+    }
+
+    generateNativeRequests(
+        methodName: string,
+        contractAccount: string,
+        contractName: string,
+        code: string,
+        lang: string,
+        initArgs: any
+    ) {
+        const newInitArgs = {
+            ...initArgs
+        };
+
+        const te = new TextEncoder();
+
+        Object.keys(initArgs).forEach(key => {
+            const bytes = te.encode(initArgs[key]);
+            const valueBuf: Array<any> = [];
+            bytes.forEach(b => valueBuf.push(String.fromCharCode(b)));
+            newInitArgs[key] = btoa(valueBuf.join(''));
+        });
+
+        const langArray = lang.split('')
+        const desc = new Uint8Array([10, langArray.length].concat(lang.split('').map(w => w.charCodeAt(0))));
+        const descBuf = Object.values(desc).map(n => String.fromCharCode(n));
+
+        const nativeField = new Uint8Array([42, 6, 110, 97, 116, 105, 118, 101]);
+        const nativeFieldBuf = Object.values(nativeField).map(n => String.fromCharCode(n));
+
+        const args = {
+            account_name: contractAccount,
+            contract_code: code,
+            contract_desc: descBuf.join('')+nativeFieldBuf.join(''),
             contract_name: contractName,
             init_args: JSON.stringify(newInitArgs)
         };

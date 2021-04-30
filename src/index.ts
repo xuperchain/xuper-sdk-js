@@ -493,6 +493,94 @@ export default class XuperSDK implements XuperSDKInterface {
         };
     }
 
+    async deployNativeContract(
+        contractAccount: string,
+        contractName: string,
+        code: string,
+        lang: string,
+        initArgs: any,
+        upgrade = false,
+        account?: AccountModel
+    ): Promise<any> {
+        const {node, chain} = this.options;
+
+        let invokeRequests: ContractRequesttModel[];
+
+        if (upgrade) {
+            invokeRequests = this.contractInstance.upgradeNativeContractRequests(
+                contractAccount,
+                contractName,
+                code,
+                lang,
+                initArgs
+            )
+        }
+        else {
+            invokeRequests = this.contractInstance.deployNativeContractRequests(
+                contractAccount,
+                contractName,
+                code,
+                lang,
+                initArgs
+            );
+        }
+
+        if (!account) {
+            account = this.account;
+        }
+
+        if (!account) {
+            throw Errors.ACCOUNT_NOT_EXIST;
+        }
+
+        const address = account.address;
+
+        let authRequires: { [propName: string]: AuthModel } = {
+            [`${contractAccount}/${address}`]: {
+                fee: 0,
+                sign: async (_checkTx: TransactionModel, tx: TransactionModel): Promise<TransactionModel> => {
+                    if (!tx.authRequireSigns) {
+                        tx.authRequireSigns = [];
+                    }
+                    tx.authRequireSigns = tx.authRequireSigns.concat(tx.initiatorSigns);
+                    return tx;
+                }
+            }
+        };
+
+        if (this.plugins.length > 0 && this.plugins.every(item => item.hookFuncs.indexOf('transfer') > -1)) {
+            for (const plugin of this.plugins) {
+                authRequires = {
+                    ...authRequires,
+                    ...await plugin.func['transfer'](plugin.args['transfer'], chain)
+                };
+            }
+        }
+
+        let totalNeed = new BN(0);
+        Object.keys(authRequires).forEach((key: string) => {
+            const auth = authRequires[key];
+            totalNeed = totalNeed.add(new BN(auth.fee || 0));
+        });
+
+        const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(node, chain, address, totalNeed, Object.keys(authRequires), invokeRequests, account)
+
+        const preExecWithUtxosObj = preExecWithUtxos;
+
+        const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
+
+        const tx = await this.transactionInstance.makeTransaction(account, {
+            amount: '0',
+            fee: gasUsed.toString(),
+            to: ''
+        }, authRequires, preExecWithUtxosObj);
+
+        return {
+            preExecutionTransaction: preExecWithUtxosObj,
+            transaction: tx
+        };
+    }
+
     async invokeContarct(
         contractName: string,
         methodName: string,
