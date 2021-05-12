@@ -109,7 +109,7 @@ describe('Xuper SDK Contract：', () => {
         }
 
         // const contractName = `counter${~~(Math.random() * 10 ** 3 - 10 ** 3) + 10 ** 3}`;
-        const contractName = `counter123`;
+        const contractName = 'counter123';
         console.log("合约名字：",contractName)
         console.log("合约账户：",contractAccount)
 
@@ -164,7 +164,7 @@ describe('Xuper SDK Contract：', () => {
         }
 
         // const contractName = `counter${~~(Math.random() * 10 ** 3 - 10 ** 3) + 10 ** 3}`;
-        const contractName = `counter123`;
+        const contractName = 'counter123';
         console.log("合约名字：",contractName)
         console.log("合约账户：",contractAccount)
 
@@ -216,7 +216,7 @@ describe('Xuper SDK Contract：', () => {
         // }
 
         // const contractName = `counter${~~(Math.random() * 10 ** 3 - 10 ** 3) + 10 ** 3}`;
-        const contractName = `counter123`;
+        const contractName = 'counter123';
         console.log("合约名字：",contractName)
         console.log("合约账户：",contractAccount)
 

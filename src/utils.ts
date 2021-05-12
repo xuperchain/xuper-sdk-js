@@ -190,7 +190,7 @@ export const grpcClient = (node: string, PROTO_PATH = `${__dirname}/proto/xuper.
     return new xchainProto.Xchain(node, grpc.credentials.createInsecure(), {
         "grpc.max_receive_message_length": 64<<20 - 1, // 63M
         "grpc.max_send_message_length": 64<<20 - 1
-      });
+    });
 };
 
 export const grpcEndorserClient = (node: string, PROTO_PATH = `${__dirname}/proto/xendorser.proto`): any => {
@@ -212,7 +212,7 @@ export const grpcEndorserClient = (node: string, PROTO_PATH = `${__dirname}/prot
     return new xendorserProto.xendorser(node, grpc.credentials.createInsecure(), {
         "grpc.max_receive_message_length": 64<<20 - 1, // 63M
         "grpc.max_send_message_length": 64<<20 - 1
-      });
+    });
 };
 
 export function deepEqual(x: any, y: any): boolean {

@@ -118,6 +118,8 @@ XuperSDK.getInstance({
 调用 Wasm 合约|invokeContarct|[LINK](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#invokeContarct)|√
 部署 Solidity 合约|deploySolidityContract|[LINK](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#deploySolidityContract)|√
 调用 Solidity 合约|invokeSolidityContarct|[LINK](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#invokeSolidityContarct)|√
+部署 Native 合约|deployNativeContract|[LINK](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#deployNativeContract)|√
+调用 Native 合约|invokeContarct|[LINK](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#invokeContarct)|√
 查询访问控制列表|queryACL|[LINK](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#queryACL)|√
 查询合约状态|queryContractStatData|[LINK](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#queryContractStatData)|√
 
