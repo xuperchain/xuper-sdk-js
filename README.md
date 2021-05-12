@@ -120,6 +120,8 @@ Deploy Wasm contract|deployWasmContract|[LINK](https://xuperchain.github.io/xupe
 Invoke Wasm contarct|invokeContarct|[LINK](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#invokeContarct)|√
 Deploy Solidity contract|deploySolidityContract|[LINK](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#deploySolidityContract)|√
 Invoke Solidity contarct|invokeSolidityContarct|[LINK](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#invokeSolidityContarct)|√
+Deploy Native contract|deployNativeContract|[LINK](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#deployNativeContract)|√
+Invoke Native contarct|invokeContarct|[LINK](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#invokeContarct)|√
 Query ACL|queryACL|[LINK](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#queryACL)|√
 Query stat data about contract|queryContractStatData|[LINK](https://xuperchain.github.io/xuper-sdk-js/classes/xupersdk.html#queryContractStatData)|√
 

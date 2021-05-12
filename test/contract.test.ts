@@ -83,6 +83,158 @@ describe('Xuper SDK Contract：', () => {
         expect(result).toHaveProperty('contracts');
     });
 
+    test('deploy native contract', async () => {
+        console.log("node:",node)
+        const xsdk = new XuperSDK({
+            node,
+            chain
+        });
+
+        xsdk.retrieve(
+            mnemonic,
+            Language.SimplifiedChinese,
+            Cryptography.EccFIPS,
+            true
+        );
+
+        const codeBuf: string[] = [];
+
+        if (isBrowser) {
+            // @ts-ignore
+            window.file.forEach(n => codeBuf.push(String.fromCharCode(n)));
+        } else {
+            const fs = require('fs');
+            const native = Uint8Array.from(fs.readFileSync(`${__dirname}/native/counter-native`));
+            native.forEach(n => codeBuf.push(String.fromCharCode(n)));
+        }
+
+        // const contractName = `counter${~~(Math.random() * 10 ** 3 - 10 ** 3) + 10 ** 3}`;
+        const contractName = 'counter123';
+        console.log("合约名字：",contractName)
+        console.log("合约账户：",contractAccount)
+
+        try {
+            console.log("预执行")
+            const {transaction, preExecutionTransaction} = await xsdk.deployNativeContract(
+                contractAccount,
+                contractName,
+                codeBuf.join(''),
+                'go', {
+                    creator: address
+                }
+            );
+            console.log("预执行结束")
+
+            console.log("preExecutionTransaction",preExecutionTransaction)
+    
+            // expect(transaction).toBeTruthy();
+            // expect(preExecutionTransaction).toBeTruthy();
+            console.log("POST Tx")
+            const result = await xsdk.postTransaction(transaction);
+            console.log(result)
+        }
+        catch (err) {
+            console.log(err)
+        }
+
+    });
+
+    test('upgrade native contract', async () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain
+        });
+
+        xsdk.retrieve(
+            mnemonic,
+            Language.SimplifiedChinese,
+            Cryptography.EccFIPS,
+            true
+        );
+
+        const codeBuf: string[] = [];
+
+        if (isBrowser) {
+            // @ts-ignore
+            window.file.forEach(n => codeBuf.push(String.fromCharCode(n)));
+        } else {
+            const fs = require('fs');
+            const native = Uint8Array.from(fs.readFileSync(`${__dirname}/native/counter-native-v2`));
+            native.forEach(n => codeBuf.push(String.fromCharCode(n)));
+        }
+
+        // const contractName = `counter${~~(Math.random() * 10 ** 3 - 10 ** 3) + 10 ** 3}`;
+        const contractName = 'counter123';
+        console.log("合约名字：",contractName)
+        console.log("合约账户：",contractAccount)
+
+        try {
+            const {transaction, preExecutionTransaction} = await xsdk.deployNativeContract(
+                contractAccount,
+                contractName,
+                codeBuf.join(''),
+                'go', {
+                    creator: address
+                },
+                true
+            );
+
+            console.log("preExecutionTransaction",preExecutionTransaction)
+    
+            // expect(transaction).toBeTruthy();
+            // expect(preExecutionTransaction).toBeTruthy();
+            const result = await xsdk.postTransaction(transaction);
+            console.log(result)
+        }
+        catch (err) {
+            console.log(err)
+        }
+    });
+
+    test('invoke native contract', async () => {
+        const xsdk = new XuperSDK({
+            node,
+            chain
+        });
+
+        xsdk.retrieve(
+            mnemonic,
+            Language.SimplifiedChinese,
+            Cryptography.EccFIPS,
+            true
+        );
+
+        // const codeBuf: string[] = [];
+
+        // if (isBrowser) {
+        //     // @ts-ignore
+        //     window.file.forEach(n => codeBuf.push(String.fromCharCode(n)));
+        // } else {
+        //     const fs = require('fs');
+        //     const native = Uint8Array.from(fs.readFileSync(`${__dirname}/native/counter-native-v2`));
+        //     native.forEach(n => codeBuf.push(String.fromCharCode(n)));
+        // }
+
+        // const contractName = `counter${~~(Math.random() * 10 ** 3 - 10 ** 3) + 10 ** 3}`;
+        const contractName = 'counter123';
+        console.log("合约名字：",contractName)
+        console.log("合约账户：",contractAccount)
+
+        try {
+            const {transaction,preExecutionTransaction} = await xsdk.invokeContarct(contractName, 'increase', 'native', {key: 'a'});
+            console.log(preExecutionTransaction)
+    
+            expect(transaction).toBeTruthy();
+            expect(preExecutionTransaction).toBeTruthy();
+    
+            const result = await xsdk.postTransaction(transaction);
+            console.log(result)
+        }
+        catch (err) {
+            console.log(err)
+        }
+    });
+
     test('deploy new wasm contract should return transaction info and result of post', async () => {
         const xsdk = new XuperSDK({
             node,
@@ -285,4 +437,6 @@ describe('Xuper SDK Contract：', () => {
     });
 
     // Todo: Upgrade
+
+
 });
