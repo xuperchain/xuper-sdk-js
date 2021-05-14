@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/xuperchain/xuper-sdk-js/compare/v2.0.0...v2.1.0) (2021-05-14)
+
 ## [2.0.0](https://github.com/xuperchain/xuper-sdk-js/compare/v2.0.0-beta.11...v2.0.0) (2021-04-02)
 
 
