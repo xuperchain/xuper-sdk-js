@@ -7,7 +7,7 @@
 
 import {Cryptography, Language, Strength} from './constants';
 
-import {AccountModel, TransactionModel} from './types';
+import {AccountModel, TransactionModel, PublicKey} from './types';
 
 export default interface XuperSDKInterface extends AccountInterface, TransactionInterface, ContractInterface {
     checkStatus(): Promise<any>;
@@ -25,6 +25,8 @@ export interface AccountInterface {
     import(password: string, privateKeyStr: string, cache?: boolean): AccountModel;
 
     export(password: string): string;
+
+    publicKey(publicKey: PublicKey): string;
 
     checkAddress(address?: string): boolean;
 
