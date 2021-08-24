@@ -13,6 +13,7 @@ const
     node = process.env.HOST!,
     chain = process.env.CHAIN!,
     mnemonic = process.env.TEST_MNEMONIC!,
+    publicKeyString = process.env.PUBLIC_KEY_STRING!,
     address = process.env.TEST_ADDRESS!;
 
 describe('Xuper SDK account', () => {
@@ -70,6 +71,19 @@ describe('Xuper SDK account', () => {
         expect(retrievedAccount.privateKey.X).toEqual(account.privateKey.X);
         expect(retrievedAccount.privateKey.Y).toEqual(account.privateKey.Y);
     });
+
+    test('get xuper account public key string', () => {
+        const xsdk = new XuperSDK({chain, node});
+
+        xsdk.retrieve(
+            mnemonic,
+            Language.SimplifiedChinese,
+            Cryptography.EccFIPS,
+            true
+        );
+
+        expect(xsdk.publicKey()).toEqual(publicKeyString);
+    })
 
     test('check mnemonic', () => {
         const xsdk = new XuperSDK({
