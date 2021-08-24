@@ -1,6 +1,6 @@
 {
     "name": "@xuperchain/xuper-sdk",
-    "version": "2.1.0",
+    "version": "2.2.0",
     "description": "A simple JS(TS) SDK for XuperOS",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
@@ -14,7 +14,8 @@
         "start": "tsdx watch",
         "build": "tsdx build",
         "test": "jest --passWithNoTests --verbose",
-        "prepare": "tsdx build"
+        "prepare": "tsdx build",
+        "prerelease": "tsdx build"
     },
     "files": [
         "dist",

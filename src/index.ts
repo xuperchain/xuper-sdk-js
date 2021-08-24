@@ -131,6 +131,16 @@ export default class XuperSDK implements XuperSDKInterface {
         }
     }
 
+    publicKey(): string {
+        const acc = this.account;
+        if (acc) {
+            return this.accountInstance.publicKey(acc.publicKey);
+        }
+        else {
+            throw Errors.ACCOUNT_NOT_EXIST;
+        }
+    }
+
     checkAddress(address?: string): boolean {
         const addr = address || this.account?.address;
 

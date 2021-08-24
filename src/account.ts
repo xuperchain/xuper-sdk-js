@@ -172,6 +172,10 @@ export default class Account {
         );
     }
 
+    publicKey(publicKey: PublicKey): string {
+        return publicOrPrivateKeyToString(publicKey);
+    }
+
     private decryptPrivateKey(password: string, keyStr: string): string {
         const bytes = atob(keyStr).split('').map(s => s.charCodeAt(0));
         const blockSize = 16;
