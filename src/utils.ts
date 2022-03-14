@@ -4,7 +4,8 @@
  */
 
 import {PrivateKey, PublicKey} from './types';
-
+import {sha256} from 'js-sha256';
+import base58 from 'bs58';
 export const isBrowser =
     typeof window !== 'undefined' &&
     typeof window.document !== 'undefined';
@@ -441,4 +442,66 @@ function xchainAKToEVMAddress(xchainAddr:string) {
 	}
     rawAddr = rawAddr.slice(1, 21)
     return Buffer.from(rawAddr).toString("hex").toUpperCase()
+}
+
+/**
+ *  Evm addre convert to xchain addr
+ * @param addr 
+ * @returns xchainAddr
+ */
+export function EvmToXchainAddr(addr:string) {
+	// return addr, addrType, nil
+    var result = ''
+    try {
+        var bs = Buffer.from(addr,"hex").toString("ascii")
+        if (bs.length != Word160Length) {
+            throw new Error("slice passed as address shou have 20 byte length");
+        }
+        var evmAddrStrWithPrefix = bs
+        // 合约账号
+        if (evmAddrStrWithPrefix.slice(0,4) == contractAccountPrefixs) {
+            result = evmAddressToContractAccount(bs)
+        } else if  (evmAddrStrWithPrefix.slice(0,4) == contractNamePrefixs) {
+            result = evmAddressToContractName(bs)
+        }else {
+            var buffer = Buffer.from(addr,"hex")
+            result = evmAddressToXchain(buffer)
+        }
+        return result
+    }catch (err) {
+        console.log(err)
+    }
+    return result
+}
+function evmAddressToContractAccount (addr:string) {
+    return accountPrefix + addr.slice(4) + "@xuper"
+}
+function evmAddressToContractName(addr:string) {
+    var index = addr.lastIndexOf(evmAddressFiller)
+    return addr.slice(index+1)
+}
+
+function evmAddressToXchain(addr:any){
+    var addTyepe = []
+    var addrArray = new Uint8Array(addr)
+    addTyepe.push(1)
+    for (var i = 0; i < addrArray.length; i++ ){
+        addTyepe.push(addrArray[i])
+    }
+    var checkCode = DoubleSha256(addTyepe)
+    var simpleCheckCode = checkCode.slice(0,4)
+    for (var i = 0; i < simpleCheckCode.length; i++ ){
+        addTyepe.push(simpleCheckCode[i])
+    }
+    return base58.encode(addTyepe)
+}
+
+// DoubleSha256 执行2次SHA256，这是为了防止SHA256算法被攻破。
+function DoubleSha256(data:Number[])  {
+	return UsingSha256(UsingSha256(data))
+}
+
+// UsingSha256 get the hash result of data using SHA256
+function UsingSha256(data:any) {
+    return sha256.array(data)
 }
