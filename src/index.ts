@@ -332,7 +332,8 @@ export default class XuperSDK implements XuperSDKInterface {
         lang: string,
         initArgs: any,
         upgrade = false,
-        account?: AccountModel
+        account?: AccountModel,
+        desc?: string,
     ): Promise<any> {
         const {node, chain} = this.options;
 
@@ -404,7 +405,8 @@ export default class XuperSDK implements XuperSDKInterface {
         const tx = await this.transactionInstance.makeTransaction(account, {
             amount: '0',
             fee: gasUsed.toString(),
-            to: ''
+            to: '',
+            desc: desc
         }, authRequires, preExecWithUtxosObj);
 
         return {
@@ -421,7 +423,8 @@ export default class XuperSDK implements XuperSDKInterface {
         lang: string,
         initArgs: any,
         upgrade = false,
-        account?: AccountModel
+        account?: AccountModel,
+        desc?: string
     ): Promise<any> {
         const {node, chain} = this.options;
 
@@ -494,7 +497,8 @@ export default class XuperSDK implements XuperSDKInterface {
         const tx = await this.transactionInstance.makeTransaction(account, {
             amount: '0',
             fee: gasUsed.toString(),
-            to: ''
+            to: '',
+            desc: desc
         }, authRequires, preExecWithUtxosObj);
 
         return {
@@ -510,7 +514,8 @@ export default class XuperSDK implements XuperSDKInterface {
         lang: string,
         initArgs: any,
         upgrade = false,
-        account?: AccountModel
+        account?: AccountModel,
+        desc?: string
     ): Promise<any> {
         const {node, chain} = this.options;
 
@@ -582,7 +587,8 @@ export default class XuperSDK implements XuperSDKInterface {
         const tx = await this.transactionInstance.makeTransaction(account, {
             amount: '0',
             fee: gasUsed.toString(),
-            to: ''
+            to: '',
+            desc: desc,
         }, authRequires, preExecWithUtxosObj);
 
         return {
