@@ -84,8 +84,10 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="contract.html#contarctaccounts" class="tsd-kind-icon">contarct<wbr>Accounts</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="contract.html#createcontractaccount" class="tsd-kind-icon">create<wbr>Contract<wbr>Account</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="contract.html#deploycontractrequests" class="tsd-kind-icon">deploy<wbr>Contract<wbr>Requests</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="contract.html#deploynativecontractrequests" class="tsd-kind-icon">deploy<wbr>Native<wbr>Contract<wbr>Requests</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="contract.html#deploysoliditycontractrequests" class="tsd-kind-icon">deploy<wbr>Solidity<wbr>Contract<wbr>Requests</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="contract.html#generatecontractrequests" class="tsd-kind-icon">generate<wbr>Contract<wbr>Requests</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="contract.html#generatenativerequests" class="tsd-kind-icon">generate<wbr>Native<wbr>Requests</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="contract.html#generatesoliditycontractrequests" class="tsd-kind-icon">generate<wbr>Solidity<wbr>Contract<wbr>Requests</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="contract.html#getcontracts" class="tsd-kind-icon">get<wbr>Contracts</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="contract.html#invokecontract" class="tsd-kind-icon">invoke<wbr>Contract</a></li>
@@ -93,6 +95,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="contract.html#queryacl" class="tsd-kind-icon">queryACL</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="contract.html#querycontractstatdata" class="tsd-kind-icon">query<wbr>Contract<wbr>Stat<wbr>Data</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="contract.html#upgradecontractrequests" class="tsd-kind-icon">upgrade<wbr>Contract<wbr>Requests</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="contract.html#upgradenativecontractrequests" class="tsd-kind-icon">upgrade<wbr>Native<wbr>Contract<wbr>Requests</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="contract.html#upgradesoliditycontractrequests" class="tsd-kind-icon">upgrade<wbr>Solidity<wbr>Contract<wbr>Requests</a></li>
 							</ul>
 						</section>
@@ -111,7 +114,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/contract.ts#L66">src/contract.ts:66</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/d9e6609/src/contract.ts#L65">src/contract.ts:65</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -140,7 +143,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/contract.ts#L10">src/contract.ts:10</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/d9e6609/src/contract.ts#L9">src/contract.ts:9</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -166,7 +169,42 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/contract.ts#L95">src/contract.ts:95</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/d9e6609/src/contract.ts#L94">src/contract.ts:94</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>contractAccount: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>contractName: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>code: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>lang: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>initArgs: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="deploynativecontractrequests" class="tsd-anchor"></a>
+					<h3>deploy<wbr>Native<wbr>Contract<wbr>Requests</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">deploy<wbr>Native<wbr>Contract<wbr>Requests<span class="tsd-signature-symbol">(</span>contractAccount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, contractName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, code<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, lang<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, initArgs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/d9e6609/src/contract.ts#L180">src/contract.ts:180</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -201,7 +239,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/contract.ts#L149">src/contract.ts:149</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/d9e6609/src/contract.ts#L148">src/contract.ts:148</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -239,7 +277,45 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/contract.ts#L181">src/contract.ts:181</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/d9e6609/src/contract.ts#L200">src/contract.ts:200</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>methodName: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>contractAccount: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>contractName: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>code: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>lang: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>initArgs: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="generatenativerequests" class="tsd-anchor"></a>
+					<h3>generate<wbr>Native<wbr>Requests</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">generate<wbr>Native<wbr>Requests<span class="tsd-signature-symbol">(</span>methodName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, contractAccount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, contractName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, code<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, lang<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, initArgs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/d9e6609/src/contract.ts#L310">src/contract.ts:310</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -277,7 +353,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/contract.ts#L231">src/contract.ts:231</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/d9e6609/src/contract.ts#L251">src/contract.ts:251</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -318,7 +394,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/contract.ts#L74">src/contract.ts:74</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/d9e6609/src/contract.ts#L73">src/contract.ts:73</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -350,7 +426,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/contract.ts#L289">src/contract.ts:289</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/d9e6609/src/contract.ts#L364">src/contract.ts:364</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -385,7 +461,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/contract.ts#L321">src/contract.ts:321</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/d9e6609/src/contract.ts#L396">src/contract.ts:396</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -420,7 +496,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/contract.ts#L40">src/contract.ts:40</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/d9e6609/src/contract.ts#L39">src/contract.ts:39</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -452,7 +528,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/contract.ts#L58">src/contract.ts:58</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/d9e6609/src/contract.ts#L57">src/contract.ts:57</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -478,7 +554,42 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/contract.ts#L160">src/contract.ts:160</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/d9e6609/src/contract.ts#L159">src/contract.ts:159</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>contractAccount: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>contractName: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>code: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>lang: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>initArgs: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="upgradenativecontractrequests" class="tsd-anchor"></a>
+					<h3>upgrade<wbr>Native<wbr>Contract<wbr>Requests</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">upgrade<wbr>Native<wbr>Contract<wbr>Requests<span class="tsd-signature-symbol">(</span>contractAccount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, contractName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, code<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, lang<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, initArgs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/d9e6609/src/contract.ts#L190">src/contract.ts:190</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -513,7 +624,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/c949b5f/src/contract.ts#L170">src/contract.ts:170</a></li>
+									<li>Defined in <a href="https://github.com/xuperchain/xuper-sdk-js/blob/d9e6609/src/contract.ts#L169">src/contract.ts:169</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -568,10 +679,16 @@
 								<a href="contract.html#deploycontractrequests" class="tsd-kind-icon">deploy<wbr>Contract<wbr>Requests</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="contract.html#deploynativecontractrequests" class="tsd-kind-icon">deploy<wbr>Native<wbr>Contract<wbr>Requests</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="contract.html#deploysoliditycontractrequests" class="tsd-kind-icon">deploy<wbr>Solidity<wbr>Contract<wbr>Requests</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="contract.html#generatecontractrequests" class="tsd-kind-icon">generate<wbr>Contract<wbr>Requests</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="contract.html#generatenativerequests" class="tsd-kind-icon">generate<wbr>Native<wbr>Requests</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="contract.html#generatesoliditycontractrequests" class="tsd-kind-icon">generate<wbr>Solidity<wbr>Contract<wbr>Requests</a>
@@ -593,6 +710,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="contract.html#upgradecontractrequests" class="tsd-kind-icon">upgrade<wbr>Contract<wbr>Requests</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="contract.html#upgradenativecontractrequests" class="tsd-kind-icon">upgrade<wbr>Native<wbr>Contract<wbr>Requests</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="contract.html#upgradesoliditycontractrequests" class="tsd-kind-icon">upgrade<wbr>Solidity<wbr>Contract<wbr>Requests</a>
