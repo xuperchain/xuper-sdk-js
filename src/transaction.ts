@@ -208,11 +208,6 @@ export default class Transaction {
             newtx.contractRequests = newtx.contractRequests.map((req: any) => {
                 if (req.args) {
                     req.args = JSON.parse(stringify(req.args));
-                    Object.keys(req.args).map((key: string) => {
-                        if (req.args[key] === "") {
-                            req.args[key] = null
-                        }
-                    });
                 }
                 return req;
             });
