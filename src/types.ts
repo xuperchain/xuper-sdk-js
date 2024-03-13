@@ -5,13 +5,13 @@
 
 /* ---------- Basic ---------- */
 
-import BN from 'bn.js';
+import BN from "bn.js";
 
 export type ErrorOptions = {
     name?: string;
     isFront?: boolean;
     stackIgnore?: [number, number];
-}
+};
 
 export type Plugin = {
     name: string;
@@ -19,11 +19,11 @@ export type Plugin = {
     hookFuncs: string[];
     args: any;
     init: Function;
-}
+};
 
 type PluginFunc = {
     [prop: string]: Function;
-}
+};
 
 export type Options = {
     node: string;
@@ -34,7 +34,7 @@ export type Options = {
             disableGRPC?: boolean;
         };
     };
-}
+};
 
 /* ---------- Account ---------- */
 
@@ -42,18 +42,18 @@ export type PublicKey = {
     X: string;
     Y: string;
     Curvname: string;
-}
+};
 
 export type PrivateKey = {
     D: string;
-} & PublicKey
+} & PublicKey;
 
 export type AccountModel = {
     publicKey: PublicKey;
     privateKey: PrivateKey;
     mnemonic?: string;
     address: string;
-}
+};
 
 /* ---------- Transaction ---------- */
 
@@ -62,7 +62,7 @@ export type TransactionInfomationModel = {
     amount: string | number | BN;
     fee?: string | number | BN;
     desc?: string;
-}
+};
 
 export type ContractRequesttModel = {
     module_name: string;
@@ -70,12 +70,13 @@ export type ContractRequesttModel = {
     method_name: string;
     args: any;
     amount?: string;
-}
+    desc?: string;
+};
 
 export type AuthModel = {
     fee: string | number | BN;
     sign: Function;
-}
+};
 
 /**
  * @hidden
@@ -87,7 +88,7 @@ export type TXInput = {
     fromAddr: string;
     amount: string;
     frozenHeight?: number;
-}
+};
 
 /**
  * @hidden
@@ -96,7 +97,7 @@ export type TXInput = {
 export type TXOutput = {
     amount: string;
     toAddr: string;
-}
+};
 
 /**
  * @hidden
@@ -107,12 +108,12 @@ export type UTXO = {
     toAddr: string;
     refOffset: number;
     refTxid: string;
-}
+};
 
 export type SignInfoModel = {
     PublicKey: string;
     Sign: string;
-}
+};
 
 export type TransactionModel = {
     /**
@@ -188,11 +189,11 @@ export type TransactionModel = {
      * Contract requests
      */
     contractRequests?: any[];
-}
+};
 
 /* ---------- Contract ---------- */
 
 export type ContractInfo = {
     contarctName: string;
     contractMethod: string;
-}
+};

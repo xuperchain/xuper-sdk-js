@@ -2,14 +2,16 @@
  * @file (contract)
  */
 
-import {ContractRequesttModel, ContractInfo} from './types';
-import * as Requests from './requests';
+import { ContractRequesttModel, ContractInfo } from "./types";
+import * as Requests from "./requests";
 
 export default class Contract {
-    createContractAccount(contractAccountName: number, address: string): ContractRequesttModel[] {
-        if (contractAccountName < 10 ** 15
-            || contractAccountName >= 10 ** 16) {
-            throw 'Conrtact account must be numbers of length 16';
+    createContractAccount(
+        contractAccountName: number,
+        address: string
+    ): ContractRequesttModel[] {
+        if (contractAccountName < 10 ** 15 || contractAccountName >= 10 ** 16) {
+            throw "Conrtact account must be numbers of length 16";
         }
 
         const defaultACL = {
@@ -27,20 +29,27 @@ export default class Contract {
             acl: btoa(JSON.stringify(defaultACL))
         };
 
-        const invokeRequests: ContractRequesttModel[] = [{
-            module_name: 'xkernel',
-            method_name: 'NewAccount',
-            args
-        }];
+        const invokeRequests: ContractRequesttModel[] = [
+            {
+                module_name: "xkernel",
+                method_name: "NewAccount",
+                args
+            }
+        ];
 
         return invokeRequests;
     }
 
-    async queryACL(node: string, chain: string, accountName: string, contarctInfo?: ContractInfo) {
+    async queryACL(
+        node: string,
+        chain: string,
+        accountName: string,
+        contarctInfo?: ContractInfo
+    ) {
         let body = {
             bcname: chain,
             accountName
-        }
+        };
 
         if (contarctInfo) {
             body = {
@@ -48,7 +57,7 @@ export default class Contract {
                 // @ts-ignore
                 contractName: contarctInfo.contarctName,
                 methodName: contarctInfo.contractMethod
-            }
+            };
         }
 
         return Requests.queryACL(node, body);
@@ -57,7 +66,7 @@ export default class Contract {
     async queryContractStatData(node: string, chain: string) {
         const body = {
             bcname: chain
-        }
+        };
 
         return Requests.queryContractStatData(node, body);
     }
@@ -70,15 +79,19 @@ export default class Contract {
         return Requests.accountList(node, body);
     }
 
-    getContracts(node: string, chain: string, isAccount: boolean, target?: string) {
+    getContracts(
+        node: string,
+        chain: string,
+        isAccount: boolean,
+        target?: string
+    ) {
         if (isAccount) {
             const body = {
                 bcname: chain,
                 account: target
             };
             return Requests.accountContractList(node, body);
-        }
-        else {
+        } else {
             const body = {
                 bcname: chain,
                 address: target
@@ -142,7 +155,14 @@ export default class Contract {
 
          */
 
-        return this.generateContractRequests('Deploy', contractAccount, contractName, code, lang, initArgs);
+        return this.generateContractRequests(
+            "Deploy",
+            contractAccount,
+            contractName,
+            code,
+            lang,
+            initArgs
+        );
     }
 
     deploySolidityContractRequests(
@@ -153,7 +173,15 @@ export default class Contract {
         lang: string,
         initArgs: any
     ) {
-        return this.generateSolidityContractRequests('Deploy', contractAccount, contractName, bin, abi, lang, initArgs);
+        return this.generateSolidityContractRequests(
+            "Deploy",
+            contractAccount,
+            contractName,
+            bin,
+            abi,
+            lang,
+            initArgs
+        );
     }
 
     upgradeContractRequests(
@@ -163,7 +191,14 @@ export default class Contract {
         lang: string,
         initArgs: any
     ) {
-        return this.generateContractRequests('Upgrade', contractAccount, contractName, code, lang, initArgs);
+        return this.generateContractRequests(
+            "Upgrade",
+            contractAccount,
+            contractName,
+            code,
+            lang,
+            initArgs
+        );
     }
 
     upgradeSolidityContractRequests(
@@ -174,7 +209,15 @@ export default class Contract {
         lang: string,
         initArgs: any
     ) {
-        return this.generateSolidityContractRequests('Upgrade', contractAccount, contractName, bin, abi, lang, initArgs);
+        return this.generateSolidityContractRequests(
+            "Upgrade",
+            contractAccount,
+            contractName,
+            bin,
+            abi,
+            lang,
+            initArgs
+        );
     }
 
     deployNativeContractRequests(
@@ -184,7 +227,14 @@ export default class Contract {
         lang: string,
         initArgs: any
     ) {
-        return this.generateNativeRequests('Deploy', contractAccount, contractName, code, lang, initArgs);
+        return this.generateNativeRequests(
+            "Deploy",
+            contractAccount,
+            contractName,
+            code,
+            lang,
+            initArgs
+        );
     }
 
     upgradeNativeContractRequests(
@@ -194,7 +244,14 @@ export default class Contract {
         lang: string,
         initArgs: any
     ) {
-        return this.generateNativeRequests('Upgrade', contractAccount, contractName, code, lang, initArgs);
+        return this.generateNativeRequests(
+            "Upgrade",
+            contractAccount,
+            contractName,
+            code,
+            lang,
+            initArgs
+        );
     }
 
     generateContractRequests(
@@ -215,17 +272,21 @@ export default class Contract {
             const bytes = te.encode(initArgs[key]);
             const valueBuf: Array<any> = [];
             bytes.forEach(b => valueBuf.push(String.fromCharCode(b)));
-            newInitArgs[key] = btoa(valueBuf.join(''));
+            newInitArgs[key] = btoa(valueBuf.join(""));
         });
 
-        const langArray = lang.split('')
-        const desc = new Uint8Array([10, langArray.length].concat(lang.split('').map(w => w.charCodeAt(0))));
+        const langArray = lang.split("");
+        const desc = new Uint8Array(
+            [10, langArray.length].concat(
+                lang.split("").map(w => w.charCodeAt(0))
+            )
+        );
         const descBuf = Object.values(desc).map(n => String.fromCharCode(n));
 
         const args = {
             account_name: contractAccount,
             contract_code: code,
-            contract_desc: descBuf.join(''),
+            contract_desc: descBuf.join(""),
             contract_name: contractName,
             init_args: JSON.stringify(newInitArgs)
         };
@@ -239,11 +300,13 @@ export default class Contract {
             contractArgs[key] = btoa(contractArgs[key]);
         });
 
-        const invokeRequests: ContractRequesttModel[] = [{
-            module_name: 'xkernel',
-            method_name: methodName,
-            args: contractArgs
-        }];
+        const invokeRequests: ContractRequesttModel[] = [
+            {
+                module_name: "xkernel",
+                method_name: methodName,
+                args: contractArgs
+            }
+        ];
 
         return invokeRequests;
     }
@@ -260,7 +323,7 @@ export default class Contract {
         const newInitArgs = {
             // ...initArgs,
             input: JSON.stringify(initArgs),
-            jsonEncoded: 'true'
+            jsonEncoded: "true"
         };
 
         const te = new TextEncoder();
@@ -271,11 +334,15 @@ export default class Contract {
             const valueBuf: Array<any> = [];
             bytes.forEach(b => valueBuf.push(String.fromCharCode(b)));
             // @ts-ignore
-            newInitArgs[key] = btoa(valueBuf.join(''));
+            newInitArgs[key] = btoa(valueBuf.join(""));
         });
 
-        const langArray = lang.split('')
-        const desc = new Uint8Array([42, langArray.length].concat(lang.split('').map(w => w.charCodeAt(0))));
+        const langArray = lang.split("");
+        const desc = new Uint8Array(
+            [42, langArray.length].concat(
+                lang.split("").map(w => w.charCodeAt(0))
+            )
+        );
 
         // const desc = lang.split('').map(w => w.charCodeAt(0));
         const descBuf = Object.values(desc).map(n => String.fromCharCode(n));
@@ -284,7 +351,7 @@ export default class Contract {
             account_name: contractAccount,
             contract_abi: abi,
             contract_code: bin,
-            contract_desc: descBuf.join(''),
+            contract_desc: descBuf.join(""),
             contract_name: contractName,
             init_args: JSON.stringify(newInitArgs)
         };
@@ -298,11 +365,13 @@ export default class Contract {
             contractArgs[key] = btoa(contractArgs[key]);
         });
 
-        const invokeRequests: ContractRequesttModel[] = [{
-            module_name: 'xkernel',
-            method_name: methodName,
-            args: contractArgs
-        }];
+        const invokeRequests: ContractRequesttModel[] = [
+            {
+                module_name: "xkernel",
+                method_name: methodName,
+                args: contractArgs
+            }
+        ];
 
         return invokeRequests;
     }
@@ -325,20 +394,35 @@ export default class Contract {
             const bytes = te.encode(initArgs[key]);
             const valueBuf: Array<any> = [];
             bytes.forEach(b => valueBuf.push(String.fromCharCode(b)));
-            newInitArgs[key] = btoa(valueBuf.join(''));
+            newInitArgs[key] = btoa(valueBuf.join(""));
         });
 
-        const langArray = lang.split('')
-        const desc = new Uint8Array([10, langArray.length].concat(lang.split('').map(w => w.charCodeAt(0))));
+        const langArray = lang.split("");
+        const desc = new Uint8Array(
+            [10, langArray.length].concat(
+                lang.split("").map(w => w.charCodeAt(0))
+            )
+        );
         const descBuf = Object.values(desc).map(n => String.fromCharCode(n));
 
-        const nativeField = new Uint8Array([42, 6, 110, 97, 116, 105, 118, 101]);
-        const nativeFieldBuf = Object.values(nativeField).map(n => String.fromCharCode(n));
+        const nativeField = new Uint8Array([
+            42,
+            6,
+            110,
+            97,
+            116,
+            105,
+            118,
+            101
+        ]);
+        const nativeFieldBuf = Object.values(nativeField).map(n =>
+            String.fromCharCode(n)
+        );
 
         const args = {
             account_name: contractAccount,
             contract_code: code,
-            contract_desc: descBuf.join('')+nativeFieldBuf.join(''),
+            contract_desc: descBuf.join("") + nativeFieldBuf.join(""),
             contract_name: contractName,
             init_args: JSON.stringify(newInitArgs)
         };
@@ -352,11 +436,13 @@ export default class Contract {
             contractArgs[key] = btoa(contractArgs[key]);
         });
 
-        const invokeRequests: ContractRequesttModel[] = [{
-            module_name: 'xkernel',
-            method_name: methodName,
-            args: contractArgs
-        }];
+        const invokeRequests: ContractRequesttModel[] = [
+            {
+                module_name: "xkernel",
+                method_name: methodName,
+                args: contractArgs
+            }
+        ];
 
         return invokeRequests;
     }
@@ -366,9 +452,9 @@ export default class Contract {
         methodName: string,
         moduleName: string,
         args: any,
-        amount: string
+        amount: string,
+        desc?: string
     ): ContractRequesttModel[] {
-
         const newArgs = {
             ...args
         };
@@ -379,16 +465,19 @@ export default class Contract {
             const bytes = te.encode(args[key]);
             const valueBuf: Array<any> = [];
             bytes.forEach(b => valueBuf.push(String.fromCharCode(b)));
-            newArgs[key] = btoa(valueBuf.join(''));
+            newArgs[key] = btoa(valueBuf.join(""));
         });
 
-        const invokeRequests: ContractRequesttModel[] = [{
-            module_name: moduleName,
-            method_name: methodName,
-            contract_name: contractName,
-            args: newArgs,
-            amount
-        }];
+        const invokeRequests: ContractRequesttModel[] = [
+            {
+                module_name: moduleName,
+                method_name: methodName,
+                contract_name: contractName,
+                args: newArgs,
+                amount,
+                desc: desc
+            }
+        ];
 
         return invokeRequests;
     }
@@ -398,12 +487,12 @@ export default class Contract {
         methodName: string,
         moduleName: string,
         args: any,
-        amount: string
+        amount: string,
+        desc?: string
     ): ContractRequesttModel[] {
-
         const newArgs = {
             input: JSON.stringify(args),
-            jsonEncoded: 'true'
+            jsonEncoded: "true"
         };
 
         const te = new TextEncoder();
@@ -414,16 +503,19 @@ export default class Contract {
             const valueBuf: Array<any> = [];
             bytes.forEach(b => valueBuf.push(String.fromCharCode(b)));
             // @ts-ignore
-            newArgs[key] = btoa(valueBuf.join(''));
+            newArgs[key] = btoa(valueBuf.join(""));
         });
 
-        const invokeRequests: ContractRequesttModel[] = [{
-            module_name: moduleName,
-            method_name: methodName,
-            contract_name: contractName,
-            args: newArgs,
-            amount
-        }];
+        const invokeRequests: ContractRequesttModel[] = [
+            {
+                module_name: moduleName,
+                method_name: methodName,
+                contract_name: contractName,
+                args: newArgs,
+                amount,
+                desc
+            }
+        ];
 
         return invokeRequests;
     }

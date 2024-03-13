@@ -2,15 +2,15 @@
  * @file Xuper SDK (JS/TS)
  */
 
-import BN from 'bn.js';
-import XuperSDKInterface from './interfaces';
-import * as Requests from './requests';
-import Errors, {XuperError} from './error';
-import {Cryptography, Language, Strength} from './constants';
-import {toHex, hexToBase64, isBrowser} from './utils';
-import Account from './account';
-import Transaction from './transaction';
-import Contract from './Contract';
+import BN from "bn.js";
+import XuperSDKInterface from "./interfaces";
+import * as Requests from "./requests";
+import Errors, { XuperError } from "./error";
+import { Cryptography, Language, Strength } from "./constants";
+import { toHex, hexToBase64, isBrowser } from "./utils";
+import Account from "./account";
+import Transaction from "./transaction";
+import Contract from "./contract";
 import {
     Options,
     AccountModel,
@@ -20,7 +20,7 @@ import {
     Plugin,
     ContractRequesttModel,
     ContractInfo
-} from './types';
+} from "./types";
 
 export default class XuperSDK implements XuperSDKInterface {
     static instance: XuperSDK;
@@ -39,7 +39,7 @@ export default class XuperSDK implements XuperSDKInterface {
     }
 
     constructor(opts: Options) {
-        this.options = {...opts};
+        this.options = { ...opts };
         this.plugins = opts.plugins || [];
         this.accountInstance = new Account();
         this.transactionInstance = new Transaction(opts.plugins);
@@ -50,7 +50,9 @@ export default class XuperSDK implements XuperSDKInterface {
         }
 
         if (this.plugins.length > 0) {
-            this.plugins.every(plugin => plugin.init && plugin.init(plugin.args, this.options));
+            this.plugins.every(
+                plugin => plugin.init && plugin.init(plugin.args, this.options)
+            );
         }
     }
 
@@ -68,12 +70,16 @@ export default class XuperSDK implements XuperSDKInterface {
     }
 
     getBlockById(blockid: string) {
-        const {node, chain} = this.options;
-        return this.transactionInstance.getBlock(node, chain, hexToBase64(blockid));
+        const { node, chain } = this.options;
+        return this.transactionInstance.getBlock(
+            node,
+            chain,
+            hexToBase64(blockid)
+        );
     }
 
     getBlockByHeight(height: string): Promise<any> {
-        const {node, chain} = this.options;
+        const { node, chain } = this.options;
         return this.transactionInstance.getBlockByHeight(node, chain, height);
     }
 
@@ -92,7 +98,11 @@ export default class XuperSDK implements XuperSDKInterface {
         cache = false
     ): AccountModel {
         if (mnemonic) {
-            const account = this.accountInstance.retrieve(mnemonic, language, cryptography);
+            const account = this.accountInstance.retrieve(
+                mnemonic,
+                language,
+                cryptography
+            );
             if (cache) {
                 this.account = account;
                 return account;
@@ -104,7 +114,11 @@ export default class XuperSDK implements XuperSDKInterface {
         }
     }
 
-    import(password: string, privateKeyStr: string, cache = false): AccountModel {
+    import(
+        password: string,
+        privateKeyStr: string,
+        cache = false
+    ): AccountModel {
         if (!password || !privateKeyStr) {
             throw Errors.PARAMETER_ERROR;
         }
@@ -116,7 +130,6 @@ export default class XuperSDK implements XuperSDKInterface {
     }
 
     export(password: string): string {
-
         const acc = this.account;
 
         if (!password) {
@@ -125,8 +138,7 @@ export default class XuperSDK implements XuperSDKInterface {
 
         if (acc) {
             return this.accountInstance.export(password, acc.privateKey);
-        }
-        else {
+        } else {
             throw Errors.ACCOUNT_NOT_EXIST;
         }
     }
@@ -135,8 +147,7 @@ export default class XuperSDK implements XuperSDKInterface {
         const acc = this.account;
         if (acc) {
             return this.accountInstance.publicKey(acc.publicKey);
-        }
-        else {
+        } else {
             throw Errors.ACCOUNT_NOT_EXIST;
         }
     }
@@ -147,65 +158,88 @@ export default class XuperSDK implements XuperSDKInterface {
         if (addr) {
             return this.accountInstance.checkAddress(addr);
         } else {
-            throw XuperError.or([Errors.ACCOUNT_NOT_EXIST, Errors.PARAMETER_ERROR]);
+            throw XuperError.or([
+                Errors.ACCOUNT_NOT_EXIST,
+                Errors.PARAMETER_ERROR
+            ]);
         }
     }
 
     checkMnemonic(mnemonic: string, language: Language): boolean {
         if (mnemonic || language) {
             return this.accountInstance.checkMnemonic(mnemonic, language);
-        }
-        else {
+        } else {
             throw Errors.PARAMETER_ERROR;
         }
     }
 
     getBalance(address?: string): Promise<any> {
-        const {node, chain} = this.options;
+        const { node, chain } = this.options;
         const addr = address || this.account?.address;
 
         if (addr) {
             return this.accountInstance.getBalance(addr, node, chain);
         } else {
-            throw XuperError.or([Errors.ACCOUNT_NOT_EXIST, Errors.PARAMETER_ERROR]);
+            throw XuperError.or([
+                Errors.ACCOUNT_NOT_EXIST,
+                Errors.PARAMETER_ERROR
+            ]);
         }
     }
 
     getBalanceDetail(address?: string): Promise<any> {
-        const {node, chain} = this.options;
+        const { node, chain } = this.options;
         const addr = address || this.account?.address;
 
         if (addr) {
             return this.accountInstance.getBalanceDetail(addr, node, chain);
         } else {
-            throw XuperError.or([Errors.ACCOUNT_NOT_EXIST, Errors.PARAMETER_ERROR]);
+            throw XuperError.or([
+                Errors.ACCOUNT_NOT_EXIST,
+                Errors.PARAMETER_ERROR
+            ]);
         }
     }
 
-    async transfer(ti: TransactionInfomationModel, account?: AccountModel): Promise<TransactionModel> {
-        const {node, chain} = this.options;
-        let authRequires: { [propName: string]: AuthModel} = {};
+    async transfer(
+        ti: TransactionInfomationModel,
+        account?: AccountModel
+    ): Promise<TransactionModel> {
+        const { node, chain } = this.options;
+        let authRequires: { [propName: string]: AuthModel } = {};
 
-        if (this.plugins.length > 0 && this.plugins.every(plugin => plugin.hookFuncs.indexOf('transfer') > -1)) {
+        if (
+            this.plugins.length > 0 &&
+            this.plugins.every(
+                plugin => plugin.hookFuncs.indexOf("transfer") > -1
+            )
+        ) {
             for (const plugin of this.plugins) {
-                authRequires = {...await plugin.func['transfer'](plugin.args['transfer'], chain)};
+                authRequires = {
+                    ...(await plugin.func["transfer"](
+                        plugin.args["transfer"],
+                        chain
+                    ))
+                };
             }
         }
 
         const acc = account || this.account;
 
         if (!acc) {
-            throw XuperError.or([Errors.ACCOUNT_NOT_EXIST, Errors.PARAMETER_ERROR]);
+            throw XuperError.or([
+                Errors.ACCOUNT_NOT_EXIST,
+                Errors.PARAMETER_ERROR
+            ]);
         }
 
-        const {amount, fee} = ti;
+        const { amount, fee } = ti;
 
         let totalNeed = new BN(0);
 
         totalNeed = totalNeed.add(new BN(amount));
 
-        if (fee)
-            totalNeed = totalNeed.add(new BN(fee));
+        if (fee) totalNeed = totalNeed.add(new BN(fee));
 
         // @ts-ignore
         Object.keys(authRequires).forEach((key: string) => {
@@ -215,39 +249,63 @@ export default class XuperSDK implements XuperSDKInterface {
 
         try {
             // @ts-ignore
-            const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(node, chain, acc.address, totalNeed, Object.keys(authRequires), null, acc)
-            return this.transactionInstance.makeTransaction(acc, ti, authRequires, preExecWithUtxos);
-        }
-        catch (e) {
+            const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(
+                node,
+                chain,
+                acc.address,
+                totalNeed,
+                Object.keys(authRequires),
+                [],
+                acc
+            );
+            return this.transactionInstance.makeTransaction(
+                acc,
+                ti,
+                authRequires,
+                preExecWithUtxos
+            );
+        } catch (e) {
             throw e;
         }
     }
 
     async postTransaction(tx: TransactionModel, account?: AccountModel) {
+        // console.log(tx.desc, "------tx---------");
         const acc = account || this.account;
-        const {node, chain} = this.options;
+        const { node, chain } = this.options;
         if (acc) {
             return this.transactionInstance.post(node, chain, tx, acc);
-        }
-        else {
-            throw 'err'
+        } else {
+            throw "err";
         }
     }
 
     async queryTransaction(txid: string): Promise<any> {
-        const {node, chain} = this.options;
+        const { node, chain } = this.options;
         return this.transactionInstance.queryTransaction(node, chain, txid);
     }
 
-    async createContractAccount(contractAccountName: number, address? : string): Promise<any> {
+    async createContractAccount(
+        contractAccountName: number,
+        address?: string,
+        desc?: string
+    ): Promise<any> {
         const addr = address || this.account?.address;
 
         if (addr) {
-            const contractRequest = this.contractInstance.createContractAccount(contractAccountName, addr);
+            const contractRequest = this.contractInstance.createContractAccount(
+                contractAccountName,
+                addr
+            );
+            if (contractRequest && contractRequest.length == 1) {
+                contractRequest[0].desc = desc;
+            }
             return this.invoke(contractRequest);
-        }
-        else {
-            throw XuperError.or([Errors.ACCOUNT_NOT_EXIST, Errors.PARAMETER_ERROR]);
+        } else {
+            throw XuperError.or([
+                Errors.ACCOUNT_NOT_EXIST,
+                Errors.PARAMETER_ERROR
+            ]);
         }
 
         // auth requires
@@ -256,28 +314,37 @@ export default class XuperSDK implements XuperSDKInterface {
         // const preExecWithUtxos = this.transactionInstance.preExecWithUTXO(
         //     totalNeed, Object.keys(authRequires), invokeRequests
         // );
-
     }
 
     async invoke(
         invokeRequests: ContractRequesttModel[],
-        amount = '0',
-        account?: AccountModel,
+        amount = "0",
+        account?: AccountModel
     ): Promise<any> {
-
-        const {node, chain} = this.options;
+        const { node, chain } = this.options;
 
         const acc = account || this.account;
 
         if (!acc) {
-            throw XuperError.or([Errors.ACCOUNT_NOT_EXIST, Errors.PARAMETER_ERROR]);
+            throw XuperError.or([
+                Errors.ACCOUNT_NOT_EXIST,
+                Errors.PARAMETER_ERROR
+            ]);
         }
 
-        let authRequires: { [propName: string]: AuthModel} = {};
+        let authRequires: { [propName: string]: AuthModel } = {};
 
-        if (this.plugins.length > 0 && this.plugins.every(item => item.hookFuncs.indexOf('transfer') > -1)) {
+        if (
+            this.plugins.length > 0 &&
+            this.plugins.every(item => item.hookFuncs.indexOf("transfer") > -1)
+        ) {
             for (const plugin of this.plugins) {
-                authRequires = {...await plugin.func['transfer'](plugin.args['transfer'], chain)};
+                authRequires = {
+                    ...(await plugin.func["transfer"](
+                        plugin.args["transfer"],
+                        chain
+                    ))
+                };
             }
         }
 
@@ -289,17 +356,34 @@ export default class XuperSDK implements XuperSDKInterface {
         });
 
         const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(
-            node, chain, acc.address,
-            totalNeed, Object.keys(authRequires), invokeRequests
+            node,
+            chain,
+            acc.address,
+            totalNeed,
+            Object.keys(authRequires),
+            invokeRequests
         );
 
         const gasUsed = preExecWithUtxos.response.gas_used || 0;
-
-        const tx = await this.transactionInstance.makeTransaction(acc, {
+        let tiObj: TransactionInfomationModel = {
             amount,
             fee: gasUsed.toString(),
-            to: amount !== '0' ? invokeRequests[invokeRequests.length - 1].contract_name! : ''
-        }, authRequires, preExecWithUtxos);
+            to:
+                amount !== "0"
+                    ? invokeRequests[invokeRequests.length - 1].contract_name!
+                    : ""
+        };
+        // console.log("----9999999999999999999999999999----");
+        if (invokeRequests[0] && invokeRequests[0].desc) {
+            tiObj.desc = invokeRequests[0].desc;
+            // console.log(tiObj.desc, "---- tiObj.desc ----");
+        }
+        const tx = await this.transactionInstance.makeTransaction(
+            acc,
+            tiObj,
+            authRequires,
+            preExecWithUtxos
+        );
 
         return {
             preExecutionTransaction: preExecWithUtxos,
@@ -308,20 +392,23 @@ export default class XuperSDK implements XuperSDKInterface {
     }
 
     getContracts(target: string): Promise<any> {
-        const {node, chain} = this.options;
+        const { node, chain } = this.options;
 
-        return this.contractInstance.getContracts(node, chain,
-            !this.accountInstance.checkAddress(target), target);
+        return this.contractInstance.getContracts(
+            node,
+            chain,
+            !this.accountInstance.checkAddress(target),
+            target
+        );
     }
 
     getContractAccounts(address?: string): Promise<any> {
-        const {node, chain} = this.options;
+        const { node, chain } = this.options;
         const addr = address || this.account?.address;
         if (addr) {
             return this.contractInstance.contarctAccounts(node, chain, addr);
-        }
-        else {
-            throw Errors.PARAMETER_EMPTY_FUNC('address');
+        } else {
+            throw Errors.PARAMETER_EMPTY_FUNC("address");
         }
     }
 
@@ -333,9 +420,9 @@ export default class XuperSDK implements XuperSDKInterface {
         initArgs: any,
         upgrade = false,
         account?: AccountModel,
-        desc?: string,
+        desc?: string
     ): Promise<any> {
-        const {node, chain} = this.options;
+        const { node, chain } = this.options;
 
         let invokeRequests: ContractRequesttModel[];
 
@@ -346,9 +433,8 @@ export default class XuperSDK implements XuperSDKInterface {
                 code,
                 lang,
                 initArgs
-            )
-        }
-        else {
+            );
+        } else {
             invokeRequests = this.contractInstance.deployContractRequests(
                 contractAccount,
                 contractName,
@@ -371,21 +457,32 @@ export default class XuperSDK implements XuperSDKInterface {
         let authRequires: { [propName: string]: AuthModel } = {
             [`${contractAccount}/${address}`]: {
                 fee: 0,
-                sign: async (_checkTx: TransactionModel, tx: TransactionModel): Promise<TransactionModel> => {
+                sign: async (
+                    _checkTx: TransactionModel,
+                    tx: TransactionModel
+                ): Promise<TransactionModel> => {
                     if (!tx.authRequireSigns) {
                         tx.authRequireSigns = [];
                     }
-                    tx.authRequireSigns = tx.authRequireSigns.concat(tx.initiatorSigns);
+                    tx.authRequireSigns = tx.authRequireSigns.concat(
+                        tx.initiatorSigns
+                    );
                     return tx;
                 }
             }
         };
 
-        if (this.plugins.length > 0 && this.plugins.every(item => item.hookFuncs.indexOf('transfer') > -1)) {
+        if (
+            this.plugins.length > 0 &&
+            this.plugins.every(item => item.hookFuncs.indexOf("transfer") > -1)
+        ) {
             for (const plugin of this.plugins) {
                 authRequires = {
                     ...authRequires,
-                    ...await plugin.func['transfer'](plugin.args['transfer'], chain)
+                    ...(await plugin.func["transfer"](
+                        plugin.args["transfer"],
+                        chain
+                    ))
                 };
             }
         }
@@ -396,18 +493,31 @@ export default class XuperSDK implements XuperSDKInterface {
             totalNeed = totalNeed.add(new BN(auth.fee || 0));
         });
 
-        const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(node, chain, address, totalNeed, Object.keys(authRequires), invokeRequests, account)
+        const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(
+            node,
+            chain,
+            address,
+            totalNeed,
+            Object.keys(authRequires),
+            invokeRequests,
+            account
+        );
 
         const preExecWithUtxosObj = preExecWithUtxos;
 
         const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
 
-        const tx = await this.transactionInstance.makeTransaction(account, {
-            amount: '0',
-            fee: gasUsed.toString(),
-            to: '',
-            desc: desc
-        }, authRequires, preExecWithUtxosObj);
+        const tx = await this.transactionInstance.makeTransaction(
+            account,
+            {
+                amount: "0",
+                fee: gasUsed.toString(),
+                to: "",
+                desc: desc
+            },
+            authRequires,
+            preExecWithUtxosObj
+        );
 
         return {
             preExecutionTransaction: preExecWithUtxosObj,
@@ -426,7 +536,7 @@ export default class XuperSDK implements XuperSDKInterface {
         account?: AccountModel,
         desc?: string
     ): Promise<any> {
-        const {node, chain} = this.options;
+        const { node, chain } = this.options;
 
         let invokeRequests: ContractRequesttModel[];
 
@@ -437,9 +547,8 @@ export default class XuperSDK implements XuperSDKInterface {
                 bin,
                 lang,
                 initArgs
-            )
-        }
-        else {
+            );
+        } else {
             invokeRequests = this.contractInstance.deploySolidityContractRequests(
                 contractAccount,
                 contractName,
@@ -463,21 +572,32 @@ export default class XuperSDK implements XuperSDKInterface {
         let authRequires: { [propName: string]: AuthModel } = {
             [`${contractAccount}/${address}`]: {
                 fee: 0,
-                sign: async (_checkTx: TransactionModel, tx: TransactionModel): Promise<TransactionModel> => {
+                sign: async (
+                    _checkTx: TransactionModel,
+                    tx: TransactionModel
+                ): Promise<TransactionModel> => {
                     if (!tx.authRequireSigns) {
                         tx.authRequireSigns = [];
                     }
-                    tx.authRequireSigns = tx.authRequireSigns.concat(tx.initiatorSigns);
+                    tx.authRequireSigns = tx.authRequireSigns.concat(
+                        tx.initiatorSigns
+                    );
                     return tx;
                 }
             }
         };
 
-        if (this.plugins.length > 0 && this.plugins.every(item => item.hookFuncs.indexOf('transfer') > -1)) {
+        if (
+            this.plugins.length > 0 &&
+            this.plugins.every(item => item.hookFuncs.indexOf("transfer") > -1)
+        ) {
             for (const plugin of this.plugins) {
                 authRequires = {
                     ...authRequires,
-                    ...await plugin.func['transfer'](plugin.args['transfer'], chain)
+                    ...(await plugin.func["transfer"](
+                        plugin.args["transfer"],
+                        chain
+                    ))
                 };
             }
         }
@@ -488,18 +608,31 @@ export default class XuperSDK implements XuperSDKInterface {
             totalNeed = totalNeed.add(new BN(auth.fee || 0));
         });
 
-        const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(node, chain, address, totalNeed, Object.keys(authRequires), invokeRequests, account)
+        const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(
+            node,
+            chain,
+            address,
+            totalNeed,
+            Object.keys(authRequires),
+            invokeRequests,
+            account
+        );
 
         const preExecWithUtxosObj = preExecWithUtxos;
 
         const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
 
-        const tx = await this.transactionInstance.makeTransaction(account, {
-            amount: '0',
-            fee: gasUsed.toString(),
-            to: '',
-            desc: desc
-        }, authRequires, preExecWithUtxosObj);
+        const tx = await this.transactionInstance.makeTransaction(
+            account,
+            {
+                amount: "0",
+                fee: gasUsed.toString(),
+                to: "",
+                desc: desc
+            },
+            authRequires,
+            preExecWithUtxosObj
+        );
 
         return {
             preExecutionTransaction: preExecWithUtxosObj,
@@ -517,7 +650,7 @@ export default class XuperSDK implements XuperSDKInterface {
         account?: AccountModel,
         desc?: string
     ): Promise<any> {
-        const {node, chain} = this.options;
+        const { node, chain } = this.options;
 
         let invokeRequests: ContractRequesttModel[];
 
@@ -528,9 +661,8 @@ export default class XuperSDK implements XuperSDKInterface {
                 code,
                 lang,
                 initArgs
-            )
-        }
-        else {
+            );
+        } else {
             invokeRequests = this.contractInstance.deployNativeContractRequests(
                 contractAccount,
                 contractName,
@@ -553,21 +685,32 @@ export default class XuperSDK implements XuperSDKInterface {
         let authRequires: { [propName: string]: AuthModel } = {
             [`${contractAccount}/${address}`]: {
                 fee: 0,
-                sign: async (_checkTx: TransactionModel, tx: TransactionModel): Promise<TransactionModel> => {
+                sign: async (
+                    _checkTx: TransactionModel,
+                    tx: TransactionModel
+                ): Promise<TransactionModel> => {
                     if (!tx.authRequireSigns) {
                         tx.authRequireSigns = [];
                     }
-                    tx.authRequireSigns = tx.authRequireSigns.concat(tx.initiatorSigns);
+                    tx.authRequireSigns = tx.authRequireSigns.concat(
+                        tx.initiatorSigns
+                    );
                     return tx;
                 }
             }
         };
 
-        if (this.plugins.length > 0 && this.plugins.every(item => item.hookFuncs.indexOf('transfer') > -1)) {
+        if (
+            this.plugins.length > 0 &&
+            this.plugins.every(item => item.hookFuncs.indexOf("transfer") > -1)
+        ) {
             for (const plugin of this.plugins) {
                 authRequires = {
                     ...authRequires,
-                    ...await plugin.func['transfer'](plugin.args['transfer'], chain)
+                    ...(await plugin.func["transfer"](
+                        plugin.args["transfer"],
+                        chain
+                    ))
                 };
             }
         }
@@ -578,18 +721,31 @@ export default class XuperSDK implements XuperSDKInterface {
             totalNeed = totalNeed.add(new BN(auth.fee || 0));
         });
 
-        const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(node, chain, address, totalNeed, Object.keys(authRequires), invokeRequests, account)
+        const preExecWithUtxos = await this.transactionInstance.preExecWithUTXO(
+            node,
+            chain,
+            address,
+            totalNeed,
+            Object.keys(authRequires),
+            invokeRequests,
+            account
+        );
 
         const preExecWithUtxosObj = preExecWithUtxos;
 
         const gasUsed = preExecWithUtxosObj.response.gas_used || 0;
 
-        const tx = await this.transactionInstance.makeTransaction(account, {
-            amount: '0',
-            fee: gasUsed.toString(),
-            to: '',
-            desc: desc,
-        }, authRequires, preExecWithUtxosObj);
+        const tx = await this.transactionInstance.makeTransaction(
+            account,
+            {
+                amount: "0",
+                fee: gasUsed.toString(),
+                to: "",
+                desc: desc
+            },
+            authRequires,
+            preExecWithUtxosObj
+        );
 
         return {
             preExecutionTransaction: preExecWithUtxosObj,
@@ -602,15 +758,17 @@ export default class XuperSDK implements XuperSDKInterface {
         methodName: string,
         moduleName: string,
         args: any,
-        amount = '0',
-        account?: AccountModel
+        amount = "0",
+        account?: AccountModel,
+        desc?: string
     ): Promise<any> {
         const invokeRequests = this.contractInstance.invokeContract(
             contractName,
             methodName,
             moduleName,
             args,
-            amount
+            amount,
+            desc
         );
 
         if (!account) {
@@ -629,15 +787,17 @@ export default class XuperSDK implements XuperSDKInterface {
         methodName: string,
         moduleName: string,
         args: any,
-        amount = '0',
-        account?: AccountModel
+        amount = "0",
+        account?: AccountModel,
+        desc?: string
     ): Promise<any> {
         const invokeRequests = this.contractInstance.invokeSolidityContract(
             contractName,
             methodName,
             moduleName,
             args,
-            amount
+            amount,
+            desc
         );
 
         if (!account) {
@@ -648,22 +808,26 @@ export default class XuperSDK implements XuperSDKInterface {
             throw Errors.ACCOUNT_NOT_EXIST;
         }
 
-        return this.invoke(invokeRequests, amount, account)
+        return this.invoke(invokeRequests, amount, account);
     }
 
     async queryACL(
         contractAccount: string,
         contractInfo?: ContractInfo
     ): Promise<any> {
-
         const node = this.options.node;
         const bcname = this.options.chain;
 
-        return this.contractInstance.queryACL(node, bcname, contractAccount, contractInfo);
+        return this.contractInstance.queryACL(
+            node,
+            bcname,
+            contractAccount,
+            contractInfo
+        );
     }
 
     async queryContractStatData(): Promise<any> {
-        const {node, chain} = this.options;
+        const { node, chain } = this.options;
         return this.contractInstance.queryContractStatData(node, chain);
     }
 
@@ -674,13 +838,12 @@ export default class XuperSDK implements XuperSDKInterface {
 
         try {
             return toHex(t.toString());
-        }
-        catch (err) {
+        } catch (err) {
             throw err;
         }
     }
 }
 
-export * from './plugins';
+export * from "./plugins";
 
-export {Cryptography, Language, Strength};
+export { Cryptography, Language, Strength };

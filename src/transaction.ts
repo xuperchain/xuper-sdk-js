@@ -3,25 +3,39 @@
  * Created by SmilingXinyi <smilingxinyi@gmail.com> on 2020/6/2
  */
 
-import {ContractRequesttModel, TransactionInfomationModel, AuthModel, AccountModel, TXInput, TXOutput, UTXO, TransactionModel, Plugin} from './types';
-import * as Requests from './requests';
-import BN from 'bn.js';
-import Errors from './error';
-import {convert, getNonce, jsonEncode, publicOrPrivateKeyToString} from './utils';
-import sha256 from 'sha256';
-import {VERSION} from './constants';
-import {ec as EC} from 'elliptic';
-import stringify from 'json-stable-stringify';
+import {
+    ContractRequesttModel,
+    TransactionInfomationModel,
+    AuthModel,
+    AccountModel,
+    TXInput,
+    TXOutput,
+    UTXO,
+    TransactionModel,
+    Plugin
+} from "./types";
+import * as Requests from "./requests";
+import BN from "bn.js";
+import Errors from "./error";
+import {
+    convert,
+    getNonce,
+    jsonEncode,
+    publicOrPrivateKeyToString
+} from "./utils";
+import sha256 from "sha256";
+import { VERSION } from "./constants";
+import { ec as EC } from "elliptic";
+import stringify from "json-stable-stringify";
 
 export default class Transaction {
-
     private plugins: Plugin[];
 
     constructor(plugins: Plugin[] = []) {
         this.plugins = plugins;
     }
 
-    async preExec (
+    async preExec(
         node: string,
         chain: string,
         address: string,
@@ -60,18 +74,32 @@ export default class Transaction {
                 requests: invokeRequests
             }
         };
-
+        const te = new TextEncoder();
+        const descBuff: Uint8Array = te.encode(JSON.stringify(data));
+        const descArr: string[] = [];
+        descBuff.forEach(n => descArr.push(String.fromCharCode(n)));
         let body = {
-            RequestName: 'PreExecWithFee',
+            RequestName: "PreExecWithFee",
             BcName: chain,
-            RequestData: btoa(JSON.stringify(data))
+            RequestData: btoa(descArr.join(""))
         };
 
-        if (this.plugins.length > 0 && this.plugins.findIndex(item => item.hookFuncs.indexOf('postTx') > -1) > -1) {
+        if (
+            this.plugins.length > 0 &&
+            this.plugins.findIndex(
+                item => item.hookFuncs.indexOf("postTx") > -1
+            ) > -1
+        ) {
             for (const plugin of this.plugins) {
-                if (plugin.func['postTx']) {
-                    body = await plugin.func['postTx'].call(this, plugin.args['postTx'],
-                        node, chain, body, account);
+                if (plugin.func["postTx"]) {
+                    body = await plugin.func["postTx"].call(
+                        this,
+                        plugin.args["postTx"],
+                        node,
+                        chain,
+                        body,
+                        account
+                    );
                 }
             }
         }
@@ -98,7 +126,12 @@ export default class Transaction {
         if (bnUtxos.gte(bnNeed)) {
             const delta = bnUtxos.sub(bnNeed);
             return {
-                amount: btoa(delta.toArray().map(v => String.fromCharCode(v)).join('')),
+                amount: btoa(
+                    delta
+                        .toArray()
+                        .map(v => String.fromCharCode(v))
+                        .join("")
+                ),
                 toAddr: btoa(toAddress)
             };
         }
@@ -114,55 +147,60 @@ export default class Transaction {
         const bnFee = new BN(fee || 0);
         const accounts = [];
 
-        to && accounts.push({
-            address: to,
-            amount: bnAmount
-        });
+        to &&
+            accounts.push({
+                address: to,
+                amount: bnAmount
+            });
 
-        bnFee.gt(new BN(0)) && accounts.push({
-            address: '$',
-            amount: bnFee
-        });
+        bnFee.gt(new BN(0)) &&
+            accounts.push({
+                address: "$",
+                amount: bnFee
+            });
 
         return accounts.map(account => ({
-            amount: btoa(account.amount.toArray().map(v => String.fromCharCode(v)).join('')),
+            amount: btoa(
+                account.amount
+                    .toArray()
+                    .map(v => String.fromCharCode(v))
+                    .join("")
+            ),
             toAddr: btoa(account.address)
         }));
     }
 
-    makeTxInputs(
-        utxos: UTXO[]
-    ): TXInput[] {
+    makeTxInputs(utxos: UTXO[]): TXInput[] {
         const txInputs: TXInput[] = [];
-        utxos.forEach(utxo => txInputs.push({
-            refTxid: utxo.refTxid,
-            refOffset: utxo.refOffset || 0,
-            fromAddr: utxo.toAddr,
-            amount: utxo.amount
-        } as TXInput));
+        utxos.forEach(utxo =>
+            txInputs.push({
+                refTxid: utxo.refTxid,
+                refOffset: utxo.refOffset || 0,
+                fromAddr: utxo.toAddr,
+                amount: utxo.amount
+            } as TXInput)
+        );
         return txInputs;
     }
 
     encodeDataForDigestHash(tx: TransactionModel, include_signs: boolean) {
         const newtx: TransactionModel = JSON.parse(JSON.stringify(tx));
 
-        let str = '';
+        let str = "";
 
-        newtx.txInputs.forEach(
-            (txInput: TXInput) => {
-                if (txInput.refTxid) {
-                    str += jsonEncode(txInput.refTxid);
-                }
-                str += jsonEncode(txInput.refOffset || 0);
-                if (txInput.fromAddr) {
-                    str += jsonEncode(txInput.fromAddr);
-                }
-                if (txInput.amount) {
-                    str += jsonEncode(txInput.amount);
-                }
-                str += jsonEncode(txInput.frozenHeight || 0);
+        newtx.txInputs.forEach((txInput: TXInput) => {
+            if (txInput.refTxid) {
+                str += jsonEncode(txInput.refTxid);
             }
-        );
+            str += jsonEncode(txInput.refOffset || 0);
+            if (txInput.fromAddr) {
+                str += jsonEncode(txInput.fromAddr);
+            }
+            if (txInput.amount) {
+                str += jsonEncode(txInput.amount);
+            }
+            str += jsonEncode(txInput.frozenHeight || 0);
+        });
 
         str += jsonEncode(convert(newtx.txOutputs));
 
@@ -209,16 +247,23 @@ export default class Transaction {
                 if (req.args) {
                     req.args = JSON.parse(stringify(req.args));
                 }
+                if (req.desc) {
+                    req.desc = JSON.parse(stringify(req.desc));
+                }
                 return req;
             });
         }
 
         // @ts-ignore
-        str += jsonEncode(convert(newtx.contractRequests, ['jsonEncoded']));
+        str += jsonEncode(convert(newtx.contractRequests, ["jsonEncoded"]));
 
         str += jsonEncode(newtx.initiator);
 
-        str += jsonEncode(newtx.authRequire && newtx.authRequire.length > 0 ? newtx.authRequire : null);
+        str += jsonEncode(
+            newtx.authRequire && newtx.authRequire.length > 0
+                ? newtx.authRequire
+                : null
+        );
 
         if (include_signs) {
             str += jsonEncode(newtx.initiatorSigns);
@@ -232,7 +277,7 @@ export default class Transaction {
         const te = new TextEncoder();
         const bytes = te.encode(str);
 
-        return sha256.x2(Array.from(bytes), {asBytes: true});
+        return sha256.x2(Array.from(bytes), { asBytes: true });
     }
 
     generateTransaction(
@@ -241,12 +286,10 @@ export default class Transaction {
         authRequires: any,
         ti: TransactionInfomationModel
     ): TransactionModel {
-        const {utxoOutput, response} = preExecWithUtxos;
-        const {utxoList, totalSelected} = utxoOutput;
+        const { utxoOutput, response } = preExecWithUtxos;
+        const { utxoList, totalSelected } = utxoOutput;
 
-        const {
-            amount, fee, to, desc
-        } = ti;
+        const { amount, fee, to, desc } = ti;
 
         // inputs
         const txInputs = this.makeTxInputs(utxoList);
@@ -257,13 +300,14 @@ export default class Transaction {
         let totalNeed = new BN(0);
         totalNeed = totalNeed.add(new BN(amount));
 
-        if (fee)
-            totalNeed = totalNeed.add(new BN(fee));
+        if (fee) totalNeed = totalNeed.add(new BN(fee));
 
-
-        txOutputs.push(this.makeTxOutput(totalSelected, totalNeed, account.address));
+        txOutputs.push(
+            this.makeTxOutput(totalSelected, totalNeed, account.address)
+        );
 
         // desc
+        // console.log("----0000000000000000000000----");
         const te = new TextEncoder();
         const descBuff: Uint8Array = te.encode(desc);
         const descArr: string[] = [];
@@ -283,7 +327,9 @@ export default class Transaction {
         } as TransactionModel;
 
         if (descArr.length > 0) {
-            tx.desc = btoa(descArr.join(''));
+            // console.log("----11111----");
+            tx.desc = btoa(descArr.join(""));
+            // console.log(tx.desc, "----tx.desc----");
         }
 
         if (response) {
@@ -302,11 +348,11 @@ export default class Transaction {
                 tx.contractRequests = response.requests;
             }
         }
-
+        // console.log("----2222----");
         const digestHash = this.encodeDataForDigestHash(tx, false);
-
+        // console.log("----3333----");
         // sign
-        const ec = new EC('p256');
+        const ec = new EC("p256");
         const bnD = new BN(account.privateKey.D);
         const privKey = ec.keyFromPrivate(bnD.toArray());
         const sign = privKey.sign(digestHash);
@@ -314,20 +360,24 @@ export default class Transaction {
         const signatureInfos = [];
         const signatureInfo = {
             PublicKey: publicOrPrivateKeyToString(account.publicKey),
-            Sign: btoa(derbuf.join(''))
+            Sign: btoa(derbuf.join(""))
         };
         signatureInfos.push(signatureInfo);
         tx.initiatorSigns = signatureInfos;
         const digest = this.encodeDataForDigestHash(tx, true);
 
         // txid
-        tx.txid = btoa(digest.map(v => String.fromCharCode(v)).join(''));
+        tx.txid = btoa(digest.map(v => String.fromCharCode(v)).join(""));
 
         return tx;
     }
 
-    async post(node: string, chain: string, tx: any, account?: AccountModel): Promise<any> {
-
+    async post(
+        node: string,
+        chain: string,
+        tx: any,
+        account?: AccountModel
+    ): Promise<any> {
         let body = {
             bcname: chain,
             status: 4,
@@ -335,11 +385,22 @@ export default class Transaction {
             txid: tx.txid
         };
 
-        if (this.plugins.length > 0 && this.plugins.findIndex(item => item.hookFuncs.indexOf('postTx') > -1) > -1) {
+        if (
+            this.plugins.length > 0 &&
+            this.plugins.findIndex(
+                item => item.hookFuncs.indexOf("postTx") > -1
+            ) > -1
+        ) {
             for (const plugin of this.plugins) {
-                if (plugin.func['postTx']) {
-                    body = await plugin.func['postTx'].call(this, plugin.args['postTx'],
-                        node, chain, body, account);
+                if (plugin.func["postTx"]) {
+                    body = await plugin.func["postTx"].call(
+                        this,
+                        plugin.args["postTx"],
+                        node,
+                        chain,
+                        body,
+                        account
+                    );
                 }
             }
         }
@@ -353,16 +414,27 @@ export default class Transaction {
         authRequires: { [propName: string]: AuthModel },
         preExecWithUtxosObj: any
     ): Promise<TransactionModel> {
-        const newPreExecWithUtxosObj = {...preExecWithUtxosObj};
+        const newPreExecWithUtxosObj = { ...preExecWithUtxosObj };
 
         let tx: TransactionModel;
 
-        if (this.plugins.length > 0 && this.plugins.every(item => item.hookFuncs.indexOf('makeTransaction') > -1)) {
+        if (
+            this.plugins.length > 0 &&
+            this.plugins.every(
+                item => item.hookFuncs.indexOf("makeTransaction") > -1
+            )
+        ) {
             for (const plugin of this.plugins) {
-                tx = await plugin.func['makeTransaction'].call(this, plugin.args['makeTransaction'], account, ti, authRequires, preExecWithUtxosObj)
+                tx = await plugin.func["makeTransaction"].call(
+                    this,
+                    plugin.args["makeTransaction"],
+                    account,
+                    ti,
+                    authRequires,
+                    preExecWithUtxosObj
+                );
             }
-        }
-        else {
+        } else {
             tx = this.generateTransaction(
                 account,
                 newPreExecWithUtxosObj,
@@ -371,20 +443,28 @@ export default class Transaction {
             );
 
             // @ts-ignore
-            await Object.keys(authRequires).reduce(async (prov: any, cur: any): Promise<any> => {
-                const auth = authRequires[cur];
-                tx = await auth.sign(null, await tx);
-                return tx;
-            }, 0);
+            await Object.keys(authRequires).reduce(
+                async (prov: any, cur: any): Promise<any> => {
+                    console.log(prov);
+                    const auth = authRequires[cur];
+                    tx = await auth.sign(null, await tx);
+                    return tx;
+                },
+                0
+            );
         }
 
         // @ts-ignore
-        const res = convert(this.signTx(tx), ['jsonEncoded']);
+        const res = convert(this.signTx(tx), ["jsonEncoded"]);
 
         return res;
     }
 
-    async queryTransaction(node: string, chain: string, txid: string): Promise<any> {
+    async queryTransaction(
+        node: string,
+        chain: string,
+        txid: string
+    ): Promise<any> {
         const body = {
             bcname: chain,
             txid
@@ -395,7 +475,7 @@ export default class Transaction {
 
     signTx(tx: TransactionModel): TransactionModel {
         const digest = this.encodeDataForDigestHash(tx, true);
-        tx.txid = btoa(digest.map(v => String.fromCharCode(v)).join(''));
+        tx.txid = btoa(digest.map(v => String.fromCharCode(v)).join(""));
         return tx;
     }
 
@@ -404,16 +484,20 @@ export default class Transaction {
             bcname: chain,
             blockid,
             need_content: true
-        }
+        };
 
         return Requests.getBlock(node, body);
     }
 
-    async getBlockByHeight(node: string, chain: string, height: string): Promise<any> {
+    async getBlockByHeight(
+        node: string,
+        chain: string,
+        height: string
+    ): Promise<any> {
         const body = {
             bcname: chain,
             height
-        }
+        };
 
         return Requests.getBlockByHeight(node, body);
     }
